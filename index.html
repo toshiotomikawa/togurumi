@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" data-theme="system">
+  <head>
+    <script>
+      try {
+        var t = localStorage.getItem('togurumi-theme');
+        if (t === 'day' || t === 'night' || t === 'system') document.documentElement.dataset.theme = t;
+        var l = localStorage.getItem('togurumi-locale');
+        var lang = 'en-US';
+        if (l === 'pt-BR') lang = 'pt-BR';
+        else if (l === 'en-US') lang = 'en-US';
+        else lang = (navigator.language || '').toLowerCase().startsWith('pt') ? 'pt-BR' : 'en-US';
+        document.documentElement.lang = lang;
+      } catch (e) {}
+    </script>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400..700&family=Nunito:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Togurumi</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
