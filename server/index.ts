@@ -23,6 +23,8 @@ import {
   type JournalPostInput,
 } from './journal'
 import { FileSessionStore } from './sessionStore'
+import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sheets'
+import { getShopProducts } from './shop'
 import { ensureSeedUser, findUser, createGoogleUser, findUserByGoogleId, saveUser, type UserRecord } from './store'
 
 const PORT = Number(process.env.API_PORT ?? 8788)
@@ -348,6 +350,74 @@ app.delete('/api/journal/:id', requireAuth, async (req, res) => {
     return
   }
   res.json({ ok: true })
+})
+
+app.get('/api/shop/products', async (_req, res) => {
+  try {
+    const products = await getShopProducts()
+    res.json({ products })
+  } catch (err) {
+    if (err instanceof SheetsError) {
+      const status = err.code === 'disabled' ? 503 : err.code === 'invalid_tab' ? 400 : 502
+      res.status(status).json({ error: err.code })
+      return
+    }
+    throw err
+  }
+})
+
+app.get('/api/sheets/:tab', async (req, res) => {
+  try {
+    const rows = await getSheetTab(req.params.tab)
+    res.json({ rows })
+  } catch (err) {
+    if (err instanceof SheetsError) {
+      const status = err.code === 'disabled' ? 503 : err.code === 'invalid_tab' ? 400 : 502
+      res.status(status).json({ error: err.code })
+      return
+    }
+    throw err
+  }
+})
+
+app.put('/api/sheets/:tab/:range', requireAuth, async (req, res) => {
+  const values = req.body?.values
+  if (!Array.isArray(values) || !values.every((row) => Array.isArray(row))) {
+    res.status(400).json({ error: 'invalid_values' })
+    return
+  }
+
+  try {
+    await updateSheetRange(req.params.tab, req.params.range, values)
+    res.json({ ok: true })
+  } catch (err) {
+    if (err instanceof SheetsError) {
+      const status = err.code === 'disabled' ? 503 : err.code === 'invalid_tab' ? 400 : 502
+      res.status(status).json({ error: err.code })
+      return
+    }
+    throw err
+  }
+})
+
+app.post('/api/sheets/:tab/append', requireAuth, async (req, res) => {
+  const row = req.body?.row
+  if (!Array.isArray(row)) {
+    res.status(400).json({ error: 'invalid_row' })
+    return
+  }
+
+  try {
+    await appendSheetRow(req.params.tab, row)
+    res.json({ ok: true })
+  } catch (err) {
+    if (err instanceof SheetsError) {
+      const status = err.code === 'disabled' ? 503 : err.code === 'invalid_tab' ? 400 : 502
+      res.status(status).json({ error: err.code })
+      return
+    }
+    throw err
+  }
 })
 
 await ensureSeedUser(process.env.ADMIN_USERNAME ?? 'admin', process.env.ADMIN_PASSWORD ?? 'change-me', 'admin')

@@ -10,12 +10,12 @@ function HomePage() {
     <div className="page">
       <section className="hero">
         <span aria-hidden="true" className="hero__yarn-ball" />
-        <span className="hero__eyebrow">{messages.home.eyebrow}</span>
+        <span className="hero__eyebrow hero__eyebrow--katakana">{messages.home.eyebrow}</span>
         <h1>{messages.home.title}</h1>
         <p>{messages.home.intro}</p>
         <div className="hero__actions">
-          <Link to="/gallery" className="button button--primary">
-            {messages.home.galleryCta}
+          <Link to="/shop" className="button button--primary">
+            {messages.home.shopCta}
           </Link>
           <Link to="/journal" className="button">
             {messages.home.journalCta}
@@ -26,7 +26,7 @@ function HomePage() {
       <section className="section">
         <div className="section__head">
           <h2>{messages.home.recentHeading}</h2>
-          <Link to="/gallery">{messages.home.viewAll}</Link>
+          <Link to="/shop">{messages.home.viewAll}</Link>
         </div>
         <div className="gallery-grid">
           {messages.home.featured.map((item) => (

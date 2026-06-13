@@ -23,7 +23,7 @@ const enUS: PrivacyContent = {
       id: 'who',
       title: '1. Who we are',
       paragraphs: [
-        'Togurumi is operated by Bella, an independent crochet artist based in Brazil. For any privacy-related questions, contact privacy@togurumi.example.',
+        'Togurumi is operated by Bella, an independent crochet artist based in Brazil. For any privacy-related questions, contact togurumi@gmail.com.',
       ],
     },
     {
@@ -52,7 +52,7 @@ const enUS: PrivacyContent = {
       id: 'contact',
       title: '5. Contact',
       paragraphs: [
-        'The Contact page links to our Instagram profile (instagram.com/togurumi) for general inquiries. For privacy questions or requests under LGPD, email privacy@togurumi.example.',
+        'The Contact page links to our Instagram profile (instagram.com/togurumi) for general inquiries. For privacy questions or requests under LGPD, email togurumi@gmail.com.',
       ],
     },
   ],
@@ -68,7 +68,7 @@ const ptBR: PrivacyContent = {
       id: 'who',
       title: '1. Quem somos',
       paragraphs: [
-        'O Togurumi é mantido por Bella, artesã de crochê independente, sediada no Brasil. Para questões relacionadas à privacidade, entre em contato pelo e-mail privacy@togurumi.example.',
+        'O Togurumi é mantido por Bella, artesã de crochê independente, sediada no Brasil. Para questões relacionadas à privacidade, entre em contato pelo e-mail togurumi@gmail.com.',
       ],
     },
     {
@@ -97,7 +97,7 @@ const ptBR: PrivacyContent = {
       id: 'contact',
       title: '5. Contato',
       paragraphs: [
-        'A página de Contato traz um link para nosso perfil no Instagram (instagram.com/togurumi) para dúvidas gerais. Para questões de privacidade ou solicitações com base na LGPD, envie um e-mail para privacy@togurumi.example.',
+        'A página de Contato traz um link para nosso perfil no Instagram (instagram.com/togurumi) para dúvidas gerais. Para questões de privacidade ou solicitações com base na LGPD, envie um e-mail para togurumi@gmail.com.',
       ],
     },
   ],
@@ -113,7 +113,7 @@ const esES: PrivacyContent = {
       id: 'who',
       title: '1. Quiénes somos',
       paragraphs: [
-        'Togurumi es administrado por Bella, una artista independiente de crochet con sede en Brasil. Para cualquier pregunta relacionada con la privacidad, contacta a privacy@togurumi.example.',
+        'Togurumi es administrado por Bella, una artista independiente de crochet con sede en Brasil. Para cualquier pregunta relacionada con la privacidad, contacta a togurumi@gmail.com.',
       ],
     },
     {
@@ -142,7 +142,7 @@ const esES: PrivacyContent = {
       id: 'contact',
       title: '5. Contacto',
       paragraphs: [
-        'La página de Contacto enlaza a nuestro perfil de Instagram (instagram.com/togurumi) para consultas generales. Para preguntas de privacidad o solicitudes bajo la LGPD, escribe a privacy@togurumi.example.',
+        'La página de Contacto enlaza a nuestro perfil de Instagram (instagram.com/togurumi) para consultas generales. Para preguntas de privacidad o solicitudes bajo la LGPD, escribe a togurumi@gmail.com.',
       ],
     },
   ],

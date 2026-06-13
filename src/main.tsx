@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
 import AuthProvider from './components/AuthProvider.tsx'
+import CartProvider from './components/CartProvider.tsx'
 import LocaleProvider from './components/LocaleProvider.tsx'
 import ThemeProvider from './components/ThemeProvider.tsx'
 
@@ -12,9 +13,11 @@ createRoot(document.getElementById('root')!).render(
     <LocaleProvider>
       <ThemeProvider>
         <AuthProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
+          <CartProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </CartProvider>
         </AuthProvider>
       </ThemeProvider>
     </LocaleProvider>

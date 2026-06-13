@@ -1,4 +1,4 @@
-import type { SupportedLocale } from '../lib/i18n'
+﻿import type { SupportedLocale } from '../lib/i18n'
 
 export type GalleryItem = {
   icon: string
@@ -10,8 +10,7 @@ export type Messages = {
   meta: { title: string }
   nav: {
     home: string
-    gallery: string
-    patterns: string
+    shop: string
     journal: string
     about: string
     contact: string
@@ -75,13 +74,14 @@ export type Messages = {
     profileUpdated: string
     showPassword: string
     hidePassword: string
+    accountMenuLabel: string
   }
   footer: { tagline: string }
   home: {
     eyebrow: string
     title: string
     intro: string
-    galleryCta: string
+    shopCta: string
     journalCta: string
     recentHeading: string
     viewAll: string
@@ -89,17 +89,26 @@ export type Messages = {
     allEntries: string
     featured: GalleryItem[]
   }
-  gallery: {
+  shop: {
     eyebrow: string
     title: string
     intro: string
-    items: GalleryItem[]
-  }
-  patterns: {
-    eyebrow: string
-    title: string
-    intro: string
-    items: { name: string; status: string; description: string }[]
+    availableHeading: string
+    availableEmpty: string
+    stockLabel: string
+    outOfStock: string
+    allCategories: string
+    newBadge: string
+    backLink: string
+    yarnLabel: string
+    eyesLabel: string
+    addToCart: string
+    addedToCart: string
+    galleryHeading: string
+    galleryItems: GalleryItem[]
+    patternsHeading: string
+    patternsIntro: string
+    patternsItems: { name: string; status: string; description: string }[]
   }
   journal: {
     eyebrow: string
@@ -121,6 +130,7 @@ export type Messages = {
     title: string
     intro: string
     instagram: string
+    email: string
     commissions: string
     commissionsBody: string
   }
@@ -130,14 +140,32 @@ export type Messages = {
     body: string
     button: string
   }
+  search: {
+    ariaLabel: string
+    eyebrow: string
+    title: string
+    placeholder: string
+    noResults: string
+    filteringBy: string
+    clearFilter: string
+  }
+  cart: {
+    ariaLabel: string
+    eyebrow: string
+    title: string
+    empty: string
+    remove: string
+    total: string
+    continueShopping: string
+    checkoutNote: string
+  }
 }
 
 const enUS: Messages = {
   meta: { title: 'Togurumi' },
   nav: {
     home: 'Home',
-    gallery: 'Gallery',
-    patterns: 'Patterns',
+    shop: 'Shop',
     journal: 'Journal',
     about: 'About',
     contact: 'Contact',
@@ -201,14 +229,15 @@ const enUS: Messages = {
     profileUpdated: 'Profile updated.',
     showPassword: 'Show password',
     hidePassword: 'Hide password',
+    accountMenuLabel: 'Account',
   },
   footer: { tagline: 'made with a hook and a lot of yarn' },
   home: {
-    eyebrow: 'Togurumi',
+    eyebrow: 'トグルミ',
     title: 'Small stitches, soft stories.',
     intro:
       "Handmade amigurumi and crochet notes from Bella's hook — finished friends, works-in-progress, and the quiet craft in between.",
-    galleryCta: 'See the gallery',
+    shopCta: 'Visit the shop',
     journalCta: 'Read the journal',
     recentHeading: 'Recently finished',
     viewAll: 'View all →',
@@ -220,12 +249,24 @@ const enUS: Messages = {
       { icon: '🐰', name: 'Clover the Bunny', tag: 'Dusty rose · floppy ears' },
     ],
   },
-  gallery: {
-    eyebrow: 'Gallery',
-    title: 'Finished friends & works in progress',
+  shop: {
+    eyebrow: 'Shop',
+    title: 'Finished friends, patterns & commissions',
     intro:
-      'A growing collection of amigurumi — hero shots, detail close-ups, and a few still-in-progress projects. Real photos coming soon!',
-    items: [
+      "A growing collection of amigurumi pieces, pattern plans, and commission notes — finished friends, detail close-ups, works in progress, and links as they're ready.",
+    availableHeading: 'Available now',
+    availableEmpty: 'New pieces are on the way — check back soon!',
+    stockLabel: 'In stock',
+    outOfStock: 'Sold out',
+    allCategories: 'All',
+    newBadge: 'NEW!',
+    backLink: 'Back to shop',
+    yarnLabel: 'Yarn',
+    eyesLabel: 'Eyes',
+    addToCart: 'Add to cart',
+    addedToCart: 'Added to cart!',
+    galleryHeading: 'Finished friends & works in progress',
+    galleryItems: [
       { icon: '🐙', name: 'Ollie the Octopus', tag: 'Cotton yarn · 6 legs (so far)' },
       { icon: '🐻', name: 'Mochi Bear', tag: 'Sage mint · button eyes' },
       { icon: '🐰', name: 'Clover the Bunny', tag: 'Dusty rose · floppy ears' },
@@ -235,13 +276,10 @@ const enUS: Messages = {
       { icon: '🌵', name: 'Pip the Cactus', tag: 'No spikes, all hugs' },
       { icon: '🐱', name: 'Yarn Cat', tag: 'Custom commission' },
     ],
-  },
-  patterns: {
-    eyebrow: 'Patterns',
-    title: 'Patterns & commissions',
-    intro:
+    patternsHeading: 'Patterns & commissions',
+    patternsIntro:
       "Free and paid patterns will live here, along with links to Ravelry, Etsy, or PDF downloads as they're ready. For now, here's what's in the works.",
-    items: [
+    patternsItems: [
       {
         name: 'Mochi Bear',
         status: 'Coming soon',
@@ -287,6 +325,7 @@ const enUS: Messages = {
     title: 'Say hello',
     intro: 'Questions about a piece, interested in a commission, or just want to chat about yarn? Reach out.',
     instagram: 'Instagram',
+    email: 'Email',
     commissions: 'Commissions',
     commissionsBody: 'Custom characters welcome — send a message with your idea and any reference photos.',
   },
@@ -296,14 +335,32 @@ const enUS: Messages = {
     body: "The page you're looking for has unraveled. Let's get you back on track.",
     button: 'Back home',
   },
+  search: {
+    ariaLabel: 'Search',
+    eyebrow: 'Search',
+    title: 'Find a piece',
+    placeholder: 'Search by name, type, yarn...',
+    noResults: 'No pieces match your search.',
+    filteringBy: 'Filtering by',
+    clearFilter: 'Clear filter',
+  },
+  cart: {
+    ariaLabel: 'Cart',
+    eyebrow: 'Cart',
+    title: 'Your cart',
+    empty: "Your cart is empty — go find something to love.",
+    remove: 'Remove',
+    total: 'Total',
+    continueShopping: 'Continue shopping',
+    checkoutNote: "Checkout isn't quite ready yet — we'll let you know as soon as it's open!",
+  },
 }
 
 const ptBR: Messages = {
   meta: { title: 'Togurumi' },
   nav: {
     home: 'Início',
-    gallery: 'Galeria',
-    patterns: 'Receitas',
+    shop: 'Loja',
     journal: 'Diário',
     about: 'Sobre',
     contact: 'Contato',
@@ -367,14 +424,15 @@ const ptBR: Messages = {
     profileUpdated: 'Perfil atualizado.',
     showPassword: 'Mostrar senha',
     hidePassword: 'Ocultar senha',
+    accountMenuLabel: 'Conta',
   },
   footer: { tagline: 'feito com uma agulha e muito fio' },
   home: {
-    eyebrow: 'Togurumi',
+    eyebrow: 'トグルミ',
     title: 'Pontinhos pequenos, histórias macias.',
     intro:
       'Amigurumis feitos à mão e anotações de crochê da agulha da Bella — amiguinhos prontos, trabalhos em andamento e o artesanato tranquilo no meio do caminho.',
-    galleryCta: 'Ver a galeria',
+    shopCta: 'Visitar a loja',
     journalCta: 'Ler o diário',
     recentHeading: 'Recém-finalizados',
     viewAll: 'Ver tudo →',
@@ -386,12 +444,24 @@ const ptBR: Messages = {
       { icon: '🐰', name: 'Clover the Bunny', tag: 'Rosa empoeirado · orelhas caídas' },
     ],
   },
-  gallery: {
-    eyebrow: 'Galeria',
-    title: 'Amiguinhos prontos e trabalhos em andamento',
+  shop: {
+    eyebrow: 'Loja',
+    title: 'Amiguinhos, receitas e encomendas',
     intro:
-      'Uma coleção crescente de amigurumis — fotos de destaque, detalhes em close e alguns projetos ainda em progresso. Fotos reais em breve!',
-    items: [
+      'Uma coleção crescente de amigurumis, receitas em preparação e notas de encomenda — amiguinhos prontos, detalhes em close, trabalhos em andamento e links conforme ficarem prontos.',
+    availableHeading: 'Disponível agora',
+    availableEmpty: 'Novas peças estão a caminho — volte em breve!',
+    stockLabel: 'Em estoque',
+    outOfStock: 'Esgotado',
+    allCategories: 'Todos',
+    newBadge: 'NOVO!',
+    backLink: 'Voltar para a loja',
+    yarnLabel: 'Fio',
+    eyesLabel: 'Olhos',
+    addToCart: 'Colocar no carrinho',
+    addedToCart: 'Adicionado ao carrinho!',
+    galleryHeading: 'Amiguinhos prontos e trabalhos em andamento',
+    galleryItems: [
       { icon: '🐙', name: 'Ollie the Octopus', tag: 'Fio de algodão · 6 pernas (por enquanto)' },
       { icon: '🐻', name: 'Mochi Bear', tag: 'Verde-sálvia · olhos de botão' },
       { icon: '🐰', name: 'Clover the Bunny', tag: 'Rosa empoeirado · orelhas caídas' },
@@ -401,13 +471,10 @@ const ptBR: Messages = {
       { icon: '🌵', name: 'Pip the Cactus', tag: 'Sem espinhos, só abraços' },
       { icon: '🐱', name: 'Yarn Cat', tag: 'Encomenda personalizada' },
     ],
-  },
-  patterns: {
-    eyebrow: 'Receitas',
-    title: 'Receitas e encomendas',
-    intro:
+    patternsHeading: 'Receitas e encomendas',
+    patternsIntro:
       'Receitas gratuitas e pagas vão morar aqui, junto com links para Ravelry, Etsy ou downloads em PDF conforme forem ficando prontos. Por enquanto, eis o que está em andamento.',
-    items: [
+    patternsItems: [
       {
         name: 'Mochi Bear',
         status: 'Em breve',
@@ -453,6 +520,7 @@ const ptBR: Messages = {
     title: 'Diga oi',
     intro: 'Dúvidas sobre uma peça, interesse em encomenda ou só quer bater papo sobre fio? Manda mensagem.',
     instagram: 'Instagram',
+    email: 'E-mail',
     commissions: 'Encomendas',
     commissionsBody: 'Personagens personalizados são bem-vindos — envie uma mensagem com sua ideia e fotos de referência, se tiver.',
   },
@@ -462,14 +530,32 @@ const ptBR: Messages = {
     body: 'A página que você procura se desfiou. Vamos te colocar de volta no caminho.',
     button: 'Voltar ao início',
   },
+  search: {
+    ariaLabel: 'Buscar',
+    eyebrow: 'Busca',
+    title: 'Encontre uma peça',
+    placeholder: 'Busque por nome, tipo, fio...',
+    noResults: 'Nenhuma peça encontrada para sua busca.',
+    filteringBy: 'Filtrando por',
+    clearFilter: 'Limpar filtro',
+  },
+  cart: {
+    ariaLabel: 'Carrinho',
+    eyebrow: 'Carrinho',
+    title: 'Seu carrinho',
+    empty: 'Seu carrinho está vazio — vá encontrar algo para amar.',
+    remove: 'Remover',
+    total: 'Total',
+    continueShopping: 'Continuar comprando',
+    checkoutNote: 'A finalização de compra ainda não está disponível — em breve avisaremos quando estiver pronta!',
+  },
 }
 
 const esES: Messages = {
   meta: { title: 'Togurumi' },
   nav: {
     home: 'Inicio',
-    gallery: 'Galería',
-    patterns: 'Patrones',
+    shop: 'Tienda',
     journal: 'Diario',
     about: 'Acerca de',
     contact: 'Contacto',
@@ -533,14 +619,15 @@ const esES: Messages = {
     profileUpdated: 'Perfil actualizado.',
     showPassword: 'Mostrar contraseña',
     hidePassword: 'Ocultar contraseña',
+    accountMenuLabel: 'Cuenta',
   },
   footer: { tagline: 'hecho con una aguja y mucho hilo' },
   home: {
-    eyebrow: 'Togurumi',
+    eyebrow: 'トグルミ',
     title: 'Puntadas pequeñas, historias suaves.',
     intro:
       'Amigurumis hechos a mano y notas de crochet del gancho de Bella — amiguitos terminados, trabajos en progreso y el oficio tranquilo entre medio.',
-    galleryCta: 'Ver la galería',
+    shopCta: 'Visitar la tienda',
     journalCta: 'Leer el diario',
     recentHeading: 'Recién terminados',
     viewAll: 'Ver todo →',
@@ -552,12 +639,24 @@ const esES: Messages = {
       { icon: '🐰', name: 'Clover the Bunny', tag: 'Rosa empolvado · orejas caídas' },
     ],
   },
-  gallery: {
-    eyebrow: 'Galería',
-    title: 'Amiguitos terminados y trabajos en progreso',
+  shop: {
+    eyebrow: 'Tienda',
+    title: 'Amiguitos, patrones y encargos',
     intro:
-      'Una colección creciente de amigurumis — fotos destacadas, primeros planos de detalles y algunos proyectos aún en progreso. ¡Pronto fotos reales!',
-    items: [
+      'Una colección creciente de amigurumis, patrones en preparación y notas de encargos — amiguitos terminados, primeros planos, trabajos en progreso y enlaces cuando estén listos.',
+    availableHeading: 'Disponible ahora',
+    availableEmpty: '¡Nuevas piezas en camino — vuelve pronto!',
+    stockLabel: 'En stock',
+    outOfStock: 'Agotado',
+    allCategories: 'Todos',
+    newBadge: '¡NUEVO!',
+    backLink: 'Volver a la tienda',
+    yarnLabel: 'Hilo',
+    eyesLabel: 'Ojos',
+    addToCart: 'Añadir al carrito',
+    addedToCart: '¡Añadido al carrito!',
+    galleryHeading: 'Amiguitos terminados y trabajos en progreso',
+    galleryItems: [
       { icon: '🐙', name: 'Ollie the Octopus', tag: 'Hilo de algodón · 6 patas (por ahora)' },
       { icon: '🐻', name: 'Mochi Bear', tag: 'Verde salvia · ojos de botón' },
       { icon: '🐰', name: 'Clover the Bunny', tag: 'Rosa empolvado · orejas caídas' },
@@ -567,13 +666,10 @@ const esES: Messages = {
       { icon: '🌵', name: 'Pip the Cactus', tag: 'Sin espinas, solo abrazos' },
       { icon: '🐱', name: 'Yarn Cat', tag: 'Encargo personalizado' },
     ],
-  },
-  patterns: {
-    eyebrow: 'Patrones',
-    title: 'Patrones y encargos',
-    intro:
+    patternsHeading: 'Patrones y encargos',
+    patternsIntro:
       'Aquí vivirán patrones gratuitos y de pago, junto con enlaces a Ravelry, Etsy o descargas en PDF cuando estén listos. Por ahora, esto es lo que está en marcha.',
-    items: [
+    patternsItems: [
       {
         name: 'Mochi Bear',
         status: 'Próximamente',
@@ -619,6 +715,7 @@ const esES: Messages = {
     title: 'Saluda',
     intro: '¿Preguntas sobre una pieza, interesado en un encargo, o solo quieres charlar sobre hilos? Escríbeme.',
     instagram: 'Instagram',
+    email: 'Correo electrónico',
     commissions: 'Encargos',
     commissionsBody: 'Personajes personalizados son bienvenidos — envía un mensaje con tu idea y fotos de referencia, si tienes.',
   },
@@ -628,6 +725,25 @@ const esES: Messages = {
     body: 'La página que buscas se ha deshilado. Vamos a regresarte al buen camino.',
     button: 'Volver al inicio',
   },
+  search: {
+    ariaLabel: 'Buscar',
+    eyebrow: 'Búsqueda',
+    title: 'Encuentra una pieza',
+    placeholder: 'Busca por nombre, tipo, hilo...',
+    noResults: 'Ninguna pieza coincide con tu búsqueda.',
+    filteringBy: 'Filtrando por',
+    clearFilter: 'Limpiar filtro',
+  },
+  cart: {
+    ariaLabel: 'Carrito',
+    eyebrow: 'Carrito',
+    title: 'Tu carrito',
+    empty: 'Tu carrito está vacío — ve a encontrar algo para amar.',
+    remove: 'Eliminar',
+    total: 'Total',
+    continueShopping: 'Seguir comprando',
+    checkoutNote: 'El pago todavía no está disponible — ¡te avisaremos en cuanto esté listo!',
+  },
 }
 
 export function getMessages(locale: SupportedLocale): Messages {
@@ -635,3 +751,5 @@ export function getMessages(locale: SupportedLocale): Messages {
   if (locale === 'es-ES') return esES
   return enUS
 }
+
+

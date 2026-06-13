@@ -1,5 +1,5 @@
 import { useLocale } from '../hooks/useLocale'
-import { TOGURUMI_INSTAGRAM } from '../lib/togurumi'
+import { TOGURUMI_EMAIL, TOGURUMI_INSTAGRAM } from '../lib/togurumi'
 
 function ContactPage() {
   const { messages } = useLocale()
@@ -19,6 +19,12 @@ function ContactPage() {
             <a href={TOGURUMI_INSTAGRAM} target="_blank" rel="noopener noreferrer">
               @togurumi
             </a>
+          </p>
+        </div>
+        <div className="card">
+          <h3>{messages.contact.email}</h3>
+          <p>
+            <a href={`mailto:${TOGURUMI_EMAIL}`}>{TOGURUMI_EMAIL}</a>
           </p>
         </div>
         <div className="card">
