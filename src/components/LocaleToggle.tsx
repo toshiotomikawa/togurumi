@@ -11,6 +11,10 @@ function LocaleIcon({ preference }: { preference: LocalePreference }) {
     return <span className="settings-toggle__glyph">PT</span>
   }
 
+  if (preference === 'es-ES') {
+    return <span className="settings-toggle__glyph">ES</span>
+  }
+
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
@@ -53,7 +57,8 @@ function LocaleToggle() {
   const labelFor = (id: LocalePreference) => {
     if (id === 'system') return messages.locale.system
     if (id === 'en-US') return messages.locale.enUS
-    return messages.locale.ptBR
+    if (id === 'pt-BR') return messages.locale.ptBR
+    return messages.locale.esES
   }
 
   const currentLabel = labelFor(preference)

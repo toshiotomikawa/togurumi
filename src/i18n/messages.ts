@@ -18,7 +18,64 @@ export type Messages = {
     privacy: string
   }
   theme: { system: string; day: string; night: string; menuLabel: string }
-  locale: { system: string; enUS: string; ptBR: string; menuLabel: string }
+  locale: { system: string; enUS: string; ptBR: string; esES: string; menuLabel: string }
+  auth: {
+    loginTitle: string
+    loginIntro: string
+    username: string
+    password: string
+    submit: string
+    invalidCredentials: string
+    tooManyAttempts: string
+    genericError: string
+    or: string
+    googleButton: string
+    comingSoon: string
+    loginNav: string
+    logout: string
+    adminNav: string
+    journalEditorNav: string
+    loggedInAs: string
+    adminWelcome: string
+    adminJournalCardTitle: string
+    adminJournalCardBody: string
+    editorTitle: string
+    newPost: string
+    editPost: string
+    deletePost: string
+    deleteConfirm: string
+    fieldSlug: string
+    fieldLocale: string
+    fieldTitle: string
+    fieldDate: string
+    fieldOrder: string
+    fieldSummary: string
+    fieldBody: string
+    save: string
+    cancel: string
+    saveSuccess: string
+    saveError: string
+    deleteSuccess: string
+    accountNav: string
+    accountTitle: string
+    accountIntro: string
+    currentPassword: string
+    newPassword: string
+    confirmPassword: string
+    passwordMismatch: string
+    changePassword: string
+    passwordUpdated: string
+    wrongPassword: string
+    weakPassword: string
+    email: string
+    emailOptional: string
+    emailHint: string
+    invalidEmail: string
+    saveProfile: string
+    profileUpdated: string
+    showPassword: string
+    hidePassword: string
+  }
   footer: { tagline: string }
   home: {
     eyebrow: string
@@ -87,7 +144,64 @@ const enUS: Messages = {
     privacy: 'Privacy',
   },
   theme: { system: 'System', day: 'Day', night: 'Night', menuLabel: 'Theme' },
-  locale: { system: 'System', enUS: 'English', ptBR: 'Portuguese (Brazil)', menuLabel: 'Language' },
+  locale: { system: 'System', enUS: 'English', ptBR: 'Portuguese (Brazil)', esES: 'Spanish', menuLabel: 'Language' },
+  auth: {
+    loginTitle: 'Sign in',
+    loginIntro: 'Access the private Togurumi tools for managing journal posts.',
+    username: 'Username',
+    password: 'Password',
+    submit: 'Sign in',
+    invalidCredentials: 'The username or password is incorrect.',
+    tooManyAttempts: 'Too many attempts. Please wait a bit before trying again.',
+    genericError: 'Something went wrong. Please try again.',
+    or: 'or',
+    googleButton: 'Sign in with Google',
+    comingSoon: 'Coming soon',
+    loginNav: 'Login',
+    logout: 'Logout',
+    adminNav: 'Admin',
+    journalEditorNav: 'Manage posts',
+    loggedInAs: 'Signed in as',
+    adminWelcome: 'Welcome back',
+    adminJournalCardTitle: 'Journal editor',
+    adminJournalCardBody: 'Create, edit, translate, and remove Togurumi journal posts.',
+    editorTitle: 'Journal editor',
+    newPost: 'New post',
+    editPost: 'Edit post',
+    deletePost: 'Delete',
+    deleteConfirm: 'Delete this journal post? This cannot be undone.',
+    fieldSlug: 'Slug',
+    fieldLocale: 'Locale',
+    fieldTitle: 'Title',
+    fieldDate: 'Date',
+    fieldOrder: 'Order',
+    fieldSummary: 'Summary',
+    fieldBody: 'Body',
+    save: 'Save',
+    cancel: 'Cancel',
+    saveSuccess: 'Post saved.',
+    saveError: 'Could not save the post.',
+    deleteSuccess: 'Post deleted.',
+    accountNav: 'Account settings',
+    accountTitle: 'Account settings',
+    accountIntro: 'Update your password and contact details.',
+    currentPassword: 'Current password',
+    newPassword: 'New password',
+    confirmPassword: 'Confirm new password',
+    passwordMismatch: 'The new passwords do not match.',
+    changePassword: 'Update password',
+    passwordUpdated: 'Password updated.',
+    wrongPassword: 'The current password is incorrect.',
+    weakPassword: 'Use at least 8 characters.',
+    email: 'Email',
+    emailOptional: 'Email (optional)',
+    emailHint: "Optional for now — required for standard accounts once self sign-up is available.",
+    invalidEmail: 'Enter a valid email address.',
+    saveProfile: 'Save',
+    profileUpdated: 'Profile updated.',
+    showPassword: 'Show password',
+    hidePassword: 'Hide password',
+  },
   footer: { tagline: 'made with a hook and a lot of yarn' },
   home: {
     eyebrow: 'Togurumi',
@@ -189,14 +303,71 @@ const ptBR: Messages = {
   nav: {
     home: 'Início',
     gallery: 'Galeria',
-    patterns: 'Moldes',
+    patterns: 'Receitas',
     journal: 'Diário',
     about: 'Sobre',
     contact: 'Contato',
     privacy: 'Privacidade',
   },
   theme: { system: 'Sistema', day: 'Dia', night: 'Noite', menuLabel: 'Tema' },
-  locale: { system: 'Sistema', enUS: 'Inglês', ptBR: 'Português (Brasil)', menuLabel: 'Idioma' },
+  locale: { system: 'Sistema', enUS: 'Inglês', ptBR: 'Português (Brasil)', esES: 'Espanhol', menuLabel: 'Idioma' },
+  auth: {
+    loginTitle: 'Entrar',
+    loginIntro: 'Acesse as ferramentas privadas da Togurumi para gerenciar posts do diário.',
+    username: 'Usuário',
+    password: 'Senha',
+    submit: 'Entrar',
+    invalidCredentials: 'O usuário ou a senha está incorreto.',
+    tooManyAttempts: 'Muitas tentativas. Aguarde um pouco antes de tentar de novo.',
+    genericError: 'Algo deu errado. Tente novamente.',
+    or: 'ou',
+    googleButton: 'Entrar com Google',
+    comingSoon: 'Em breve',
+    loginNav: 'Entrar',
+    logout: 'Sair',
+    adminNav: 'Admin',
+    journalEditorNav: 'Gerenciar posts',
+    loggedInAs: 'Conectado como',
+    adminWelcome: 'Boas-vindas de volta',
+    adminJournalCardTitle: 'Editor do diário',
+    adminJournalCardBody: 'Crie, edite, traduza e remova posts do diário da Togurumi.',
+    editorTitle: 'Editor do diário',
+    newPost: 'Novo post',
+    editPost: 'Editar post',
+    deletePost: 'Excluir',
+    deleteConfirm: 'Excluir este post do diário? Isso não pode ser desfeito.',
+    fieldSlug: 'Slug',
+    fieldLocale: 'Idioma',
+    fieldTitle: 'Título',
+    fieldDate: 'Data',
+    fieldOrder: 'Ordem',
+    fieldSummary: 'Resumo',
+    fieldBody: 'Corpo',
+    save: 'Salvar',
+    cancel: 'Cancelar',
+    saveSuccess: 'Post salvo.',
+    saveError: 'Não foi possível salvar o post.',
+    deleteSuccess: 'Post excluído.',
+    accountNav: 'Configurações da conta',
+    accountTitle: 'Configurações da conta',
+    accountIntro: 'Atualize sua senha e seus dados de contato.',
+    currentPassword: 'Senha atual',
+    newPassword: 'Nova senha',
+    confirmPassword: 'Confirmar nova senha',
+    passwordMismatch: 'As novas senhas não coincidem.',
+    changePassword: 'Atualizar senha',
+    passwordUpdated: 'Senha atualizada.',
+    wrongPassword: 'A senha atual está incorreta.',
+    weakPassword: 'Use pelo menos 8 caracteres.',
+    email: 'E-mail',
+    emailOptional: 'E-mail (opcional)',
+    emailHint: 'Opcional por enquanto — será obrigatório para contas padrão quando o cadastro próprio estiver disponível.',
+    invalidEmail: 'Informe um e-mail válido.',
+    saveProfile: 'Salvar',
+    profileUpdated: 'Perfil atualizado.',
+    showPassword: 'Mostrar senha',
+    hidePassword: 'Ocultar senha',
+  },
   footer: { tagline: 'feito com uma agulha e muito fio' },
   home: {
     eyebrow: 'Togurumi',
@@ -232,10 +403,10 @@ const ptBR: Messages = {
     ],
   },
   patterns: {
-    eyebrow: 'Moldes',
-    title: 'Moldes e encomendas',
+    eyebrow: 'Receitas',
+    title: 'Receitas e encomendas',
     intro:
-      'Moldes gratuitos e pagos vão morar aqui, junto com links para Ravelry, Etsy ou downloads em PDF conforme forem ficando prontos. Por enquanto, eis o que está em andamento.',
+      'Receitas gratuitas e pagas vão morar aqui, junto com links para Ravelry, Etsy ou downloads em PDF conforme forem ficando prontos. Por enquanto, eis o que está em andamento.',
     items: [
       {
         name: 'Mochi Bear',
@@ -293,6 +464,174 @@ const ptBR: Messages = {
   },
 }
 
+const esES: Messages = {
+  meta: { title: 'Togurumi' },
+  nav: {
+    home: 'Inicio',
+    gallery: 'Galería',
+    patterns: 'Patrones',
+    journal: 'Diario',
+    about: 'Acerca de',
+    contact: 'Contacto',
+    privacy: 'Privacidad',
+  },
+  theme: { system: 'Sistema', day: 'Día', night: 'Noche', menuLabel: 'Tema' },
+  locale: { system: 'Sistema', enUS: 'Inglés', ptBR: 'Portugués (Brasil)', esES: 'Español', menuLabel: 'Idioma' },
+  auth: {
+    loginTitle: 'Iniciar sesión',
+    loginIntro: 'Accede a las herramientas privadas de Togurumi para gestionar las publicaciones del diario.',
+    username: 'Usuario',
+    password: 'Contraseña',
+    submit: 'Entrar',
+    invalidCredentials: 'El usuario o la contraseña no son correctos.',
+    tooManyAttempts: 'Demasiados intentos. Espera un poco antes de volver a probar.',
+    genericError: 'Algo salió mal. Inténtalo de nuevo.',
+    or: 'o',
+    googleButton: 'Iniciar sesión con Google',
+    comingSoon: 'Próximamente',
+    loginNav: 'Entrar',
+    logout: 'Cerrar sesión',
+    adminNav: 'Admin',
+    journalEditorNav: 'Gestionar posts',
+    loggedInAs: 'Sesión iniciada como',
+    adminWelcome: 'Bienvenida de vuelta',
+    adminJournalCardTitle: 'Editor del diario',
+    adminJournalCardBody: 'Crea, edita, traduce y elimina publicaciones del diario de Togurumi.',
+    editorTitle: 'Editor del diario',
+    newPost: 'Nuevo post',
+    editPost: 'Editar post',
+    deletePost: 'Eliminar',
+    deleteConfirm: '¿Eliminar esta publicación del diario? Esta acción no se puede deshacer.',
+    fieldSlug: 'Slug',
+    fieldLocale: 'Idioma',
+    fieldTitle: 'Título',
+    fieldDate: 'Fecha',
+    fieldOrder: 'Orden',
+    fieldSummary: 'Resumen',
+    fieldBody: 'Contenido',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    saveSuccess: 'Post guardado.',
+    saveError: 'No se pudo guardar el post.',
+    deleteSuccess: 'Post eliminado.',
+    accountNav: 'Configuración de cuenta',
+    accountTitle: 'Configuración de cuenta',
+    accountIntro: 'Actualiza tu contraseña y tus datos de contacto.',
+    currentPassword: 'Contraseña actual',
+    newPassword: 'Nueva contraseña',
+    confirmPassword: 'Confirmar nueva contraseña',
+    passwordMismatch: 'Las nuevas contraseñas no coinciden.',
+    changePassword: 'Actualizar contraseña',
+    passwordUpdated: 'Contraseña actualizada.',
+    wrongPassword: 'La contraseña actual es incorrecta.',
+    weakPassword: 'Usa al menos 8 caracteres.',
+    email: 'Correo electrónico',
+    emailOptional: 'Correo electrónico (opcional)',
+    emailHint: 'Opcional por ahora — será obligatorio para cuentas estándar cuando el registro propio esté disponible.',
+    invalidEmail: 'Ingresa un correo electrónico válido.',
+    saveProfile: 'Guardar',
+    profileUpdated: 'Perfil actualizado.',
+    showPassword: 'Mostrar contraseña',
+    hidePassword: 'Ocultar contraseña',
+  },
+  footer: { tagline: 'hecho con una aguja y mucho hilo' },
+  home: {
+    eyebrow: 'Togurumi',
+    title: 'Puntadas pequeñas, historias suaves.',
+    intro:
+      'Amigurumis hechos a mano y notas de crochet del gancho de Bella — amiguitos terminados, trabajos en progreso y el oficio tranquilo entre medio.',
+    galleryCta: 'Ver la galería',
+    journalCta: 'Leer el diario',
+    recentHeading: 'Recién terminados',
+    viewAll: 'Ver todo →',
+    journalHeading: 'Del diario',
+    allEntries: 'Todas las entradas →',
+    featured: [
+      { icon: '🐙', name: 'Ollie the Octopus', tag: 'Hilo de algodón · 6 patas (por ahora)' },
+      { icon: '🐻', name: 'Mochi Bear', tag: 'Verde salvia · ojos de botón' },
+      { icon: '🐰', name: 'Clover the Bunny', tag: 'Rosa empolvado · orejas caídas' },
+    ],
+  },
+  gallery: {
+    eyebrow: 'Galería',
+    title: 'Amiguitos terminados y trabajos en progreso',
+    intro:
+      'Una colección creciente de amigurumis — fotos destacadas, primeros planos de detalles y algunos proyectos aún en progreso. ¡Pronto fotos reales!',
+    items: [
+      { icon: '🐙', name: 'Ollie the Octopus', tag: 'Hilo de algodón · 6 patas (por ahora)' },
+      { icon: '🐻', name: 'Mochi Bear', tag: 'Verde salvia · ojos de botón' },
+      { icon: '🐰', name: 'Clover the Bunny', tag: 'Rosa empolvado · orejas caídas' },
+      { icon: '🐢', name: 'Shelly the Turtle', tag: 'Caparazón color miel' },
+      { icon: '🦊', name: 'Fennec Fox', tag: 'En progreso — orejas en proceso' },
+      { icon: '🐝', name: 'Bumble', tag: 'Abejita pequeña, gran personalidad' },
+      { icon: '🌵', name: 'Pip the Cactus', tag: 'Sin espinas, solo abrazos' },
+      { icon: '🐱', name: 'Yarn Cat', tag: 'Encargo personalizado' },
+    ],
+  },
+  patterns: {
+    eyebrow: 'Patrones',
+    title: 'Patrones y encargos',
+    intro:
+      'Aquí vivirán patrones gratuitos y de pago, junto con enlaces a Ravelry, Etsy o descargas en PDF cuando estén listos. Por ahora, esto es lo que está en marcha.',
+    items: [
+      {
+        name: 'Mochi Bear',
+        status: 'Próximamente',
+        description: 'Un oso redondo y abrazable con brazos cortitos — apto para principiantes.',
+      },
+      {
+        name: 'Clover the Bunny',
+        status: 'Próximamente',
+        description: 'Conejita de orejas caídas con vestido opcional. Nivel intermedio.',
+      },
+      {
+        name: 'Ollie the Octopus',
+        status: 'En pruebas',
+        description: 'Tentáculos rizados usando un patrón de puntada repetitivo simple.',
+      },
+      {
+        name: 'Encargos personalizados',
+        status: 'Abierto',
+        description: '¿Tienes un personaje en mente? Contáctame desde la página de contacto.',
+      },
+    ],
+  },
+  journal: {
+    eyebrow: 'Diario',
+    title: 'Notas desde el gancho',
+    intro: 'Publicaciones de proceso — trabajos en progreso, elecciones de hilo, errores y pequeños logros.',
+    backLink: '← Volver al diario',
+  },
+  about: {
+    eyebrow: 'Acerca de',
+    title: 'Hola, soy Bella',
+    intro:
+      'Hago amigurumis — pequeñas criaturas tejidas a crochet, sobre todo animales, a veces algo más extraño. "Togurumi" es donde guardo registro de lo que estoy haciendo, lo que he aprendido y lo que viene a continuación en el gancho.',
+    whyHeading: '¿Por qué amigurumi?',
+    whyBody:
+      'Hay algo satisfactorio en convertir un solo hilo de lana en un pequeño personaje con personalidad propia — y en el ritmo lento y repetitivo de las vueltas de punto bajo. Este sitio es un lugar para compartir ese proceso: las piezas terminadas, el desorden en progreso y los patrones en los que estoy trabajando.',
+    nameHeading: 'Qué significa "Togurumi"',
+    nameBody:
+      'Un pequeño acrónimo propio — parte apodo, parte "amigurumi". Este es mi rincón para ello: galería, diario y (eventualmente) patrones para descargar o encargar.',
+  },
+  contact: {
+    eyebrow: 'Contacto',
+    title: 'Saluda',
+    intro: '¿Preguntas sobre una pieza, interesado en un encargo, o solo quieres charlar sobre hilos? Escríbeme.',
+    instagram: 'Instagram',
+    commissions: 'Encargos',
+    commissionsBody: 'Personajes personalizados son bienvenidos — envía un mensaje con tu idea y fotos de referencia, si tienes.',
+  },
+  notFound: {
+    eyebrow: '404',
+    title: 'Esta puntada no existe',
+    body: 'La página que buscas se ha deshilado. Vamos a regresarte al buen camino.',
+    button: 'Volver al inicio',
+  },
+}
+
 export function getMessages(locale: SupportedLocale): Messages {
-  return locale === 'pt-BR' ? ptBR : enUS
+  if (locale === 'pt-BR') return ptBR
+  if (locale === 'es-ES') return esES
+  return enUS
 }

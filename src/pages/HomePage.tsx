@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import yarnBall from '../assets/togurumi-yarn-ball.png'
 import { useLocale } from '../hooks/useLocale'
 import { getJournalPosts } from '../lib/journal'
 
@@ -10,7 +9,7 @@ function HomePage() {
   return (
     <div className="page">
       <section className="hero">
-        <img src={yarnBall} alt="" aria-hidden="true" className="hero__yarn-ball" />
+        <span aria-hidden="true" className="hero__yarn-ball" />
         <span className="hero__eyebrow">{messages.home.eyebrow}</span>
         <h1>{messages.home.title}</h1>
         <p>{messages.home.intro}</p>

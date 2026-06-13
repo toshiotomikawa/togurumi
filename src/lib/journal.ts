@@ -38,7 +38,7 @@ function parsePost(raw: string): JournalPost {
 
   return {
     slug: fields.slug ?? '',
-    locale: fields.locale === 'pt-BR' ? 'pt-BR' : 'en-US',
+    locale: fields.locale === 'pt-BR' || fields.locale === 'es-ES' ? fields.locale : 'en-US',
     title: fields.title ?? 'Untitled',
     date: fields.date ?? '',
     summary: fields.summary ?? '',

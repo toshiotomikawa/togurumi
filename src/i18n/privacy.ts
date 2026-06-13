@@ -30,7 +30,7 @@ const enUS: PrivacyContent = {
       id: 'data',
       title: '2. Data we store',
       paragraphs: [
-        "This site has no backend, no accounts, and no forms. The only information stored is your theme preference (day, night, or system) and language preference (English or Portuguese), saved locally in your browser's localStorage.",
+        "This site has no backend, no accounts, and no forms. The only information stored is your theme preference (day, night, or system) and language preference (English, Portuguese, or Spanish), saved locally in your browser's localStorage.",
         'This data never leaves your device, is not transmitted to us or anyone else, and is used solely to remember your display settings between visits.',
       ],
     },
@@ -75,7 +75,7 @@ const ptBR: PrivacyContent = {
       id: 'data',
       title: '2. Dados que armazenamos',
       paragraphs: [
-        'Este site não possui backend, contas de usuário ou formulários. A única informação armazenada é a sua preferência de tema (dia, noite ou automático) e preferência de idioma (português ou inglês), salvas localmente no localStorage do seu navegador.',
+        'Este site não possui backend, contas de usuário ou formulários. A única informação armazenada é a sua preferência de tema (dia, noite ou automático) e preferência de idioma (português, inglês ou espanhol), salvas localmente no localStorage do seu navegador.',
         'Esses dados nunca saem do seu dispositivo, não são transmitidos para nós ou para terceiros, e servem apenas para lembrar suas configurações de exibição entre visitas.',
       ],
     },
@@ -103,6 +103,53 @@ const ptBR: PrivacyContent = {
   ],
 }
 
+const esES: PrivacyContent = {
+  title: 'Política de privacidad',
+  lastUpdated: 'Última actualización: 11 de junio de 2026',
+  intro:
+    'Togurumi ("nosotros", "nuestro" o "el sitio") es un portafolio personal y blog que muestra trabajos de amigurumi y crochet. Esta política explica cómo manejamos la información cuando visitas el sitio, y está escrita para cumplir con los requisitos básicos de divulgación de la Lei Geral de Proteção de Dados de Brasil (LGPD — Ley n.º 13.709/2018).',
+  sections: [
+    {
+      id: 'who',
+      title: '1. Quiénes somos',
+      paragraphs: [
+        'Togurumi es administrado por Bella, una artista independiente de crochet con sede en Brasil. Para cualquier pregunta relacionada con la privacidad, contacta a privacy@togurumi.example.',
+      ],
+    },
+    {
+      id: 'data',
+      title: '2. Datos que almacenamos',
+      paragraphs: [
+        'Este sitio no tiene backend, cuentas ni formularios. La única información que se almacena es tu preferencia de tema (día, noche o sistema) y tu preferencia de idioma (inglés, portugués o español), guardadas localmente en el localStorage de tu navegador.',
+        'Estos datos nunca salen de tu dispositivo, no se transmiten a nosotros ni a nadie más, y se usan únicamente para recordar tus ajustes de visualización entre visitas.',
+      ],
+    },
+    {
+      id: 'cookies',
+      title: '3. Cookies y seguimiento',
+      paragraphs: [
+        'No usamos cookies, herramientas de análisis, redes publicitarias ni rastreadores de terceros.',
+      ],
+    },
+    {
+      id: 'rights',
+      title: '4. Tus derechos según la LGPD',
+      paragraphs: [
+        'Según la Ley General de Protección de Datos de Brasil (LGPD), tienes derecho a acceder, corregir o eliminar los datos personales que conservemos sobre ti. Como los únicos datos almacenados son tus preferencias locales del navegador — que nunca llegan a nuestros servidores — puedes verlos o eliminarlos en cualquier momento borrando los datos del sitio o el almacenamiento local de tu navegador. No conservamos ninguna copia de esta información.',
+      ],
+    },
+    {
+      id: 'contact',
+      title: '5. Contacto',
+      paragraphs: [
+        'La página de Contacto enlaza a nuestro perfil de Instagram (instagram.com/togurumi) para consultas generales. Para preguntas de privacidad o solicitudes bajo la LGPD, escribe a privacy@togurumi.example.',
+      ],
+    },
+  ],
+}
+
 export function getPrivacyContent(locale: SupportedLocale): PrivacyContent {
-  return locale === 'pt-BR' ? ptBR : enUS
+  if (locale === 'pt-BR') return ptBR
+  if (locale === 'es-ES') return esES
+  return enUS
 }

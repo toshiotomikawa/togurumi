@@ -1,12 +1,17 @@
 import { Route, Routes } from 'react-router-dom'
+import ProtectedRoute from './components/ProtectedRoute'
 import SiteFooter from './components/SiteFooter'
 import SiteHeader from './components/SiteHeader'
 import AboutPage from './pages/AboutPage'
+import AccountPage from './pages/AccountPage'
+import AdminPage from './pages/AdminPage'
 import ContactPage from './pages/ContactPage'
 import GalleryPage from './pages/GalleryPage'
 import HomePage from './pages/HomePage'
+import JournalEditorPage from './pages/JournalEditorPage'
 import JournalPage from './pages/JournalPage'
 import JournalPostPage from './pages/JournalPostPage'
+import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import PatternsPage from './pages/PatternsPage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
@@ -25,6 +30,31 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute roles={['admin']}>
+                <AdminPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/journal"
+            element={
+              <ProtectedRoute roles={['admin', 'moderator']}>
+                <JournalEditorPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/account"
+            element={
+              <ProtectedRoute roles={['admin', 'moderator']}>
+                <AccountPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
