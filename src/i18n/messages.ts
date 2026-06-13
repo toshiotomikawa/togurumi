@@ -12,7 +12,6 @@ export type Messages = {
     home: string
     shop: string
     journal: string
-    about: string
     contact: string
     privacy: string
   }
@@ -166,8 +165,7 @@ const enUS: Messages = {
   nav: {
     home: 'Home',
     shop: 'Shop',
-    journal: 'Journal',
-    about: 'About',
+    journal: 'Blog',
     contact: 'Contact',
     privacy: 'Privacy',
   },
@@ -361,8 +359,7 @@ const ptBR: Messages = {
   nav: {
     home: 'Início',
     shop: 'Loja',
-    journal: 'Diário',
-    about: 'Sobre',
+    journal: 'Blog',
     contact: 'Contato',
     privacy: 'Privacidade',
   },
@@ -556,8 +553,7 @@ const esES: Messages = {
   nav: {
     home: 'Inicio',
     shop: 'Tienda',
-    journal: 'Diario',
-    about: 'Acerca de',
+    journal: 'Blog',
     contact: 'Contacto',
     privacy: 'Privacidad',
   },

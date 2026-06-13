@@ -2,7 +2,6 @@ import { Route, Routes } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute'
 import SiteFooter from './components/SiteFooter'
 import SiteHeader from './components/SiteHeader'
-import AboutPage from './pages/AboutPage'
 import AccountPage from './pages/AccountPage'
 import AdminPage from './pages/AdminPage'
 import CartPage from './pages/CartPage'
@@ -31,7 +30,6 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/journal" element={<JournalPage />} />
           <Route path="/journal/:slug" element={<JournalPostPage />} />
-          <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/login" element={<LoginPage />} />

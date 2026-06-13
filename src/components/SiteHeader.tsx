@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import cartIcon from '../assets/shopping-cart.png'
 import logo from '../assets/togurumi-logo.png'
 import { useCart } from '../hooks/useCart'
@@ -12,6 +12,54 @@ function SearchIcon() {
       <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
       <path stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" d="M16 16l4.5 4.5" />
     </svg>
+  )
+}
+
+function SearchBox({ onNavigate }: { onNavigate?: () => void }) {
+  const { messages } = useLocale()
+  const navigate = useNavigate()
+  const [open, setOpen] = useState(false)
+  const [value, setValue] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (open) inputRef.current?.focus()
+  }, [open])
+
+  function submit(event: FormEvent) {
+    event.preventDefault()
+    const query = value.trim()
+    if (!query) return
+    navigate(`/search?q=${encodeURIComponent(query)}`)
+    setValue('')
+    setOpen(false)
+    onNavigate?.()
+  }
+
+  return (
+    <form className={`site-search${open ? ' is-open' : ''}`} onSubmit={submit}>
+      <input
+        ref={inputRef}
+        type="search"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+        onBlur={() => {
+          if (!value) setOpen(false)
+        }}
+        placeholder={messages.search.placeholder}
+        aria-label={messages.search.ariaLabel}
+      />
+      <button
+        type={open ? 'submit' : 'button'}
+        className="settings-toggle__button"
+        aria-label={messages.search.ariaLabel}
+        onClick={() => {
+          if (!open) setOpen(true)
+        }}
+      >
+        <SearchIcon />
+      </button>
+    </form>
   )
 }
 
@@ -41,7 +89,6 @@ function SiteHeader() {
     { to: '/', label: messages.nav.home },
     { to: '/shop', label: messages.nav.shop },
     { to: '/journal', label: messages.nav.journal },
-    { to: '/about', label: messages.nav.about },
     { to: '/contact', label: messages.nav.contact },
   ]
 
@@ -87,9 +134,7 @@ function SiteHeader() {
         </nav>
 
         <div className="site-header__actions site-header__actions--desktop">
-          <Link to="/search" className="settings-toggle__button" aria-label={messages.search.ariaLabel}>
-            <SearchIcon />
-          </Link>
+          <SearchBox />
           <CartLink />
           <AccountMenu />
         </div>
@@ -126,9 +171,7 @@ function SiteHeader() {
         </nav>
 
         <div className="site-mobile-panel__actions">
-          <Link to="/search" className="settings-toggle__button" aria-label={messages.search.ariaLabel} onClick={closeNav}>
-            <SearchIcon />
-          </Link>
+          <SearchBox onNavigate={closeNav} />
           <CartLink onNavigate={closeNav} />
           <AccountMenu onNavigate={closeNav} />
         </div>
