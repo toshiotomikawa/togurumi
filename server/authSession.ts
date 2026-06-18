@@ -25,7 +25,12 @@ export function createOAuthState(): string {
 }
 
 export function buildAllowedOrigins(appUrl: string) {
-  return new Set([appUrl, 'http://localhost:5174', 'http://127.0.0.1:5174'])
+  const origins = new Set([appUrl, 'http://localhost:5174', 'http://127.0.0.1:5174'])
+  for (const lanOrigin of (process.env.LAN_APP_URL ?? '').split(',')) {
+    const trimmed = lanOrigin.trim()
+    if (trimmed) origins.add(trimmed)
+  }
+  return origins
 }
 
 export function originAllowed(req: express.Request, allowedOrigins: Set<string>) {

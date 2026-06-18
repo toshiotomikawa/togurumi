@@ -17,7 +17,7 @@ const enUS: PrivacyContent = {
   title: 'Privacy Policy',
   lastUpdated: 'Last updated: June 11, 2026',
   intro:
-    'Togurumi ("we", "our", or "the site") is a personal portfolio and blog showcasing amigurumi and crochet work. This policy explains how we handle information when you visit, and is written to meet the baseline disclosure requirements of Brazil\'s Lei Geral de Proteção de Dados (LGPD — Law No. 13,709/2018).',
+    'Togurumi ("we", "our", or "the site") is a personal portfolio and blog showcasing amigurumi and crochet work. This policy explains how we handle information when you visit, and is written to meet the baseline disclosure requirements of Brazil\'s Lei Geral de Proteção de Dados (LGPD, Law No. 13,709/2018).',
   sections: [
     {
       id: 'who',
@@ -45,7 +45,7 @@ const enUS: PrivacyContent = {
       id: 'rights',
       title: '4. Your rights under LGPD',
       paragraphs: [
-        "Under Brazil's General Data Protection Law (LGPD), you have the right to access, correct, or delete personal data we hold about you. Since the only data stored is your local browser preferences — which never reach our servers — you can view or delete it at any time by clearing your browser's site data or local storage. We do not retain any copy of this information.",
+        "Under Brazil's General Data Protection Law (LGPD), you have the right to access, correct, or delete personal data we hold about you. Since the only data stored is your local browser preferences, which never reach our servers, you can view or delete it at any time by clearing your browser's site data or local storage. We do not retain any copy of this information.",
       ],
     },
     {
@@ -62,7 +62,7 @@ const ptBR: PrivacyContent = {
   title: 'Política de Privacidade',
   lastUpdated: 'Última atualização: 11 de junho de 2026',
   intro:
-    'O Togurumi ("nós" ou "o site") é um portfólio pessoal e blog dedicado a trabalhos de amigurumi e crochê. Esta política explica como tratamos as informações quando você visita o site, e foi escrita para atender aos requisitos básicos de divulgação da Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018).',
+    'O Togurumi ("nós" ou "o site") é um portfólio pessoal e blog dedicado a trabalhos de amigurumi e crochê. Esta política explica como tratamos as informações quando você visita o site, e foi escrita para atender aos requisitos básicos de divulgação da Lei Geral de Proteção de Dados (LGPD, Lei nº 13.709/2018).',
   sections: [
     {
       id: 'who',
@@ -90,7 +90,7 @@ const ptBR: PrivacyContent = {
       id: 'rights',
       title: '4. Seus direitos sob a LGPD',
       paragraphs: [
-        'De acordo com a Lei Geral de Proteção de Dados (LGPD), você tem o direito de acessar, corrigir ou excluir dados pessoais que tratamos sobre você. Como a única informação armazenada são suas preferências locais de navegador — que nunca chegam aos nossos servidores — você pode visualizá-las ou excluí-las a qualquer momento limpando os dados do site ou o armazenamento local do navegador. Não mantemos nenhuma cópia dessas informações.',
+        'De acordo com a Lei Geral de Proteção de Dados (LGPD), você tem o direito de acessar, corrigir ou excluir dados pessoais que tratamos sobre você. Como a única informação armazenada são suas preferências locais de navegador, que nunca chegam aos nossos servidores, você pode visualizá-las ou excluí-las a qualquer momento limpando os dados do site ou o armazenamento local do navegador. Não mantemos nenhuma cópia dessas informações.',
       ],
     },
     {
@@ -107,7 +107,7 @@ const esES: PrivacyContent = {
   title: 'Política de privacidad',
   lastUpdated: 'Última actualización: 11 de junio de 2026',
   intro:
-    'Togurumi ("nosotros", "nuestro" o "el sitio") es un portafolio personal y blog que muestra trabajos de amigurumi y crochet. Esta política explica cómo manejamos la información cuando visitas el sitio, y está escrita para cumplir con los requisitos básicos de divulgación de la Lei Geral de Proteção de Dados de Brasil (LGPD — Ley n.º 13.709/2018).',
+    'Togurumi ("nosotros", "nuestro" o "el sitio") es un portafolio personal y blog que muestra trabajos de amigurumi y crochet. Esta política explica cómo manejamos la información cuando visitas el sitio, y está escrita para cumplir con los requisitos básicos de divulgación de la Lei Geral de Proteção de Dados de Brasil (LGPD, Ley n.º 13.709/2018).',
   sections: [
     {
       id: 'who',
@@ -135,7 +135,7 @@ const esES: PrivacyContent = {
       id: 'rights',
       title: '4. Tus derechos según la LGPD',
       paragraphs: [
-        'Según la Ley General de Protección de Datos de Brasil (LGPD), tienes derecho a acceder, corregir o eliminar los datos personales que conservemos sobre ti. Como los únicos datos almacenados son tus preferencias locales del navegador — que nunca llegan a nuestros servidores — puedes verlos o eliminarlos en cualquier momento borrando los datos del sitio o el almacenamiento local de tu navegador. No conservamos ninguna copia de esta información.',
+        'Según la Ley General de Protección de Datos de Brasil (LGPD), tienes derecho a acceder, corregir o eliminar los datos personales que conservemos sobre ti. Como los únicos datos almacenados son tus preferencias locales del navegador, que nunca llegan a nuestros servidores, puedes verlos o eliminarlos en cualquier momento borrando los datos del sitio o el almacenamiento local de tu navegador. No conservamos ninguna copia de esta información.',
       ],
     },
     {

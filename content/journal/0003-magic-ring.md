@@ -5,6 +5,7 @@ locale: en-US
 date: 2026-05-05
 order: 2
 summary: A beginner-friendly fix list for the one technique everyone loves to hate.
+archived: true
 ---
 
 The magic ring (or "magic circle") is the very first thing most amigurumi patterns ask you to do, and for a long time it was the thing that almost made me quit before I started. Mine kept coming undone — sometimes immediately, sometimes three rows later, which is somehow worse.

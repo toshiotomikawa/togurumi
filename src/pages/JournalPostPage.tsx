@@ -18,7 +18,13 @@ function JournalPostPage() {
       </Link>
       <article>
         <h1>{post.title}</h1>
-        <p className="journal-post__meta">{post.date}</p>
+        <p className="journal-post__meta">
+          {post.date}
+          {' · '}
+          <Link to={`/journal?author=${encodeURIComponent(post.author)}`} className="journal-post__author">
+            {messages.journal.byAuthor.replace('{{author}}', post.author)}
+          </Link>
+        </p>
         <div className="journal-post__body">
           <ReactMarkdown>{post.body}</ReactMarkdown>
         </div>

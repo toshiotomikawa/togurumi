@@ -5,6 +5,7 @@ locale: pt-BR
 date: 2026-05-22
 order: 1
 summary: Transformar um rabisco em uma forma crochável sem perder a personalidade na tradução.
+archived: true
 ---
 
 Todo amigurumi personalizado que faço começa do mesmo jeito: um rabisco bagunçado no canto de um caderno, geralmente desenhado enquanto eu deveria estar fazendo outra coisa.

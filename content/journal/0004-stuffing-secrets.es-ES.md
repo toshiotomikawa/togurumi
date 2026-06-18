@@ -4,7 +4,8 @@ slug: stuffing-secrets
 locale: es-ES
 date: 2026-04-18
 order: 3
-summary: Cómo los restos de hilo, el relleno de poliéster y un palillo cambian el "factor abrazo" final de una muñeca.
+summary: 'Cómo los restos de hilo, el relleno de poliéster y un palillo cambian el "factor abrazo" final de una muñeca.'
+archived: true
 ---
 
 El relleno es la parte del amigurumi de la que nadie te advierte, y puede mejorar o arruinar en silencio una pieza terminada. Dos muñecos hechos con exactamente el mismo patrón pueden sentirse completamente distintos según cómo — y con qué — los rellenes.

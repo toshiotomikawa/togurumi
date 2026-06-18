@@ -5,6 +5,7 @@ locale: es-ES
 date: 2026-05-05
 order: 2
 summary: Una lista de soluciones para principiantes para esa técnica que todo el mundo ama odiar.
+archived: true
 ---
 
 El anillo mágico (o "círculo mágico") es lo primero que la mayoría de los patrones de amigurumi te piden hacer, y durante mucho tiempo fue lo que casi hizo que abandonara antes de empezar. Los míos se deshacían una y otra vez — a veces de inmediato, a veces tres vueltas después, que de alguna manera es peor.

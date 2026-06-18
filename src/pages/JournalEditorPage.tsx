@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useLocale } from '../hooks/useLocale'
 import type { SupportedLocale } from '../lib/i18n'
@@ -11,6 +12,7 @@ type JournalPostRecord = {
   date: string
   order: number
   summary: string
+  archived: boolean
 }
 
 type JournalPost = JournalPostRecord & {
@@ -25,6 +27,7 @@ type JournalFormState = {
   order: string
   summary: string
   body: string
+  archived: boolean
 }
 
 type Feedback = {
@@ -43,6 +46,7 @@ function createEmptyForm(): JournalFormState {
     order: '0',
     summary: '',
     body: '',
+    archived: false,
   }
 }
 
@@ -100,6 +104,7 @@ async function apiRequest<T>(url: string, init: RequestInit | undefined, onUnaut
 function JournalEditorPage() {
   const { messages } = useLocale()
   const { logout } = useAuth()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [posts, setPosts] = useState<JournalPostRecord[]>([])
   const [loadingPosts, setLoadingPosts] = useState(true)
   const [feedback, setFeedback] = useState<Feedback | null>(null)
@@ -146,6 +151,29 @@ function JournalEditorPage() {
     }
   }, [logout, messages.auth.genericError])
 
+  useEffect(() => {
+    const editId = searchParams.get('edit')
+    if (editId) {
+      void startEditPost(editId).finally(() => {
+        setSearchParams({}, { replace: true })
+      })
+      return
+    }
+
+    if (searchParams.get('new') === null) return
+
+    const requestedLocale = searchParams.get('locale')
+    const nextLocale = localeOptions.includes(requestedLocale as SupportedLocale)
+      ? (requestedLocale as SupportedLocale)
+      : 'en-US'
+
+    setFeedback(null)
+    setEditingId(null)
+    setForm({ ...createEmptyForm(), locale: nextLocale })
+    setFormVisible(true)
+    setSearchParams({}, { replace: true })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps -- open once from /journal links
+
   const groupedPosts = useMemo(() => {
     const sortedPosts = [...posts].sort(
       (a, b) => a.slug.localeCompare(b.slug) || a.locale.localeCompare(b.locale),
@@ -189,6 +217,7 @@ function JournalEditorPage() {
         order: String(post.order),
         summary: post.summary,
         body: post.body,
+        archived: post.archived,
       })
       setFormVisible(true)
     } catch (error) {
@@ -222,6 +251,7 @@ function JournalEditorPage() {
       order: Number(form.order) || 0,
       summary: form.summary,
       body: form.body,
+      archived: form.archived,
     }
 
     try {
@@ -250,6 +280,31 @@ function JournalEditorPage() {
       }
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function toggleArchived(post: JournalPostRecord) {
+    setFeedback(null)
+
+    try {
+      await apiRequest<{ post: JournalPost }>(
+        `/api/journal/${post.id}/archive`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ archived: !post.archived }),
+        },
+        logout,
+      )
+      setFeedback({
+        kind: 'success',
+        text: post.archived ? messages.auth.unarchiveSuccess : messages.auth.archiveSuccess,
+      })
+      await loadPosts()
+    } catch (error) {
+      if (getApiErrorCode(error) !== 'unauthorized') {
+        setFeedback({ kind: 'error', text: messages.auth.genericError })
+      }
     }
   }
 
@@ -393,11 +448,15 @@ function JournalEditorPage() {
                     <p className="journal-card__meta">
                       <span className="locale-badge">{post.locale}</span>
                       <span>{post.date}</span>
+                      {post.archived ? <span className="locale-badge">{messages.auth.archivedBadge}</span> : null}
                     </p>
                   </div>
                   <div className="editor-row-actions">
                     <button type="button" className="button" onClick={() => void startEditPost(post.id)}>
                       {messages.auth.editPost}
+                    </button>
+                    <button type="button" className="button" onClick={() => void toggleArchived(post)}>
+                      {post.archived ? messages.auth.unarchivePost : messages.auth.archivePost}
                     </button>
                     <button type="button" className="button button--danger" onClick={() => void deletePost(post)}>
                       {messages.auth.deletePost}

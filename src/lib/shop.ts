@@ -8,6 +8,7 @@ export type ShopProduct = {
   description: string
   image: string
   releaseDate: string
+  highlight: boolean
 }
 
 const COMBINING_MARKS = new RegExp('[\\u0300-\\u036f]', 'g')

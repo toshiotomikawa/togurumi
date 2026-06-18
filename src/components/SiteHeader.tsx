@@ -89,6 +89,8 @@ function SiteHeader() {
     { to: '/', label: messages.nav.home },
     { to: '/shop', label: messages.nav.shop },
     { to: '/journal', label: messages.nav.journal },
+    { to: '/reviews', label: messages.nav.reviews },
+    { to: '/faq', label: messages.nav.faq },
     { to: '/contact', label: messages.nav.contact },
   ]
 

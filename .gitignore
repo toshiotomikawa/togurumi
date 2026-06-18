@@ -21,3 +21,7 @@ data/
 
 # Local MCP tool config
 mcps/
+
+# Agent session artifacts
+.claude/
+terminals/

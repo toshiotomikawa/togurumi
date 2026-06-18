@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useCart } from '../hooks/useCart'
 import { useLocale } from '../hooks/useLocale'
-import { formatPrice, type ShopProduct } from '../lib/shop'
+import { useShopProducts } from '../hooks/useShopProducts'
+import { formatPrice } from '../lib/shop'
 import { slugify } from '../lib/slug'
 import NotFoundPage from './NotFoundPage'
 
@@ -10,27 +11,10 @@ function ProductPage() {
   const { slug } = useParams<{ slug: string }>()
   const { messages, locale } = useLocale()
   const { addItem } = useCart()
-  const [products, setProducts] = useState<ShopProduct[] | null>(null)
+  const { products, loaded } = useShopProducts()
   const [added, setAdded] = useState(false)
 
-  useEffect(() => {
-    let cancelled = false
-
-    fetch('/api/shop/products')
-      .then((res) => (res.ok ? res.json() : { products: [] }))
-      .then((data) => {
-        if (!cancelled) setProducts(data.products ?? [])
-      })
-      .catch(() => {
-        if (!cancelled) setProducts([])
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  if (products === null) return null
+  if (!loaded) return null
 
   const product = products.find((item) => slugify(item.name) === slug)
   if (!product) return <NotFoundPage />

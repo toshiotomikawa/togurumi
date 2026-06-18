@@ -1,0 +1,146 @@
+{
+  "en-US": {
+    "home": {
+      "eyebrow": "トグルミ",
+      "title": "Small stitches, soft stories.",
+      "intro": "Handmade amigurumi and crochet notes from Bella's hook: finished friends, works-in-progress, and the quiet craft in between.",
+      "shopCta": "Visit the shop",
+      "journalCta": "Read the journal",
+      "highlightsHeading": "Highlights of the month",
+      "recentHeading": "Recently finished",
+      "viewAll": "View all →",
+      "journalHeading": "From the journal",
+      "allEntries": "All entries →"
+    },
+    "about": {
+      "eyebrow": "About",
+      "title": "Hi, I'm Bella",
+      "intro": "I make amigurumi: small crocheted creatures, mostly animals, occasionally something stranger. \"Togurumi\" is where I keep track of what I'm making, what I've learned, and what's next on the hook.",
+      "storyHeading": "My story",
+      "storyBody": "I learned to crochet as a child, embroidering dish towels with my great-grandmother. In 2020 I decided to explore another branch of this craft: amigurumi. I started with this art as a kind of hands-on therapy, and today it's my space for self-care.",
+      "whyHeading": "Why amigurumi?",
+      "whyBody": "Turning a ball of yarn into something with its own personality, something people of any age can enjoy, feels like magic to me. Making a piece that can be a teenager's keychain, a child's toy, or a grown-up's favorite little knick-knack is what drives me to explore new shapes and colors and make your everyday a little less monotonous.",
+      "nameHeading": "What \"Togurumi\" means",
+      "nameBody": "A little portmanteau of my own: \"To\" from my surname, Tomikawa (富川), and \"gurumi\" from \"amigurumi.\" This is my corner for it: gallery, journal, and (eventually) patterns to download or commission."
+    },
+    "contact": {
+      "title": "Say hello",
+      "intro": "Questions about a piece, interested in a commission, or just want to chat about yarn? Reach out.",
+      "instagram": "Instagram",
+      "email": "Email",
+      "commissions": "Commissions",
+      "commissionsBody": "Custom characters welcome, send a message with your idea and any reference photos."
+    },
+    "shop": {
+      "eyebrow": "Shop",
+      "title": "Finished friends, patterns & commissions",
+      "intro": "A growing collection of amigurumi pieces, pattern plans, and commission notes: finished friends, detail close-ups, works in progress, and links as they're ready."
+    },
+    "journal": {
+      "eyebrow": "Journal",
+      "title": "Notes from the hook",
+      "intro": "Process posts: works in progress, yarn picks, mistakes, and small wins."
+    },
+    "reviews": {
+      "eyebrow": "Reviews",
+      "title": "What people are saying",
+      "intro": "Kind words from folks who've welcomed a Togurumi friend home. Got one of your own? We'd love to hear it."
+    }
+  },
+  "pt-BR": {
+    "home": {
+      "eyebrow": "トグルミ",
+      "title": "Pontinhos pequenos, histórias macias.",
+      "intro": "Amigurumis feitos à mão e anotações de crochê da agulha da Bella: amiguinhos prontos, trabalhos em andamento e o artesanato tranquilo no meio do caminho.",
+      "shopCta": "Visitar a loja",
+      "journalCta": "Ler o diário",
+      "highlightsHeading": "Destaques do mês",
+      "recentHeading": "Recém-finalizados",
+      "viewAll": "Ver tudo →",
+      "journalHeading": "Do diário",
+      "allEntries": "Todas as entradas →"
+    },
+    "about": {
+      "eyebrow": "Sobre",
+      "title": "Oi, eu sou a Bella",
+      "intro": "Eu faço amigurumi: bichinhos pequenos de crochê, na maioria animais, às vezes algo mais estranho. \"Togurumi\" é onde guardo o que estou fazendo, o que aprendi e o que vem a seguir na agulha.",
+      "storyHeading": "Minha história",
+      "storyBody": "Aprendi crochê ainda criança, bordando panos de prato com minha bisavó, mas me desconectei da atividade porque aquilo não era muito atrativo para uma criança de 9 anos. Em 2020 decidi explorar um outro ramo desse artesanato: o amigurumi. Comecei com essa arte como um tipo de terapia manual, e hoje ela é o meu espaço de autocuidado.\n\nGostaria de trazer mais pessoas para o aconchego da arte manual. Mostrar que a arte pode ser muito versátil fazendo com que você transforme seus sentimentos e experiências em peças incríveis e cheias de personalidade e que contam histórias, e são essas histórias que eu quero ouvir!",
+      "whyHeading": "Por que amigurumi?",
+      "whyBody": "Essa arte de transformar um novelo em algo com personalidade, que pode ser apreciado por diferentes faixas etárias, é mágica pra mim. Criar uma peça que pode ser usada tanto como chaveiro de um adolescente, brinquedo de uma criança, ou um \"cacareco\" querido de um adulto é o que me move a explorar diferentes formas e cores, para deixar a sua rotina um pouco menos monótona.",
+      "nameHeading": "O que \"Togurumi\" significa",
+      "nameBody": "Uma pequena brincadeira de palavras: \"To\" do meu sobrenome, Tomikawa (富川), e \"gurumi\" de \"amigurumi\". É o meu cantinho para isso: galeria, diário e (eventualmente) moldes para baixar ou encomendar."
+    },
+    "contact": {
+      "title": "Diga oi",
+      "intro": "Dúvidas sobre uma peça, interesse em encomenda ou só quer bater papo sobre fio? Manda mensagem.",
+      "instagram": "Instagram",
+      "email": "E-mail",
+      "commissions": "Encomendas",
+      "commissionsBody": "Personagens personalizados são bem-vindos, envie uma mensagem com sua ideia e fotos de referência, se tiver."
+    },
+    "shop": {
+      "eyebrow": "Loja",
+      "title": "Amiguinhos, receitas e encomendas",
+      "intro": "Uma coleção crescente de amigurumis, receitas em preparação e notas de encomenda: amiguinhos prontos, detalhes em close, trabalhos em andamento e links conforme ficarem prontos."
+    },
+    "journal": {
+      "eyebrow": "Diário",
+      "title": "Anotações da agulha",
+      "intro": "Posts de processo: trabalhos em andamento, escolhas de fio, erros e pequenas vitórias."
+    },
+    "reviews": {
+      "eyebrow": "Avaliações",
+      "title": "O que estão dizendo",
+      "intro": "Palavras de quem já recebeu um amiguinho Togurumi em casa. Tem uma também? Adoraríamos ler."
+    }
+  },
+  "es-ES": {
+    "home": {
+      "eyebrow": "トグルミ",
+      "title": "Puntadas pequeñas, historias suaves.",
+      "intro": "Amigurumis hechos a mano y notas de crochet del gancho de Bella: amiguitos terminados, trabajos en progreso y el oficio tranquilo entre medio.",
+      "shopCta": "Visitar la tienda",
+      "journalCta": "Leer el diario",
+      "highlightsHeading": "Destacados del mes",
+      "recentHeading": "Recién terminados",
+      "viewAll": "Ver todo →",
+      "journalHeading": "Del diario",
+      "allEntries": "Todas las entradas →"
+    },
+    "about": {
+      "eyebrow": "Acerca de",
+      "title": "Hola, soy Bella",
+      "intro": "Hago amigurumis: pequeñas criaturas tejidas a crochet, sobre todo animales, a veces algo más extraño. \"Togurumi\" es donde guardo registro de lo que estoy haciendo, lo que he aprendido y lo que viene a continuación en el gancho.",
+      "storyHeading": "Mi historia",
+      "storyBody": "Aprendí a tejer a crochet de niña, bordando paños de cocina con mi bisabuela, y en 2020 decidí explorar otra rama de esta artesanía: el amigurumi. Empecé con este arte como una especie de terapia manual, y hoy es mi espacio de autocuidado.",
+      "whyHeading": "¿Por qué amigurumi?",
+      "whyBody": "El arte de convertir un ovillo de lana en algo con personalidad, que personas de cualquier edad pueden disfrutar, es mágico para mí. Crear una pieza que puede ser el llavero de un adolescente, el juguete de un niño o el querido \"cacharrito\" de un adulto es lo que me impulsa a explorar nuevas formas y colores, para hacer tu día a día un poco menos monótono.",
+      "nameHeading": "Qué significa \"Togurumi\"",
+      "nameBody": "Un pequeño acrónimo propio: \"To\" de mi apellido, Tomikawa (富川), y \"gurumi\" de \"amigurumi\". Este es mi rincón para ello: galería, diario y (eventualmente) patrones para descargar o encargar."
+    },
+    "contact": {
+      "title": "Saluda",
+      "intro": "¿Preguntas sobre una pieza, interesado en un encargo, o solo quieres charlar sobre hilos? Escríbeme.",
+      "instagram": "Instagram",
+      "email": "Correo electrónico",
+      "commissions": "Encargos",
+      "commissionsBody": "Personajes personalizados son bienvenidos, envía un mensaje con tu idea y fotos de referencia, si tienes."
+    },
+    "shop": {
+      "eyebrow": "Tienda",
+      "title": "Amiguitos, patrones y encargos",
+      "intro": "Una colección creciente de amigurumis, patrones en preparación y notas de encargos: amiguitos terminados, primeros planos, trabajos en progreso y enlaces cuando estén listos."
+    },
+    "journal": {
+      "eyebrow": "Diario",
+      "title": "Notas desde el gancho",
+      "intro": "Publicaciones de proceso: trabajos en progreso, elecciones de hilo, errores y pequeños logros."
+    },
+    "reviews": {
+      "eyebrow": "Reseñas",
+      "title": "Lo que dicen de nosotras",
+      "intro": "Palabras de quienes ya recibieron un amiguito Togurumi en casa. ¿Tienes una propia? Nos encantaría leerla."
+    }
+  }
+}

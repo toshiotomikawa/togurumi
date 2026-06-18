@@ -11,6 +11,7 @@ export type JournalPostRecord = {
   date: string
   order: number
   summary: string
+  archived: boolean
 }
 
 export type JournalPostInput = {
@@ -21,6 +22,7 @@ export type JournalPostInput = {
   order: number
   summary: string
   body: string
+  archived: boolean
 }
 
 const journalDir = path.resolve('content/journal')
@@ -81,6 +83,7 @@ function parsePost(id: string, raw: string): JournalPostRecord & { body: string 
     date: fields.date ?? '',
     order: fields.order ? Number(fields.order) : 0,
     summary: fields.summary ?? '',
+    archived: fields.archived === 'true',
     body,
   }
 }
@@ -93,6 +96,7 @@ function serializePost(data: JournalPostInput): string {
     `date: ${data.date}`,
     `order: ${data.order}`,
     `summary: ${quoteIfNeeded(data.summary)}`,
+    `archived: ${data.archived}`,
   ].join('\n')
 
   return `---\n${frontmatter}\n---\n\n${data.body.trim()}\n`
@@ -112,8 +116,8 @@ export async function listAllPosts(): Promise<JournalPostRecord[]> {
   const posts = await Promise.all(
     files.map(async (file) => {
       const raw = await readFile(path.join(journalDir, file), 'utf8')
-      const { id, slug, locale, title, date, order, summary } = parsePost(filenameToId(file), raw)
-      return { id, slug, locale, title, date, order, summary }
+      const { id, slug, locale, title, date, order, summary, archived } = parsePost(filenameToId(file), raw)
+      return { id, slug, locale, title, date, order, summary, archived }
     }),
   )
   return posts.sort((a, b) => a.slug.localeCompare(b.slug) || a.locale.localeCompare(b.locale))
@@ -186,4 +190,23 @@ export async function deletePost(id: string): Promise<boolean> {
   if (!(await fileExists(filename))) return false
   await rm(path.join(journalDir, filename))
   return true
+}
+
+export async function setPostArchived(id: string, archived: boolean): Promise<JournalPostRecord & { body: string }> {
+  const existing = await getPost(id)
+  if (!existing) throw new JournalError('not_found')
+
+  const data: JournalPostInput = {
+    slug: existing.slug,
+    locale: existing.locale,
+    title: existing.title,
+    date: existing.date,
+    order: existing.order,
+    summary: existing.summary,
+    body: existing.body,
+    archived,
+  }
+
+  await writeFile(path.join(journalDir, idToFilename(id)), serializePost(data), 'utf8')
+  return { id, ...data }
 }

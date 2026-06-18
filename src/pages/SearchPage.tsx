@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import { useLocale } from '../hooks/useLocale'
-import { matchesSearch, type ShopProduct } from '../lib/shop'
+import { useShopProducts } from '../hooks/useShopProducts'
+import { matchesSearch } from '../lib/shop'
 
 const PAGE_SIZE = 8
 
@@ -18,29 +19,12 @@ function SearchIcon() {
 function SearchPage() {
   const { messages } = useLocale()
   const [searchParams, setSearchParams] = useSearchParams()
-  const [products, setProducts] = useState<ShopProduct[]>([])
+  const { products } = useShopProducts()
   const [query, setQuery] = useState(searchParams.get('q') ?? '')
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const category = searchParams.get('category')
-
-  useEffect(() => {
-    let cancelled = false
-
-    fetch('/api/shop/products')
-      .then((res) => (res.ok ? res.json() : { products: [] }))
-      .then((data) => {
-        if (!cancelled) setProducts(data.products ?? [])
-      })
-      .catch(() => {
-        if (!cancelled) setProducts([])
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [])
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE)

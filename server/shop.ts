@@ -10,6 +10,7 @@ export type ShopProduct = {
   description: string
   image: string
   releaseDate: string
+  highlight: boolean
 }
 
 function parsePrice(value: string): number {
@@ -33,5 +34,6 @@ export async function getShopProducts(): Promise<ShopProduct[]> {
       description: row['DESCRIÇÃO'] ?? '',
       image: row['IMAGEM'] ?? '',
       releaseDate: row['DATA'] ?? '',
+      highlight: row['DESTAQUE']?.trim().toLowerCase() === 'sim',
     }))
 }

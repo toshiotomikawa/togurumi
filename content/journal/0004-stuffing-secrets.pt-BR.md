@@ -4,7 +4,8 @@ slug: segredos-do-enchimento
 locale: pt-BR
 date: 2026-04-18
 order: 3
-summary: Como fio de sobra, enchimento de fibra e um hashi mudam o "fator abraço" final de uma boneca.
+summary: 'Como fio de sobra, enchimento de fibra e um hashi mudam o "fator abraço" final de uma boneca.'
+archived: true
 ---
 
 Enchimento é a parte do amigurumi que ninguém te avisa, e pode silenciosamente fazer ou desfazer uma peça pronta. Duas bonecas feitas com exatamente o mesmo molde podem parecer completamente diferentes dependendo de como — e com o quê — você as enche.

@@ -5,6 +5,7 @@ locale: en-US
 date: 2026-05-22
 order: 1
 summary: Turning a doodle into a crochetable shape without losing the personality in translation.
+archived: true
 ---
 
 Every custom amigurumi I make starts the same way: a messy doodle in the corner of a notebook, usually drawn while I'm supposed to be doing something else.

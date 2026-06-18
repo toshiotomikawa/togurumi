@@ -12,6 +12,8 @@ export type Messages = {
     home: string
     shop: string
     journal: string
+    reviews: string
+    faq: string
     contact: string
     privacy: string
   }
@@ -42,6 +44,11 @@ export type Messages = {
     editPost: string
     deletePost: string
     deleteConfirm: string
+    archivePost: string
+    unarchivePost: string
+    archiveSuccess: string
+    unarchiveSuccess: string
+    archivedBadge: string
     fieldSlug: string
     fieldLocale: string
     fieldTitle: string
@@ -82,6 +89,7 @@ export type Messages = {
     intro: string
     shopCta: string
     journalCta: string
+    highlightsHeading: string
     recentHeading: string
     viewAll: string
     journalHeading: string
@@ -114,11 +122,14 @@ export type Messages = {
     title: string
     intro: string
     backLink: string
+    byAuthor: string
   }
   about: {
     eyebrow: string
     title: string
     intro: string
+    storyHeading: string
+    storyBody: string
     whyHeading: string
     whyBody: string
     nameHeading: string
@@ -158,6 +169,70 @@ export type Messages = {
     continueShopping: string
     checkoutNote: string
   }
+  reviews: {
+    eyebrow: string
+    title: string
+    intro: string
+    formHeading: string
+    nameLabel: string
+    namePlaceholder: string
+    ratingLabel: string
+    commentLabel: string
+    commentPlaceholder: string
+    submit: string
+    submitting: string
+    success: string
+    errorGeneric: string
+    errorTooMany: string
+    empty: string
+    remove: string
+  }
+  faqEditor: {
+    editButton: string
+    doneButton: string
+    eyebrowLabel: string
+    titleLabel: string
+    introLabel: string
+    questionLabel: string
+    answerLabel: string
+    addItem: string
+    removeItem: string
+    reorderLabel: string
+    save: string
+    cancel: string
+    saveSuccess: string
+    saveError: string
+  }
+  contentEditor: {
+    editButton: string
+    save: string
+    cancel: string
+    saveSuccess: string
+    saveError: string
+    draftRestored: string
+    fields: {
+      eyebrow: string
+      title: string
+      intro: string
+      shopCta: string
+      journalCta: string
+      highlightsHeading: string
+      recentHeading: string
+      viewAll: string
+      journalHeading: string
+      allEntries: string
+      storyHeading: string
+      storyBody: string
+      whyHeading: string
+      whyBody: string
+      nameHeading: string
+      nameBody: string
+      instagram: string
+      email: string
+      commissions: string
+      commissionsBody: string
+    }
+  }
 }
 
 const enUS: Messages = {
@@ -166,6 +241,8 @@ const enUS: Messages = {
     home: 'Home',
     shop: 'Shop',
     journal: 'Blog',
+    reviews: 'Reviews',
+    faq: 'FAQ',
     contact: 'Contact',
     privacy: 'Privacy',
   },
@@ -196,6 +273,11 @@ const enUS: Messages = {
     editPost: 'Edit post',
     deletePost: 'Delete',
     deleteConfirm: 'Delete this journal post? This cannot be undone.',
+    archivePost: 'Archive',
+    unarchivePost: 'Unarchive',
+    archiveSuccess: 'Post archived.',
+    unarchiveSuccess: 'Post unarchived.',
+    archivedBadge: 'Archived',
     fieldSlug: 'Slug',
     fieldLocale: 'Locale',
     fieldTitle: 'Title',
@@ -221,7 +303,7 @@ const enUS: Messages = {
     weakPassword: 'Use at least 8 characters.',
     email: 'Email',
     emailOptional: 'Email (optional)',
-    emailHint: "Optional for now — required for standard accounts once self sign-up is available.",
+    emailHint: "Optional for now, but required for standard accounts once self sign-up is available.",
     invalidEmail: 'Enter a valid email address.',
     saveProfile: 'Save',
     profileUpdated: 'Profile updated.',
@@ -234,9 +316,10 @@ const enUS: Messages = {
     eyebrow: 'トグルミ',
     title: 'Small stitches, soft stories.',
     intro:
-      "Handmade amigurumi and crochet notes from Bella's hook — finished friends, works-in-progress, and the quiet craft in between.",
+      "Handmade amigurumi and crochet notes from Bella's hook: finished friends, works-in-progress, and the quiet craft in between.",
     shopCta: 'Visit the shop',
     journalCta: 'Read the journal',
+    highlightsHeading: 'Highlights of the month',
     recentHeading: 'Recently finished',
     viewAll: 'View all →',
     journalHeading: 'From the journal',
@@ -251,9 +334,9 @@ const enUS: Messages = {
     eyebrow: 'Shop',
     title: 'Finished friends, patterns & commissions',
     intro:
-      "A growing collection of amigurumi pieces, pattern plans, and commission notes — finished friends, detail close-ups, works in progress, and links as they're ready.",
+      "A growing collection of amigurumi pieces, pattern plans, and commission notes: finished friends, detail close-ups, works in progress, and links as they're ready.",
     availableHeading: 'Available now',
-    availableEmpty: 'New pieces are on the way — check back soon!',
+    availableEmpty: 'New pieces are on the way, check back soon!',
     stockLabel: 'In stock',
     outOfStock: 'Sold out',
     allCategories: 'All',
@@ -269,7 +352,7 @@ const enUS: Messages = {
       { icon: '🐻', name: 'Mochi Bear', tag: 'Sage mint · button eyes' },
       { icon: '🐰', name: 'Clover the Bunny', tag: 'Dusty rose · floppy ears' },
       { icon: '🐢', name: 'Shelly the Turtle', tag: 'Honey wheat shell' },
-      { icon: '🦊', name: 'Fennec Fox', tag: 'WIP — ears in progress' },
+      { icon: '🦊', name: 'Fennec Fox', tag: 'WIP, ears in progress' },
       { icon: '🐝', name: 'Bumble', tag: 'Tiny bee, big personality' },
       { icon: '🌵', name: 'Pip the Cactus', tag: 'No spikes, all hugs' },
       { icon: '🐱', name: 'Yarn Cat', tag: 'Custom commission' },
@@ -281,7 +364,7 @@ const enUS: Messages = {
       {
         name: 'Mochi Bear',
         status: 'Coming soon',
-        description: 'A round, huggable bear with stubby arms — beginner friendly.',
+        description: 'A round, huggable bear with stubby arms, beginner friendly.',
       },
       {
         name: 'Clover the Bunny',
@@ -303,20 +386,24 @@ const enUS: Messages = {
   journal: {
     eyebrow: 'Journal',
     title: 'Notes from the hook',
-    intro: 'Process posts — works in progress, yarn picks, mistakes, and small wins.',
+    intro: 'Process posts: works in progress, yarn picks, mistakes, and small wins.',
     backLink: '← Back to journal',
+    byAuthor: 'By {{author}}',
   },
   about: {
     eyebrow: 'About',
     title: "Hi, I'm Bella",
     intro:
-      'I make amigurumi — small crocheted creatures, mostly animals, occasionally something stranger. "Togurumi" is where I keep track of what I\'m making, what I\'ve learned, and what\'s next on the hook.',
+      'I make amigurumi: small crocheted creatures, mostly animals, occasionally something stranger. "Togurumi" is where I keep track of what I\'m making, what I\'ve learned, and what\'s next on the hook.',
+    storyHeading: 'My story',
+    storyBody:
+      "I learned to crochet as a child, embroidering dish towels with my great-grandmother. In 2020 I decided to explore another branch of this craft: amigurumi. I started with this art as a kind of hands-on therapy, and today it's my space for self-care.",
     whyHeading: 'Why amigurumi?',
     whyBody:
-      "There's something satisfying about turning a single strand of yarn into a little character with its own personality — and about the slow, repetitive rhythm of single crochet rounds. This site is a place to share that process: the finished pieces, the in-progress mess, and the patterns I'm working on.",
+      "Turning a ball of yarn into something with its own personality, something people of any age can enjoy, feels like magic to me. Making a piece that can be a teenager's keychain, a child's toy, or a grown-up's favorite little knick-knack is what drives me to explore new shapes and colors and make your everyday a little less monotonous.",
     nameHeading: 'What "Togurumi" means',
     nameBody:
-      'A little portmanteau of my own — part nickname, part "amigurumi." This is my corner for it: gallery, journal, and (eventually) patterns to download or commission.',
+      'A little portmanteau of my own: "To" from my surname, Tomikawa (富川), and "gurumi" from "amigurumi." This is my corner for it: gallery, journal, and (eventually) patterns to download or commission.',
   },
   contact: {
     eyebrow: 'Contact',
@@ -325,7 +412,7 @@ const enUS: Messages = {
     instagram: 'Instagram',
     email: 'Email',
     commissions: 'Commissions',
-    commissionsBody: 'Custom characters welcome — send a message with your idea and any reference photos.',
+    commissionsBody: 'Custom characters welcome, send a message with your idea and any reference photos.',
   },
   notFound: {
     eyebrow: '404',
@@ -346,11 +433,75 @@ const enUS: Messages = {
     ariaLabel: 'Cart',
     eyebrow: 'Cart',
     title: 'Your cart',
-    empty: "Your cart is empty — go find something to love.",
+    empty: "Your cart is empty. Go find something to love.",
     remove: 'Remove',
     total: 'Total',
     continueShopping: 'Continue shopping',
-    checkoutNote: "Checkout isn't quite ready yet — we'll let you know as soon as it's open!",
+    checkoutNote: "Checkout isn't quite ready yet, we'll let you know as soon as it's open!",
+  },
+  reviews: {
+    eyebrow: 'Reviews',
+    title: 'What people are saying',
+    intro: "Kind words from folks who've welcomed a Togurumi friend home. Got one of your own? We'd love to hear it.",
+    formHeading: 'Leave a review',
+    nameLabel: 'Your name',
+    namePlaceholder: 'Your name',
+    ratingLabel: 'Rating',
+    commentLabel: 'Your review',
+    commentPlaceholder: 'Tell us what you think',
+    submit: 'Submit review',
+    submitting: 'Sending...',
+    success: 'Thanks for the kind words! Your review has been posted.',
+    errorGeneric: 'Something went wrong, please try again.',
+    errorTooMany: 'Please wait a moment before submitting another review.',
+    empty: 'No reviews yet, be the first to share one!',
+    remove: 'Remove',
+  },
+  faqEditor: {
+    editButton: 'Edit this page',
+    doneButton: 'Done editing',
+    eyebrowLabel: 'Eyebrow',
+    titleLabel: 'Title',
+    introLabel: 'Intro',
+    questionLabel: 'Question',
+    answerLabel: 'Answer',
+    addItem: 'Add question',
+    removeItem: 'Remove',
+    reorderLabel: 'Drag to reorder',
+    save: 'Save',
+    cancel: 'Cancel',
+    saveSuccess: 'FAQ saved.',
+    saveError: 'Could not save the FAQ.',
+  },
+  contentEditor: {
+    editButton: 'Edit this page',
+    save: 'Save',
+    cancel: 'Cancel',
+    saveSuccess: 'Changes saved.',
+    saveError: 'Could not save the changes.',
+    draftRestored: 'Unsaved draft restored from your last session.',
+    fields: {
+      eyebrow: 'Eyebrow',
+      title: 'Title',
+      intro: 'Intro text',
+      shopCta: 'Shop button text',
+      journalCta: 'Blog button text',
+      highlightsHeading: 'Highlights heading',
+      recentHeading: 'Recent heading',
+      viewAll: '"View all" link text',
+      journalHeading: 'Blog heading',
+      allEntries: '"All entries" link text',
+      storyHeading: 'Story heading',
+      storyBody: 'Story text',
+      whyHeading: '"Why amigurumi" heading',
+      whyBody: '"Why amigurumi" text',
+      nameHeading: 'Name meaning heading',
+      nameBody: 'Name meaning text',
+      instagram: 'Instagram label',
+      email: 'Email label',
+      commissions: 'Commissions heading',
+      commissionsBody: 'Commissions text',
+    },
   },
 }
 
@@ -359,7 +510,9 @@ const ptBR: Messages = {
   nav: {
     home: 'Início',
     shop: 'Loja',
-    journal: 'Blog',
+    journal: 'Diário',
+    reviews: 'Avaliações',
+    faq: 'Dúvidas',
     contact: 'Contato',
     privacy: 'Privacidade',
   },
@@ -390,6 +543,11 @@ const ptBR: Messages = {
     editPost: 'Editar post',
     deletePost: 'Excluir',
     deleteConfirm: 'Excluir este post do diário? Isso não pode ser desfeito.',
+    archivePost: 'Arquivar',
+    unarchivePost: 'Desarquivar',
+    archiveSuccess: 'Post arquivado.',
+    unarchiveSuccess: 'Post desarquivado.',
+    archivedBadge: 'Arquivado',
     fieldSlug: 'Slug',
     fieldLocale: 'Idioma',
     fieldTitle: 'Título',
@@ -415,7 +573,7 @@ const ptBR: Messages = {
     weakPassword: 'Use pelo menos 8 caracteres.',
     email: 'E-mail',
     emailOptional: 'E-mail (opcional)',
-    emailHint: 'Opcional por enquanto — será obrigatório para contas padrão quando o cadastro próprio estiver disponível.',
+    emailHint: 'Opcional por enquanto, mas será obrigatório para contas padrão quando o cadastro próprio estiver disponível.',
     invalidEmail: 'Informe um e-mail válido.',
     saveProfile: 'Salvar',
     profileUpdated: 'Perfil atualizado.',
@@ -428,9 +586,10 @@ const ptBR: Messages = {
     eyebrow: 'トグルミ',
     title: 'Pontinhos pequenos, histórias macias.',
     intro:
-      'Amigurumis feitos à mão e anotações de crochê da agulha da Bella — amiguinhos prontos, trabalhos em andamento e o artesanato tranquilo no meio do caminho.',
+      'Amigurumis feitos à mão e anotações de crochê da agulha da Bella: amiguinhos prontos, trabalhos em andamento e o artesanato tranquilo no meio do caminho.',
     shopCta: 'Visitar a loja',
     journalCta: 'Ler o diário',
+    highlightsHeading: 'Destaques do mês',
     recentHeading: 'Recém-finalizados',
     viewAll: 'Ver tudo →',
     journalHeading: 'Do diário',
@@ -445,9 +604,9 @@ const ptBR: Messages = {
     eyebrow: 'Loja',
     title: 'Amiguinhos, receitas e encomendas',
     intro:
-      'Uma coleção crescente de amigurumis, receitas em preparação e notas de encomenda — amiguinhos prontos, detalhes em close, trabalhos em andamento e links conforme ficarem prontos.',
+      'Uma coleção crescente de amigurumis, receitas em preparação e notas de encomenda: amiguinhos prontos, detalhes em close, trabalhos em andamento e links conforme ficarem prontos.',
     availableHeading: 'Disponível agora',
-    availableEmpty: 'Novas peças estão a caminho — volte em breve!',
+    availableEmpty: 'Novas peças estão a caminho, volte em breve!',
     stockLabel: 'Em estoque',
     outOfStock: 'Esgotado',
     allCategories: 'Todos',
@@ -463,7 +622,7 @@ const ptBR: Messages = {
       { icon: '🐻', name: 'Mochi Bear', tag: 'Verde-sálvia · olhos de botão' },
       { icon: '🐰', name: 'Clover the Bunny', tag: 'Rosa empoeirado · orelhas caídas' },
       { icon: '🐢', name: 'Shelly the Turtle', tag: 'Concha trigo-mel' },
-      { icon: '🦊', name: 'Fennec Fox', tag: 'WIP — orelhas em andamento' },
+      { icon: '🦊', name: 'Fennec Fox', tag: 'WIP, orelhas em andamento' },
       { icon: '🐝', name: 'Bumble', tag: 'Abelhinha pequena, personalidade grande' },
       { icon: '🌵', name: 'Pip the Cactus', tag: 'Sem espinhos, só abraços' },
       { icon: '🐱', name: 'Yarn Cat', tag: 'Encomenda personalizada' },
@@ -475,7 +634,7 @@ const ptBR: Messages = {
       {
         name: 'Mochi Bear',
         status: 'Em breve',
-        description: 'Um urso redondo e abraçável com bracinhos curtos — indicado para iniciantes.',
+        description: 'Um urso redondo e abraçável com bracinhos curtos, indicado para iniciantes.',
       },
       {
         name: 'Clover the Bunny',
@@ -497,20 +656,24 @@ const ptBR: Messages = {
   journal: {
     eyebrow: 'Diário',
     title: 'Anotações da agulha',
-    intro: 'Posts de processo — trabalhos em andamento, escolhas de fio, erros e pequenas vitórias.',
+    intro: 'Posts de processo: trabalhos em andamento, escolhas de fio, erros e pequenas vitórias.',
     backLink: '← Voltar ao diário',
+    byAuthor: 'Por {{author}}',
   },
   about: {
     eyebrow: 'Sobre',
     title: 'Oi, eu sou a Bella',
     intro:
-      'Eu faço amigurumi — bichinhos pequenos de crochê, na maioria animais, às vezes algo mais estranho. "Togurumi" é onde guardo o que estou fazendo, o que aprendi e o que vem a seguir na agulha.',
+      'Eu faço amigurumi: bichinhos pequenos de crochê, na maioria animais, às vezes algo mais estranho. "Togurumi" é onde guardo o que estou fazendo, o que aprendi e o que vem a seguir na agulha.',
+    storyHeading: 'Minha história',
+    storyBody:
+      'Aprendi crochê ainda criança, bordando panos de prato com minha bisavó, e em 2020 decidi explorar um outro ramo desse artesanato: o amigurumi. Comecei com essa arte como um tipo de terapia manual, e hoje ela é o meu espaço de autocuidado.',
     whyHeading: 'Por que amigurumi?',
     whyBody:
-      'Tem algo satisfatório em transformar um fio só num personagem com personalidade própria — e no ritmo lento e repetitivo das carreiras de ponto baixo. Este site é um lugar para compartilhar esse processo: as peças prontas, a bagunça em andamento e os moldes em que estou trabalhando.',
+      'Essa arte de transformar um novelo em algo com personalidade, que pode ser apreciado por diferentes faixas etárias, é mágica pra mim. Criar uma peça que pode ser usada tanto como chaveiro de um adolescente, brinquedo de uma criança, ou um "cacareco" querido de um adulto é o que me move a explorar diferentes formas e cores, para deixar a sua rotina um pouco menos monótona.',
     nameHeading: 'O que "Togurumi" significa',
     nameBody:
-      'Um pequeno portmanteau meu — parte apelido, parte "amigurumi". É o meu cantinho para isso: galeria, diário e (eventualmente) moldes para baixar ou encomendar.',
+      'Um pequeno portmanteau meu: "To" do meu sobrenome, Tomikawa (富川), e "gurumi" de "amigurumi". É o meu cantinho para isso: galeria, diário e (eventualmente) moldes para baixar ou encomendar.',
   },
   contact: {
     eyebrow: 'Contato',
@@ -519,7 +682,7 @@ const ptBR: Messages = {
     instagram: 'Instagram',
     email: 'E-mail',
     commissions: 'Encomendas',
-    commissionsBody: 'Personagens personalizados são bem-vindos — envie uma mensagem com sua ideia e fotos de referência, se tiver.',
+    commissionsBody: 'Personagens personalizados são bem-vindos, envie uma mensagem com sua ideia e fotos de referência, se tiver.',
   },
   notFound: {
     eyebrow: '404',
@@ -540,11 +703,75 @@ const ptBR: Messages = {
     ariaLabel: 'Carrinho',
     eyebrow: 'Carrinho',
     title: 'Seu carrinho',
-    empty: 'Seu carrinho está vazio — vá encontrar algo para amar.',
+    empty: 'Seu carrinho está vazio. Vá encontrar algo para amar.',
     remove: 'Remover',
     total: 'Total',
     continueShopping: 'Continuar comprando',
-    checkoutNote: 'A finalização de compra ainda não está disponível — em breve avisaremos quando estiver pronta!',
+    checkoutNote: 'A finalização de compra ainda não está disponível, em breve avisaremos quando estiver pronta!',
+  },
+  reviews: {
+    eyebrow: 'Avaliações',
+    title: 'O que estão dizendo',
+    intro: 'Palavras de quem já recebeu um amiguinho Togurumi em casa. Tem uma também? Adoraríamos ler.',
+    formHeading: 'Deixe sua avaliação',
+    nameLabel: 'Seu nome',
+    namePlaceholder: 'Seu nome',
+    ratingLabel: 'Nota',
+    commentLabel: 'Sua avaliação',
+    commentPlaceholder: 'Conte o que você achou',
+    submit: 'Enviar avaliação',
+    submitting: 'Enviando...',
+    success: 'Obrigada pelas palavras! Sua avaliação foi publicada.',
+    errorGeneric: 'Algo deu errado, tente novamente.',
+    errorTooMany: 'Espere um momento antes de enviar outra avaliação.',
+    empty: 'Ainda não há avaliações, seja a primeira a deixar uma!',
+    remove: 'Remover',
+  },
+  faqEditor: {
+    editButton: 'Editar esta página',
+    doneButton: 'Concluir edição',
+    eyebrowLabel: 'Categoria',
+    titleLabel: 'Título',
+    introLabel: 'Introdução',
+    questionLabel: 'Pergunta',
+    answerLabel: 'Resposta',
+    addItem: 'Adicionar pergunta',
+    removeItem: 'Remover',
+    reorderLabel: 'Arraste para reordenar',
+    save: 'Salvar',
+    cancel: 'Cancelar',
+    saveSuccess: 'Dúvidas salvas.',
+    saveError: 'Não foi possível salvar as dúvidas.',
+  },
+  contentEditor: {
+    editButton: 'Editar esta página',
+    save: 'Salvar',
+    cancel: 'Cancelar',
+    saveSuccess: 'Alterações salvas.',
+    saveError: 'Não foi possível salvar as alterações.',
+    draftRestored: 'Rascunho não salvo restaurado da última sessão.',
+    fields: {
+      eyebrow: 'Categoria',
+      title: 'Título',
+      intro: 'Texto de introdução',
+      shopCta: 'Texto do botão da loja',
+      journalCta: 'Texto do botão do blog',
+      highlightsHeading: 'Título dos destaques',
+      recentHeading: 'Título dos recentes',
+      viewAll: 'Texto do link "ver tudo"',
+      journalHeading: 'Título do blog',
+      allEntries: 'Texto do link "todas as postagens"',
+      storyHeading: 'Título da história',
+      storyBody: 'Texto da história',
+      whyHeading: 'Título do "por que amigurumi"',
+      whyBody: 'Texto do "por que amigurumi"',
+      nameHeading: 'Título do significado do nome',
+      nameBody: 'Texto do significado do nome',
+      instagram: 'Rótulo do Instagram',
+      email: 'Rótulo do e-mail',
+      commissions: 'Título de encomendas',
+      commissionsBody: 'Texto de encomendas',
+    },
   },
 }
 
@@ -554,6 +781,8 @@ const esES: Messages = {
     home: 'Inicio',
     shop: 'Tienda',
     journal: 'Blog',
+    reviews: 'Reseñas',
+    faq: 'Preguntas frecuentes',
     contact: 'Contacto',
     privacy: 'Privacidad',
   },
@@ -584,6 +813,11 @@ const esES: Messages = {
     editPost: 'Editar post',
     deletePost: 'Eliminar',
     deleteConfirm: '¿Eliminar esta publicación del diario? Esta acción no se puede deshacer.',
+    archivePost: 'Archivar',
+    unarchivePost: 'Desarchivar',
+    archiveSuccess: 'Post archivado.',
+    unarchiveSuccess: 'Post desarchivado.',
+    archivedBadge: 'Archivado',
     fieldSlug: 'Slug',
     fieldLocale: 'Idioma',
     fieldTitle: 'Título',
@@ -609,7 +843,7 @@ const esES: Messages = {
     weakPassword: 'Usa al menos 8 caracteres.',
     email: 'Correo electrónico',
     emailOptional: 'Correo electrónico (opcional)',
-    emailHint: 'Opcional por ahora — será obligatorio para cuentas estándar cuando el registro propio esté disponible.',
+    emailHint: 'Opcional por ahora, pero será obligatorio para cuentas estándar cuando el registro propio esté disponible.',
     invalidEmail: 'Ingresa un correo electrónico válido.',
     saveProfile: 'Guardar',
     profileUpdated: 'Perfil actualizado.',
@@ -622,9 +856,10 @@ const esES: Messages = {
     eyebrow: 'トグルミ',
     title: 'Puntadas pequeñas, historias suaves.',
     intro:
-      'Amigurumis hechos a mano y notas de crochet del gancho de Bella — amiguitos terminados, trabajos en progreso y el oficio tranquilo entre medio.',
+      'Amigurumis hechos a mano y notas de crochet del gancho de Bella: amiguitos terminados, trabajos en progreso y el oficio tranquilo entre medio.',
     shopCta: 'Visitar la tienda',
     journalCta: 'Leer el diario',
+    highlightsHeading: 'Destacados del mes',
     recentHeading: 'Recién terminados',
     viewAll: 'Ver todo →',
     journalHeading: 'Del diario',
@@ -639,9 +874,9 @@ const esES: Messages = {
     eyebrow: 'Tienda',
     title: 'Amiguitos, patrones y encargos',
     intro:
-      'Una colección creciente de amigurumis, patrones en preparación y notas de encargos — amiguitos terminados, primeros planos, trabajos en progreso y enlaces cuando estén listos.',
+      'Una colección creciente de amigurumis, patrones en preparación y notas de encargos: amiguitos terminados, primeros planos, trabajos en progreso y enlaces cuando estén listos.',
     availableHeading: 'Disponible ahora',
-    availableEmpty: '¡Nuevas piezas en camino — vuelve pronto!',
+    availableEmpty: '¡Nuevas piezas en camino, vuelve pronto!',
     stockLabel: 'En stock',
     outOfStock: 'Agotado',
     allCategories: 'Todos',
@@ -657,7 +892,7 @@ const esES: Messages = {
       { icon: '🐻', name: 'Mochi Bear', tag: 'Verde salvia · ojos de botón' },
       { icon: '🐰', name: 'Clover the Bunny', tag: 'Rosa empolvado · orejas caídas' },
       { icon: '🐢', name: 'Shelly the Turtle', tag: 'Caparazón color miel' },
-      { icon: '🦊', name: 'Fennec Fox', tag: 'En progreso — orejas en proceso' },
+      { icon: '🦊', name: 'Fennec Fox', tag: 'En progreso, orejas en proceso' },
       { icon: '🐝', name: 'Bumble', tag: 'Abejita pequeña, gran personalidad' },
       { icon: '🌵', name: 'Pip the Cactus', tag: 'Sin espinas, solo abrazos' },
       { icon: '🐱', name: 'Yarn Cat', tag: 'Encargo personalizado' },
@@ -669,7 +904,7 @@ const esES: Messages = {
       {
         name: 'Mochi Bear',
         status: 'Próximamente',
-        description: 'Un oso redondo y abrazable con brazos cortitos — apto para principiantes.',
+        description: 'Un oso redondo y abrazable con brazos cortitos, apto para principiantes.',
       },
       {
         name: 'Clover the Bunny',
@@ -691,20 +926,24 @@ const esES: Messages = {
   journal: {
     eyebrow: 'Diario',
     title: 'Notas desde el gancho',
-    intro: 'Publicaciones de proceso — trabajos en progreso, elecciones de hilo, errores y pequeños logros.',
+    intro: 'Publicaciones de proceso: trabajos en progreso, elecciones de hilo, errores y pequeños logros.',
     backLink: '← Volver al diario',
+    byAuthor: 'Por {{author}}',
   },
   about: {
     eyebrow: 'Acerca de',
     title: 'Hola, soy Bella',
     intro:
-      'Hago amigurumis — pequeñas criaturas tejidas a crochet, sobre todo animales, a veces algo más extraño. "Togurumi" es donde guardo registro de lo que estoy haciendo, lo que he aprendido y lo que viene a continuación en el gancho.',
+      'Hago amigurumis: pequeñas criaturas tejidas a crochet, sobre todo animales, a veces algo más extraño. "Togurumi" es donde guardo registro de lo que estoy haciendo, lo que he aprendido y lo que viene a continuación en el gancho.',
+    storyHeading: 'Mi historia',
+    storyBody:
+      'Aprendí a tejer a crochet de niña, bordando paños de cocina con mi bisabuela, y en 2020 decidí explorar otra rama de esta artesanía: el amigurumi. Empecé con este arte como una especie de terapia manual, y hoy es mi espacio de autocuidado.',
     whyHeading: '¿Por qué amigurumi?',
     whyBody:
-      'Hay algo satisfactorio en convertir un solo hilo de lana en un pequeño personaje con personalidad propia — y en el ritmo lento y repetitivo de las vueltas de punto bajo. Este sitio es un lugar para compartir ese proceso: las piezas terminadas, el desorden en progreso y los patrones en los que estoy trabajando.',
+      'El arte de convertir un ovillo de lana en algo con personalidad, que personas de cualquier edad pueden disfrutar, es mágico para mí. Crear una pieza que puede ser el llavero de un adolescente, el juguete de un niño o el querido "cacharrito" de un adulto es lo que me impulsa a explorar nuevas formas y colores, para hacer tu día a día un poco menos monótono.',
     nameHeading: 'Qué significa "Togurumi"',
     nameBody:
-      'Un pequeño acrónimo propio — parte apodo, parte "amigurumi". Este es mi rincón para ello: galería, diario y (eventualmente) patrones para descargar o encargar.',
+      'Un pequeño acrónimo propio: "To" de mi apellido, Tomikawa (富川), y "gurumi" de "amigurumi". Este es mi rincón para ello: galería, diario y (eventualmente) patrones para descargar o encargar.',
   },
   contact: {
     eyebrow: 'Contacto',
@@ -713,7 +952,7 @@ const esES: Messages = {
     instagram: 'Instagram',
     email: 'Correo electrónico',
     commissions: 'Encargos',
-    commissionsBody: 'Personajes personalizados son bienvenidos — envía un mensaje con tu idea y fotos de referencia, si tienes.',
+    commissionsBody: 'Personajes personalizados son bienvenidos, envía un mensaje con tu idea y fotos de referencia, si tienes.',
   },
   notFound: {
     eyebrow: '404',
@@ -734,11 +973,75 @@ const esES: Messages = {
     ariaLabel: 'Carrito',
     eyebrow: 'Carrito',
     title: 'Tu carrito',
-    empty: 'Tu carrito está vacío — ve a encontrar algo para amar.',
+    empty: 'Tu carrito está vacío. Ve a encontrar algo para amar.',
     remove: 'Eliminar',
     total: 'Total',
     continueShopping: 'Seguir comprando',
-    checkoutNote: 'El pago todavía no está disponible — ¡te avisaremos en cuanto esté listo!',
+    checkoutNote: 'El pago todavía no está disponible, ¡te avisaremos en cuanto esté listo!',
+  },
+  reviews: {
+    eyebrow: 'Reseñas',
+    title: 'Lo que dicen de nosotras',
+    intro: 'Palabras de quienes ya recibieron un amiguito Togurumi en casa. ¿Tienes una propia? Nos encantaría leerla.',
+    formHeading: 'Deja tu reseña',
+    nameLabel: 'Tu nombre',
+    namePlaceholder: 'Tu nombre',
+    ratingLabel: 'Calificación',
+    commentLabel: 'Tu reseña',
+    commentPlaceholder: 'Cuéntanos qué te pareció',
+    submit: 'Enviar reseña',
+    submitting: 'Enviando...',
+    success: '¡Gracias por tus palabras! Tu reseña ha sido publicada.',
+    errorGeneric: 'Algo salió mal, intenta de nuevo.',
+    errorTooMany: 'Espera un momento antes de enviar otra reseña.',
+    empty: 'Todavía no hay reseñas, sé la primera en dejar una.',
+    remove: 'Eliminar',
+  },
+  faqEditor: {
+    editButton: 'Editar esta página',
+    doneButton: 'Terminar edición',
+    eyebrowLabel: 'Categoría',
+    titleLabel: 'Título',
+    introLabel: 'Introducción',
+    questionLabel: 'Pregunta',
+    answerLabel: 'Respuesta',
+    addItem: 'Agregar pregunta',
+    removeItem: 'Eliminar',
+    reorderLabel: 'Arrastra para reordenar',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    saveSuccess: 'Preguntas frecuentes guardadas.',
+    saveError: 'No se pudieron guardar las preguntas frecuentes.',
+  },
+  contentEditor: {
+    editButton: 'Editar esta página',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    saveSuccess: 'Cambios guardados.',
+    saveError: 'No se pudieron guardar los cambios.',
+    draftRestored: 'Borrador sin guardar restaurado de la última sesión.',
+    fields: {
+      eyebrow: 'Categoría',
+      title: 'Título',
+      intro: 'Texto de introducción',
+      shopCta: 'Texto del botón de la tienda',
+      journalCta: 'Texto del botón del blog',
+      highlightsHeading: 'Título de destacados',
+      recentHeading: 'Título de recientes',
+      viewAll: 'Texto del enlace "ver todo"',
+      journalHeading: 'Título del blog',
+      allEntries: 'Texto del enlace "todas las entradas"',
+      storyHeading: 'Título de la historia',
+      storyBody: 'Texto de la historia',
+      whyHeading: 'Título de "por qué amigurumi"',
+      whyBody: 'Texto de "por qué amigurumi"',
+      nameHeading: 'Título del significado del nombre',
+      nameBody: 'Texto del significado del nombre',
+      instagram: 'Etiqueta de Instagram',
+      email: 'Etiqueta de correo',
+      commissions: 'Título de encargos',
+      commissionsBody: 'Texto de encargos',
+    },
   },
 }
 

@@ -5,6 +5,7 @@ locale: es-ES
 date: 2026-05-22
 order: 1
 summary: Convertir un garabato en una forma tejible sin perder la personalidad en la traducción.
+archived: true
 ---
 
 Cada amigurumi personalizado que hago empieza igual: un garabato desordenado en la esquina de un cuaderno, casi siempre dibujado cuando se supone que debería estar haciendo otra cosa.

@@ -1,29 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { EditActions, EditFeedback, EditField } from '../components/EditableContent'
 import ProductCard from '../components/ProductCard'
+import { useEditableContent } from '../hooks/useEditableContent'
 import { useLocale } from '../hooks/useLocale'
-import type { ShopProduct } from '../lib/shop'
+import { useShopProducts } from '../hooks/useShopProducts'
 
 function ShopPage() {
-  const { messages } = useLocale()
-  const [products, setProducts] = useState<ShopProduct[]>([])
+  const { messages, locale } = useLocale()
+  const { products } = useShopProducts()
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
-
-  useEffect(() => {
-    let cancelled = false
-
-    fetch('/api/shop/products')
-      .then((res) => (res.ok ? res.json() : { products: [] }))
-      .then((data) => {
-        if (!cancelled) setProducts(data.products ?? [])
-      })
-      .catch(() => {
-        if (!cancelled) setProducts([])
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [])
+  const editor = useEditableContent('shop', locale, messages.shop, messages.contentEditor.draftRestored)
 
   const categories = Array.from(new Set(products.map((product) => product.category).filter(Boolean)))
   const visibleProducts = activeCategory
@@ -32,11 +18,49 @@ function ShopPage() {
 
   return (
     <div className="page">
-      <section className="hero">
-        <span className="hero__eyebrow">{messages.shop.eyebrow}</span>
-        <h1>{messages.shop.title}</h1>
-        <p>{messages.shop.intro}</p>
-      </section>
+      {editor.editing && editor.draft ? (
+        <section className="hero">
+          <div className="content-editor__fields">
+            <EditField
+              label={messages.contentEditor.fields.eyebrow}
+              value={editor.draft.eyebrow}
+              onChange={(value) => editor.updateField('eyebrow', value)}
+            />
+            <EditField
+              label={messages.contentEditor.fields.title}
+              value={editor.draft.title}
+              onChange={(value) => editor.updateField('title', value)}
+            />
+            <EditField
+              label={messages.contentEditor.fields.intro}
+              value={editor.draft.intro}
+              multiline
+              onChange={(value) => editor.updateField('intro', value)}
+            />
+          </div>
+        </section>
+      ) : (
+        <section className="hero">
+          <span className="hero__eyebrow">{editor.content.eyebrow}</span>
+          <h1>{editor.content.title}</h1>
+          <p>{editor.content.intro}</p>
+        </section>
+      )}
+
+      {editor.canEdit && (
+        <EditActions
+          editLabel={messages.contentEditor.editButton}
+          saveLabel={messages.contentEditor.save}
+          cancelLabel={messages.contentEditor.cancel}
+          editing={editor.editing}
+          saving={editor.saving}
+          onEdit={editor.startEditing}
+          onSave={() => void editor.save(messages.contentEditor)}
+          onCancel={editor.cancelEditing}
+        />
+      )}
+
+      <EditFeedback feedback={editor.feedback} />
 
       <section className="section">
         <div className="section__head">

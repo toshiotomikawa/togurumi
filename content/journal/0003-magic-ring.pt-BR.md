@@ -1,10 +1,11 @@
 ---
-title: 'O anel mágico (e por que o meu costumava se desfazer)'
+title: O anel mágico (e por que o meu costumava se desfazer)
 slug: o-anel-magico
 locale: pt-BR
 date: 2026-05-05
 order: 2
 summary: Uma lista de correções amigável para iniciantes na técnica que todo mundo ama odiar.
+archived: true
 ---
 
 O anel mágico (ou "círculo mágico") é a primeira coisa que a maioria dos moldes de amigurumi pede para você fazer, e por muito tempo foi o que quase me fez desistir antes de começar. O meu ficava se desfazendo — às vezes na hora, às vezes três carreiras depois, o que de algum modo é pior.

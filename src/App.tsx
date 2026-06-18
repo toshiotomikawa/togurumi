@@ -6,6 +6,7 @@ import AccountPage from './pages/AccountPage'
 import AdminPage from './pages/AdminPage'
 import CartPage from './pages/CartPage'
 import ContactPage from './pages/ContactPage'
+import FaqPage from './pages/FaqPage'
 import HomePage from './pages/HomePage'
 import JournalEditorPage from './pages/JournalEditorPage'
 import JournalPage from './pages/JournalPage'
@@ -14,6 +15,7 @@ import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 import ProductPage from './pages/ProductPage'
+import ReviewsPage from './pages/ReviewsPage'
 import SearchPage from './pages/SearchPage'
 import ShopPage from './pages/ShopPage'
 
@@ -30,7 +32,9 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/journal" element={<JournalPage />} />
           <Route path="/journal/:slug" element={<JournalPostPage />} />
+          <Route path="/reviews" element={<ReviewsPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/faq" element={<FaqPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route

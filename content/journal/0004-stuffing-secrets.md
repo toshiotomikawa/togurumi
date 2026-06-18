@@ -4,7 +4,8 @@ slug: stuffing-secrets
 locale: en-US
 date: 2026-04-18
 order: 3
-summary: How scrap yarn, polyfill, and a chopstick change the final "hug factor" of a doll.
+summary: 'How scrap yarn, polyfill, and a chopstick change the final "hug factor" of a doll.'
+archived: true
 ---
 
 Stuffing is the part of amigurumi nobody warns you about, and it can quietly make or break a finished piece. Two dolls made from the exact same pattern can feel completely different depending on how — and what — you stuff them with.

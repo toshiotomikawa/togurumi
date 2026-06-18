@@ -639,6 +639,9 @@ a.card:hover {
 }
 
 .journal-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.85rem;
   color: var(--text);
   opacity: 0.7;
@@ -649,14 +652,121 @@ a.card:hover {
   margin-bottom: 0;
 }
 
+.journal-card__link {
+  display: block;
+  color: inherit;
+}
+
+.journal-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.journal-manage__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+
 .journal-post__meta {
   color: var(--text);
   opacity: 0.7;
   font-size: 0.9rem;
 }
 
+.journal-post__author {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.journal-post__author:hover {
+  text-decoration: underline;
+}
+
 .journal-post__body {
   margin-top: 24px;
+}
+
+/* Reviews */
+.review-list {
+  display: grid;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.review-card__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.review-card__date {
+  font-size: 0.85rem;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.review-card__comment {
+  margin: 12px 0;
+}
+
+.review-card__footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.review-card__name {
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.review-card__remove {
+  border: none;
+  background: none;
+  color: var(--text);
+  opacity: 0.6;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+}
+
+.review-card__remove:hover {
+  opacity: 1;
+}
+
+.review-stars {
+  color: var(--border);
+  letter-spacing: 2px;
+}
+
+.review-stars .is-filled {
+  color: var(--accent);
+}
+
+.review-star-picker {
+  display: flex;
+  gap: 6px;
+}
+
+.review-star-picker button {
+  border: none;
+  background: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--border);
+  cursor: pointer;
+  padding: 0;
+}
+
+.review-star-picker button.is-filled {
+  color: var(--accent);
 }
 
 .journal-post__body h2 {
@@ -965,6 +1075,129 @@ a.card:hover {
 
 .legal-body .section h2 {
   font-size: 1.2rem;
+}
+
+/* FAQ */
+.faq-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.faq-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 24px;
+}
+
+.faq-item summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--text-h);
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: '+';
+  float: right;
+  font-weight: 400;
+  color: var(--text);
+  opacity: 0.6;
+}
+
+.faq-item[open] summary::after {
+  content: '−';
+}
+
+.faq-item p {
+  margin: 12px 0 0;
+}
+
+.faq-item--editing {
+  display: grid;
+  gap: 12px;
+}
+
+.faq-editor__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+/* Inline page content editing */
+.content-editor__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.content-editor__fields {
+  display: grid;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+}
+
+.icon-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* FAQ drag-and-drop reordering */
+.faq-item__row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.faq-item__drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  width: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  cursor: grab;
+  touch-action: none;
+}
+
+.faq-item__drag-handle svg {
+  width: 18px;
+  height: 18px;
+}
+
+.faq-item__fields {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.faq-item--dragging {
+  opacity: 0.5;
+}
+
+.faq-item--drag-over {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
 }
 
 /* Contact */
@@ -1278,6 +1511,8 @@ a.card:hover {
 
 .form-field textarea {
   resize: vertical;
+  min-height: 6.5rem;
+  line-height: 1.5;
 }
 
 .form-field input:focus,

@@ -1,6 +1,7 @@
 import type { SupportedLocale } from './i18n'
 
 export type JournalPost = {
+  id: string
   slug: string
   locale: SupportedLocale
   title: string
@@ -8,6 +9,8 @@ export type JournalPost = {
   summary: string
   order: number
   body: string
+  author: string
+  archived: boolean
 }
 
 const rawModules = import.meta.glob('../../content/journal/*.md', {
@@ -16,7 +19,7 @@ const rawModules = import.meta.glob('../../content/journal/*.md', {
   eager: true,
 }) as Record<string, string>
 
-function parsePost(raw: string): JournalPost {
+function parsePost(id: string, raw: string): JournalPost {
   const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
   const frontmatter = match ? match[1] : ''
   const body = (match ? match[2] : raw).trim()
@@ -37,6 +40,7 @@ function parsePost(raw: string): JournalPost {
   }
 
   return {
+    id,
     slug: fields.slug ?? '',
     locale: fields.locale === 'pt-BR' || fields.locale === 'es-ES' ? fields.locale : 'en-US',
     title: fields.title ?? 'Untitled',
@@ -44,18 +48,25 @@ function parsePost(raw: string): JournalPost {
     summary: fields.summary ?? '',
     order: fields.order ? Number(fields.order) : 0,
     body,
+    author: fields.author ?? 'Bella',
+    archived: fields.archived === 'true',
   }
 }
 
-const allPosts = Object.values(rawModules)
-  .map(parsePost)
+const allPosts = Object.entries(rawModules)
+  .map(([path, raw]) => parsePost(path.replace(/^.*\//, '').replace(/\.md$/, ''), raw))
   .filter((post) => post.slug)
   .sort((a, b) => a.order - b.order || (a.date < b.date ? 1 : -1))
 
-export function getJournalPosts(locale: SupportedLocale): JournalPost[] {
-  return allPosts.filter((post) => post.locale === locale)
+export function getJournalPosts(locale: SupportedLocale, author?: string, includeArchived = false): JournalPost[] {
+  return allPosts.filter(
+    (post) =>
+      post.locale === locale &&
+      (includeArchived || !post.archived) &&
+      (!author || post.author.toLowerCase() === author.toLowerCase()),
+  )
 }
 
 export function getJournalPost(slug: string, locale: SupportedLocale): JournalPost | undefined {
-  return allPosts.find((post) => post.slug === slug && post.locale === locale)
+  return allPosts.find((post) => post.slug === slug && post.locale === locale && !post.archived)
 }

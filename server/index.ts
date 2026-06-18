@@ -18,10 +18,14 @@ import {
   deletePost,
   getPost,
   listAllPosts,
+  setPostArchived,
   updatePost,
   type JournalLocale,
   type JournalPostInput,
 } from './journal'
+import { FaqError, getFaqContent, updateFaqContent } from './faq'
+import { ReviewError, addReview, deleteReview, listReviews } from './reviews'
+import { SiteContentError, getSiteContentSection, updateSiteContentSection } from './siteContent'
 import { FileSessionStore } from './sessionStore'
 import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sheets'
 import { getShopProducts } from './shop'
@@ -50,6 +54,7 @@ const app = express()
 app.set('trust proxy', 1)
 
 const loginAttempts = new Map<string, { count: number; until: number }>()
+const reviewSubmissions = new Map<string, number>()
 
 app.use(cookieParser())
 app.use(express.json())
@@ -299,6 +304,7 @@ function parseJournalInput(body: unknown): JournalPostInput {
     order: Number(data?.order ?? 0),
     summary: String(data?.summary ?? '').trim(),
     body: String(data?.body ?? ''),
+    archived: Boolean(data?.archived),
   }
 }
 
@@ -352,14 +358,121 @@ app.delete('/api/journal/:id', requireAuth, async (req, res) => {
   res.json({ ok: true })
 })
 
+app.patch('/api/journal/:id/archive', requireAuth, async (req, res) => {
+  try {
+    const archived = Boolean((req.body as Record<string, unknown> | null)?.archived)
+    const post = await setPostArchived(req.params.id, archived)
+    res.json({ post })
+  } catch (err) {
+    if (err instanceof JournalError) {
+      res.status(err.code === 'not_found' ? 404 : 400).json({ error: err.code })
+      return
+    }
+    throw err
+  }
+})
+
 app.get('/api/shop/products', async (_req, res) => {
   try {
+    res.setHeader('Cache-Control', 'no-store')
     const products = await getShopProducts()
     res.json({ products })
   } catch (err) {
     if (err instanceof SheetsError) {
       const status = err.code === 'disabled' ? 503 : err.code === 'invalid_tab' ? 400 : 502
       res.status(status).json({ error: err.code })
+      return
+    }
+    throw err
+  }
+})
+
+app.get('/api/reviews', async (_req, res) => {
+  const reviews = await listReviews()
+  res.json({ reviews })
+})
+
+app.post('/api/reviews', async (req, res) => {
+  const key = req.ip ?? 'unknown'
+  const now = Date.now()
+  const last = reviewSubmissions.get(key)
+  if (last && now - last < 60_000) {
+    res.status(429).json({ error: 'too_many_attempts' })
+    return
+  }
+
+  try {
+    const review = await addReview({
+      name: String(req.body?.name ?? ''),
+      rating: Number(req.body?.rating ?? 0),
+      comment: String(req.body?.comment ?? ''),
+    })
+    reviewSubmissions.set(key, now)
+    res.status(201).json({ review })
+  } catch (err) {
+    if (err instanceof ReviewError) {
+      res.status(400).json({ error: err.code })
+      return
+    }
+    throw err
+  }
+})
+
+app.delete('/api/reviews/:id', requireAuth, async (req, res) => {
+  const ok = await deleteReview(req.params.id)
+  if (!ok) {
+    res.status(404).json({ error: 'not_found' })
+    return
+  }
+  res.json({ ok: true })
+})
+
+app.get('/api/faq/:locale', async (req, res) => {
+  try {
+    const faq = await getFaqContent(req.params.locale)
+    res.json({ faq })
+  } catch (err) {
+    if (err instanceof FaqError) {
+      res.status(400).json({ error: err.code })
+      return
+    }
+    throw err
+  }
+})
+
+app.put('/api/faq/:locale', requireAuth, async (req, res) => {
+  try {
+    const faq = await updateFaqContent(req.params.locale, req.body)
+    res.json({ faq })
+  } catch (err) {
+    if (err instanceof FaqError) {
+      res.status(400).json({ error: err.code })
+      return
+    }
+    throw err
+  }
+})
+
+app.get('/api/content/:locale/:section', async (req, res) => {
+  try {
+    const content = await getSiteContentSection(req.params.locale, req.params.section)
+    res.json({ content })
+  } catch (err) {
+    if (err instanceof SiteContentError) {
+      res.status(400).json({ error: err.code })
+      return
+    }
+    throw err
+  }
+})
+
+app.put('/api/content/:locale/:section', requireAuth, async (req, res) => {
+  try {
+    const content = await updateSiteContentSection(req.params.locale, req.params.section, req.body)
+    res.json({ content })
+  } catch (err) {
+    if (err instanceof SiteContentError) {
+      res.status(400).json({ error: err.code })
       return
     }
     throw err
