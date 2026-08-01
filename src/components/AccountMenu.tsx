@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useLocale } from '../hooks/useLocale'
@@ -21,7 +21,7 @@ function UserIcon() {
   )
 }
 
-function LocaleIcon({ preference }: { preference: LocalePreference }) {
+export function LocaleIcon({ preference }: { preference: LocalePreference }) {
   if (preference === 'en-US') return <span className="settings-toggle__glyph">EN</span>
   if (preference === 'pt-BR') return <span className="settings-toggle__glyph">PT</span>
   if (preference === 'es-ES') return <span className="settings-toggle__glyph">ES</span>
@@ -40,7 +40,7 @@ function LocaleIcon({ preference }: { preference: LocalePreference }) {
   )
 }
 
-function ThemeIcon({ mode }: { mode: ThemeMode }) {
+export function ThemeIcon({ mode }: { mode: ThemeMode }) {
   if (mode === 'day') {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -92,7 +92,7 @@ function ChevronIcon({ open }: { open: boolean }) {
   )
 }
 
-function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
+function AccountMenu({ onNavigate, showPreferences = true }: { onNavigate?: () => void; showPreferences?: boolean }) {
   const { messages, preference, setPreference } = useLocale()
   const { theme, setTheme } = useTheme()
   const { user, loading, logout } = useAuth()
@@ -102,22 +102,21 @@ function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
   const menuId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!open) {
-      setLocaleExpanded(false)
-      setThemeExpanded(false)
-    }
-  }, [open])
+  const closeMenu = useCallback(() => {
+    setLocaleExpanded(false)
+    setThemeExpanded(false)
+    setOpen(false)
+  }, [])
 
   useEffect(() => {
     if (!open) return
 
     function onPointerDown(event: MouseEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false)
+      if (!rootRef.current?.contains(event.target as Node)) closeMenu()
     }
 
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') setOpen(false)
+      if (event.key === 'Escape') closeMenu()
     }
 
     document.addEventListener('mousedown', onPointerDown)
@@ -126,16 +125,16 @@ function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
       document.removeEventListener('mousedown', onPointerDown)
       document.removeEventListener('keydown', onKeyDown)
     }
-  }, [open])
+  }, [closeMenu, open])
 
   async function onLogout() {
     await logout()
-    setOpen(false)
+    closeMenu()
     onNavigate?.()
   }
 
   function close() {
-    setOpen(false)
+    closeMenu()
     onNavigate?.()
   }
 
@@ -155,8 +154,8 @@ function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
   }
 
   const name = user?.displayName || user?.username
-  const adminPath = user?.role === 'admin' ? '/admin' : '/admin/journal'
-  const adminLabel = user?.role === 'admin' ? messages.auth.adminNav : messages.auth.journalEditorNav
+  const adminPath = '/admin'
+  const adminLabel = messages.auth.adminNav
   const ariaLabel = user ? `${messages.auth.loggedInAs} ${name}` : messages.auth.accountMenuLabel
 
   return (
@@ -168,7 +167,13 @@ function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={menuId}
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => {
+          if (open) {
+            closeMenu()
+            return
+          }
+          setOpen(true)
+        }}
       >
         <UserIcon />
       </button>
@@ -185,13 +190,16 @@ function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
               <Link to={adminPath} role="menuitem" onClick={close}>
                 {adminLabel}
               </Link>
+              <Link to="/admin/products" role="menuitem" onClick={close}>
+                {messages.auth.adminImagesCardTitle}
+              </Link>
               <Link to="/admin/account" role="menuitem" onClick={close}>
                 {messages.auth.accountNav}
               </Link>
               <button type="button" role="menuitem" onClick={() => void onLogout()}>
                 {messages.auth.logout}
               </button>
-              <div className="auth-menu__divider" />
+              {showPreferences ? <div className="auth-menu__divider" /> : null}
             </>
           ) : (
             <>
@@ -199,65 +207,69 @@ function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
                 <UserIcon />
                 <span>{messages.auth.loginNav}</span>
               </Link>
-              <div className="auth-menu__divider" />
+              {showPreferences ? <div className="auth-menu__divider" /> : null}
             </>
           )}
 
-          <button
-            type="button"
-            className="auth-menu__section-toggle"
-            aria-expanded={localeExpanded}
-            onClick={() => setLocaleExpanded((value) => !value)}
-          >
-            <LocaleIcon preference={preference} />
-            <span>
-              {messages.locale.menuLabel}: {localeLabelFor(preference)}
-            </span>
-            <ChevronIcon open={localeExpanded} />
-          </button>
-          {localeExpanded &&
-            localePreferences.map((option) => (
+          {showPreferences ? (
+            <>
               <button
-                key={option.id}
                 type="button"
-                role="menuitemradio"
-                aria-checked={preference === option.id}
-                className={preference === option.id ? 'is-active' : undefined}
-                onClick={() => setPreference(option.id)}
+                className="auth-menu__section-toggle"
+                aria-expanded={localeExpanded}
+                onClick={() => setLocaleExpanded((value) => !value)}
               >
-                <LocaleIcon preference={option.id} />
-                <span>{localeLabelFor(option.id)}</span>
+                <LocaleIcon preference={preference} />
+                <span>
+                  {messages.locale.menuLabel}: {localeLabelFor(preference)}
+                </span>
+                <ChevronIcon open={localeExpanded} />
               </button>
-            ))}
+              {localeExpanded &&
+                localePreferences.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked={preference === option.id}
+                    className={preference === option.id ? 'is-active' : undefined}
+                    onClick={() => setPreference(option.id)}
+                  >
+                    <LocaleIcon preference={option.id} />
+                    <span>{localeLabelFor(option.id)}</span>
+                  </button>
+                ))}
 
-          <div className="auth-menu__divider" />
+              <div className="auth-menu__divider" />
 
-          <button
-            type="button"
-            className="auth-menu__section-toggle"
-            aria-expanded={themeExpanded}
-            onClick={() => setThemeExpanded((value) => !value)}
-          >
-            <ThemeIcon mode={theme} />
-            <span>
-              {messages.theme.menuLabel}: {themeLabels[theme]}
-            </span>
-            <ChevronIcon open={themeExpanded} />
-          </button>
-          {themeExpanded &&
-            themeModes.map((mode) => (
               <button
-                key={mode.id}
                 type="button"
-                role="menuitemradio"
-                aria-checked={theme === mode.id}
-                className={theme === mode.id ? 'is-active' : undefined}
-                onClick={() => setTheme(mode.id)}
+                className="auth-menu__section-toggle"
+                aria-expanded={themeExpanded}
+                onClick={() => setThemeExpanded((value) => !value)}
               >
-                <ThemeIcon mode={mode.id} />
-                <span>{themeLabels[mode.id]}</span>
+                <ThemeIcon mode={theme} />
+                <span>
+                  {messages.theme.menuLabel}: {themeLabels[theme]}
+                </span>
+                <ChevronIcon open={themeExpanded} />
               </button>
-            ))}
+              {themeExpanded &&
+                themeModes.map((mode) => (
+                  <button
+                    key={mode.id}
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked={theme === mode.id}
+                    className={theme === mode.id ? 'is-active' : undefined}
+                    onClick={() => setTheme(mode.id)}
+                  >
+                    <ThemeIcon mode={mode.id} />
+                    <span>{themeLabels[mode.id]}</span>
+                  </button>
+                ))}
+            </>
+          ) : null}
         </div>
       ) : null}
     </div>

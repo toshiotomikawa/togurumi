@@ -12,7 +12,6 @@ export type Messages = {
     home: string
     shop: string
     journal: string
-    reviews: string
     faq: string
     contact: string
     privacy: string
@@ -39,6 +38,27 @@ export type Messages = {
     adminWelcome: string
     adminJournalCardTitle: string
     adminJournalCardBody: string
+    adminImagesCardTitle: string
+    adminImagesCardBody: string
+    imagesTitle: string
+    imagesIntro: string
+    imagesProductLabel: string
+    imagesColorLabel: string
+    imagesDefaultColor: string
+    imagesColorHint: string
+    imagesFileLabel: string
+    imagesFileHint: string
+    imagesUpload: string
+    imagesUploading: string
+    imagesUploadSuccess: string
+    imagesUploadError: string
+    imagesLoadError: string
+    imagesInvalidFile: string
+    imagesLoading: string
+    imagesNoProducts: string
+    imagesCurrent: string
+    imagesNewPreview: string
+    imagesNoImage: string
     editorTitle: string
     newPost: string
     editPost: string
@@ -90,11 +110,14 @@ export type Messages = {
     shopCta: string
     journalCta: string
     highlightsHeading: string
-    recentHeading: string
+    storeHeading: string
     viewAll: string
     journalHeading: string
     allEntries: string
-    featured: GalleryItem[]
+    youtubeHeading: string
+    youtubeIntro: string
+    youtubeVideoCta: string
+    youtubeChannelCta: string
   }
   shop: {
     eyebrow: string
@@ -108,14 +131,22 @@ export type Messages = {
     newBadge: string
     backLink: string
     yarnLabel: string
-    eyesLabel: string
+    coresLabel: string
+    chooseColorLabel: string
+    selectedColorLabel: string
+    designerLabel: string
+    photoComingSoon: string
+    comingSoonTitle: string
+    comingSoonBody: string
     addToCart: string
     addedToCart: string
+    deliveryNotice: string
     galleryHeading: string
     galleryItems: GalleryItem[]
     patternsHeading: string
     patternsIntro: string
-    patternsItems: { name: string; status: string; description: string }[]
+    commissionCta: string
+    patternsItems: { name: string; status: string; description: string; action?: 'commission' }[]
   }
   journal: {
     eyebrow: string
@@ -140,6 +171,7 @@ export type Messages = {
     title: string
     intro: string
     instagram: string
+    youtube: string
     email: string
     commissions: string
     commissionsBody: string
@@ -217,10 +249,14 @@ export type Messages = {
       shopCta: string
       journalCta: string
       highlightsHeading: string
-      recentHeading: string
+      storeHeading: string
       viewAll: string
       journalHeading: string
       allEntries: string
+      youtubeHeading: string
+      youtubeIntro: string
+      youtubeVideoCta: string
+      youtubeChannelCta: string
       storyHeading: string
       storyBody: string
       whyHeading: string
@@ -228,6 +264,7 @@ export type Messages = {
       nameHeading: string
       nameBody: string
       instagram: string
+      youtube: string
       email: string
       commissions: string
       commissionsBody: string
@@ -241,7 +278,6 @@ const enUS: Messages = {
     home: 'Home',
     shop: 'Shop',
     journal: 'Blog',
-    reviews: 'Reviews',
     faq: 'FAQ',
     contact: 'Contact',
     privacy: 'Privacy',
@@ -268,6 +304,27 @@ const enUS: Messages = {
     adminWelcome: 'Welcome back',
     adminJournalCardTitle: 'Journal editor',
     adminJournalCardBody: 'Create, edit, translate, and remove Togurumi journal posts.',
+    adminImagesCardTitle: 'Product images',
+    adminImagesCardBody: 'Upload product photos and connect them to the Google Sheets catalog.',
+    imagesTitle: 'Product images',
+    imagesIntro: 'Choose a catalog product and upload the photo that should appear in the shop.',
+    imagesProductLabel: 'Product',
+    imagesColorLabel: 'Image for',
+    imagesDefaultColor: 'Main image (shop cards and fallback)',
+    imagesColorHint: 'Choose a color to give that variation its own photo.',
+    imagesFileLabel: 'Image',
+    imagesFileHint: 'JPEG, PNG, or WebP. Maximum 8 MB.',
+    imagesUpload: 'Upload image',
+    imagesUploading: 'Uploading...',
+    imagesUploadSuccess: 'Image uploaded and saved to the catalog.',
+    imagesUploadError: 'Could not upload the image. Try again.',
+    imagesLoadError: 'Could not load catalog products.',
+    imagesInvalidFile: 'Choose a valid JPEG, PNG, or WebP image up to 8 MB.',
+    imagesLoading: 'Loading products...',
+    imagesNoProducts: 'No products found',
+    imagesCurrent: 'Current image',
+    imagesNewPreview: 'New image preview',
+    imagesNoImage: 'No image uploaded',
     editorTitle: 'Journal editor',
     newPost: 'New post',
     editPost: 'Edit post',
@@ -320,15 +377,14 @@ const enUS: Messages = {
     shopCta: 'Visit the shop',
     journalCta: 'Read the journal',
     highlightsHeading: 'Highlights of the month',
-    recentHeading: 'Recently finished',
+    storeHeading: 'Available in the shop',
     viewAll: 'View all →',
     journalHeading: 'From the journal',
     allEntries: 'All entries →',
-    featured: [
-      { icon: '🐙', name: 'Ollie the Octopus', tag: 'Cotton yarn · 6 legs (so far)' },
-      { icon: '🐻', name: 'Mochi Bear', tag: 'Sage mint · button eyes' },
-      { icon: '🐰', name: 'Clover the Bunny', tag: 'Dusty rose · floppy ears' },
-    ],
+    youtubeHeading: 'Watch Togurumi on YouTube',
+    youtubeIntro: 'See Bella bring yarn to life, one stitch at a time. Start with the latest Togurumi video.',
+    youtubeVideoCta: 'Watch the latest video',
+    youtubeChannelCta: 'Visit the channel',
   },
   shop: {
     eyebrow: 'Shop',
@@ -343,9 +399,17 @@ const enUS: Messages = {
     newBadge: 'NEW!',
     backLink: 'Back to shop',
     yarnLabel: 'Yarn',
-    eyesLabel: 'Eyes',
+    coresLabel: 'Colors',
+    chooseColorLabel: 'Choose a color',
+    selectedColorLabel: 'Selected color',
+    designerLabel: 'Designer',
+    photoComingSoon: 'Photo coming soon',
+    comingSoonTitle: 'More friends coming soon!',
+    comingSoonBody: 'Bella is preparing new handmade pieces. Check back soon!',
     addToCart: 'Add to cart',
     addedToCart: 'Added to cart!',
+    deliveryNotice:
+      'For now, delivery is available only in Curitiba and the metropolitan region. Shipping to all Brazilian states is planned for the future.',
     galleryHeading: 'Finished friends & works in progress',
     galleryItems: [
       { icon: '🐙', name: 'Ollie the Octopus', tag: 'Cotton yarn · 6 legs (so far)' },
@@ -360,6 +424,7 @@ const enUS: Messages = {
     patternsHeading: 'Patterns & commissions',
     patternsIntro:
       "Free and paid patterns will live here, along with links to Ravelry, Etsy, or PDF downloads as they're ready. For now, here's what's in the works.",
+    commissionCta: 'Send a private message',
     patternsItems: [
       {
         name: 'Mochi Bear',
@@ -379,7 +444,8 @@ const enUS: Messages = {
       {
         name: 'Custom commissions',
         status: 'Open',
-        description: 'Have a character in mind? Reach out via the contact page.',
+        description: 'Have a character in mind? Send a private message to @togurumi on Instagram.',
+        action: 'commission',
       },
     ],
   },
@@ -410,9 +476,11 @@ const enUS: Messages = {
     title: 'Say hello',
     intro: 'Questions about a piece, interested in a commission, or just want to chat about yarn? Reach out.',
     instagram: 'Instagram',
+    youtube: 'YouTube',
     email: 'Email',
     commissions: 'Commissions',
-    commissionsBody: 'Custom characters welcome, send a message with your idea and any reference photos.',
+    commissionsBody:
+      'Custom characters are welcome. Tap here to send a private message to @togurumi on Instagram with your idea and any reference photos.',
   },
   notFound: {
     eyebrow: '404',
@@ -487,10 +555,14 @@ const enUS: Messages = {
       shopCta: 'Shop button text',
       journalCta: 'Blog button text',
       highlightsHeading: 'Highlights heading',
-      recentHeading: 'Recent heading',
+      storeHeading: 'Shop section heading',
       viewAll: '"View all" link text',
       journalHeading: 'Blog heading',
       allEntries: '"All entries" link text',
+      youtubeHeading: 'YouTube heading',
+      youtubeIntro: 'YouTube intro text',
+      youtubeVideoCta: 'Latest video button text',
+      youtubeChannelCta: 'YouTube channel button text',
       storyHeading: 'Story heading',
       storyBody: 'Story text',
       whyHeading: '"Why amigurumi" heading',
@@ -498,6 +570,7 @@ const enUS: Messages = {
       nameHeading: 'Name meaning heading',
       nameBody: 'Name meaning text',
       instagram: 'Instagram label',
+      youtube: 'YouTube label',
       email: 'Email label',
       commissions: 'Commissions heading',
       commissionsBody: 'Commissions text',
@@ -510,8 +583,7 @@ const ptBR: Messages = {
   nav: {
     home: 'Início',
     shop: 'Loja',
-    journal: 'Diário',
-    reviews: 'Avaliações',
+    journal: 'Blog',
     faq: 'Dúvidas',
     contact: 'Contato',
     privacy: 'Privacidade',
@@ -520,7 +592,7 @@ const ptBR: Messages = {
   locale: { system: 'Sistema', enUS: 'Inglês', ptBR: 'Português (Brasil)', esES: 'Espanhol', menuLabel: 'Idioma' },
   auth: {
     loginTitle: 'Entrar',
-    loginIntro: 'Acesse as ferramentas privadas da Togurumi para gerenciar posts do diário.',
+    loginIntro: 'Acesse as ferramentas privadas da Togurumi para gerenciar posts do blog.',
     username: 'Usuário',
     password: 'Senha',
     submit: 'Entrar',
@@ -536,13 +608,34 @@ const ptBR: Messages = {
     journalEditorNav: 'Gerenciar posts',
     loggedInAs: 'Conectado como',
     adminWelcome: 'Boas-vindas de volta',
-    adminJournalCardTitle: 'Editor do diário',
-    adminJournalCardBody: 'Crie, edite, traduza e remova posts do diário da Togurumi.',
-    editorTitle: 'Editor do diário',
+    adminJournalCardTitle: 'Editor do blog',
+    adminJournalCardBody: 'Crie, edite, traduza e remova posts do blog da Togurumi.',
+    adminImagesCardTitle: 'Imagens dos produtos',
+    adminImagesCardBody: 'Envie fotos dos produtos e vincule-as ao catálogo do Google Sheets.',
+    imagesTitle: 'Imagens dos produtos',
+    imagesIntro: 'Escolha um produto do catálogo e envie a foto que deve aparecer na loja.',
+    imagesProductLabel: 'Produto',
+    imagesColorLabel: 'Imagem para',
+    imagesDefaultColor: 'Imagem principal (vitrine e padrão)',
+    imagesColorHint: 'Escolha uma cor para dar uma foto própria a essa variação.',
+    imagesFileLabel: 'Imagem',
+    imagesFileHint: 'JPEG, PNG ou WebP. Máximo de 8 MB.',
+    imagesUpload: 'Enviar imagem',
+    imagesUploading: 'Enviando...',
+    imagesUploadSuccess: 'Imagem enviada e salva no catálogo.',
+    imagesUploadError: 'Não foi possível enviar a imagem. Tente novamente.',
+    imagesLoadError: 'Não foi possível carregar os produtos do catálogo.',
+    imagesInvalidFile: 'Escolha uma imagem JPEG, PNG ou WebP válida de até 8 MB.',
+    imagesLoading: 'Carregando produtos...',
+    imagesNoProducts: 'Nenhum produto encontrado',
+    imagesCurrent: 'Imagem atual',
+    imagesNewPreview: 'Prévia da nova imagem',
+    imagesNoImage: 'Nenhuma imagem enviada',
+    editorTitle: 'Editor do blog',
     newPost: 'Novo post',
     editPost: 'Editar post',
     deletePost: 'Excluir',
-    deleteConfirm: 'Excluir este post do diário? Isso não pode ser desfeito.',
+    deleteConfirm: 'Excluir este post do blog? Isso não pode ser desfeito.',
     archivePost: 'Arquivar',
     unarchivePost: 'Desarquivar',
     archiveSuccess: 'Post arquivado.',
@@ -588,17 +681,16 @@ const ptBR: Messages = {
     intro:
       'Amigurumis feitos à mão e anotações de crochê da agulha da Bella: amiguinhos prontos, trabalhos em andamento e o artesanato tranquilo no meio do caminho.',
     shopCta: 'Visitar a loja',
-    journalCta: 'Ler o diário',
+    journalCta: 'Ler o blog',
     highlightsHeading: 'Destaques do mês',
-    recentHeading: 'Recém-finalizados',
+    storeHeading: 'Disponível na loja',
     viewAll: 'Ver tudo →',
-    journalHeading: 'Do diário',
+    journalHeading: 'Do blog',
     allEntries: 'Todas as entradas →',
-    featured: [
-      { icon: '🐙', name: 'Ollie the Octopus', tag: 'Fio de algodão · 6 pernas (por enquanto)' },
-      { icon: '🐻', name: 'Mochi Bear', tag: 'Verde-sálvia · olhos de botão' },
-      { icon: '🐰', name: 'Clover the Bunny', tag: 'Rosa empoeirado · orelhas caídas' },
-    ],
+    youtubeHeading: 'Assista à Togurumi no YouTube',
+    youtubeIntro: 'Veja a Bella dar vida aos fios, ponto por ponto. Comece pelo vídeo mais recente da Togurumi.',
+    youtubeVideoCta: 'Assistir ao vídeo mais recente',
+    youtubeChannelCta: 'Visitar o canal',
   },
   shop: {
     eyebrow: 'Loja',
@@ -613,9 +705,17 @@ const ptBR: Messages = {
     newBadge: 'NOVO!',
     backLink: 'Voltar para a loja',
     yarnLabel: 'Fio',
-    eyesLabel: 'Olhos',
+    coresLabel: 'Cores',
+    chooseColorLabel: 'Escolha uma cor',
+    selectedColorLabel: 'Cor escolhida',
+    designerLabel: 'Designer',
+    photoComingSoon: 'Foto em breve',
+    comingSoonTitle: 'Mais amiguinhos em breve!',
+    comingSoonBody: 'A Bella está preparando novas peças feitas à mão. Volte em breve!',
     addToCart: 'Colocar no carrinho',
     addedToCart: 'Adicionado ao carrinho!',
+    deliveryNotice:
+      'Por enquanto, as entregas são somente para Curitiba e região metropolitana. Futuramente, atenderemos todos os estados do Brasil.',
     galleryHeading: 'Amiguinhos prontos e trabalhos em andamento',
     galleryItems: [
       { icon: '🐙', name: 'Ollie the Octopus', tag: 'Fio de algodão · 6 pernas (por enquanto)' },
@@ -630,6 +730,7 @@ const ptBR: Messages = {
     patternsHeading: 'Receitas e encomendas',
     patternsIntro:
       'Receitas gratuitas e pagas vão morar aqui, junto com links para Ravelry, Etsy ou downloads em PDF conforme forem ficando prontos. Por enquanto, eis o que está em andamento.',
+    commissionCta: 'Enviar mensagem privada',
     patternsItems: [
       {
         name: 'Mochi Bear',
@@ -649,15 +750,16 @@ const ptBR: Messages = {
       {
         name: 'Encomendas personalizadas',
         status: 'Aberto',
-        description: 'Tem um personagem em mente? Entre em contato pela página de contato.',
+        description: 'Tem um personagem em mente? Envie uma mensagem privada para @togurumi no Instagram.',
+        action: 'commission',
       },
     ],
   },
   journal: {
-    eyebrow: 'Diário',
+    eyebrow: 'Blog',
     title: 'Anotações da agulha',
     intro: 'Posts de processo: trabalhos em andamento, escolhas de fio, erros e pequenas vitórias.',
-    backLink: '← Voltar ao diário',
+    backLink: '← Voltar ao blog',
     byAuthor: 'Por {{author}}',
   },
   about: {
@@ -673,16 +775,18 @@ const ptBR: Messages = {
       'Essa arte de transformar um novelo em algo com personalidade, que pode ser apreciado por diferentes faixas etárias, é mágica pra mim. Criar uma peça que pode ser usada tanto como chaveiro de um adolescente, brinquedo de uma criança, ou um "cacareco" querido de um adulto é o que me move a explorar diferentes formas e cores, para deixar a sua rotina um pouco menos monótona.',
     nameHeading: 'O que "Togurumi" significa',
     nameBody:
-      'Um pequeno portmanteau meu: "To" do meu sobrenome, Tomikawa (富川), e "gurumi" de "amigurumi". É o meu cantinho para isso: galeria, diário e (eventualmente) moldes para baixar ou encomendar.',
+      'Um pequeno portmanteau meu: "To" do meu sobrenome, Tomikawa (富川), e "gurumi" de "amigurumi". É o meu cantinho para isso: galeria, blog e (eventualmente) moldes para baixar ou encomendar.',
   },
   contact: {
     eyebrow: 'Contato',
     title: 'Diga oi',
     intro: 'Dúvidas sobre uma peça, interesse em encomenda ou só quer bater papo sobre fio? Manda mensagem.',
     instagram: 'Instagram',
+    youtube: 'YouTube',
     email: 'E-mail',
     commissions: 'Encomendas',
-    commissionsBody: 'Personagens personalizados são bem-vindos, envie uma mensagem com sua ideia e fotos de referência, se tiver.',
+    commissionsBody:
+      'Personagens personalizados são bem-vindos. Toque aqui para enviar uma mensagem privada para @togurumi no Instagram com sua ideia e fotos de referência, se tiver.',
   },
   notFound: {
     eyebrow: '404',
@@ -757,10 +861,14 @@ const ptBR: Messages = {
       shopCta: 'Texto do botão da loja',
       journalCta: 'Texto do botão do blog',
       highlightsHeading: 'Título dos destaques',
-      recentHeading: 'Título dos recentes',
+      storeHeading: 'Título da seção da loja',
       viewAll: 'Texto do link "ver tudo"',
       journalHeading: 'Título do blog',
       allEntries: 'Texto do link "todas as postagens"',
+      youtubeHeading: 'Título do YouTube',
+      youtubeIntro: 'Texto de introdução do YouTube',
+      youtubeVideoCta: 'Texto do botão do vídeo mais recente',
+      youtubeChannelCta: 'Texto do botão do canal do YouTube',
       storyHeading: 'Título da história',
       storyBody: 'Texto da história',
       whyHeading: 'Título do "por que amigurumi"',
@@ -768,6 +876,7 @@ const ptBR: Messages = {
       nameHeading: 'Título do significado do nome',
       nameBody: 'Texto do significado do nome',
       instagram: 'Rótulo do Instagram',
+      youtube: 'Rótulo do YouTube',
       email: 'Rótulo do e-mail',
       commissions: 'Título de encomendas',
       commissionsBody: 'Texto de encomendas',
@@ -781,7 +890,6 @@ const esES: Messages = {
     home: 'Inicio',
     shop: 'Tienda',
     journal: 'Blog',
-    reviews: 'Reseñas',
     faq: 'Preguntas frecuentes',
     contact: 'Contacto',
     privacy: 'Privacidad',
@@ -808,6 +916,27 @@ const esES: Messages = {
     adminWelcome: 'Bienvenida de vuelta',
     adminJournalCardTitle: 'Editor del diario',
     adminJournalCardBody: 'Crea, edita, traduce y elimina publicaciones del diario de Togurumi.',
+    adminImagesCardTitle: 'Imágenes de productos',
+    adminImagesCardBody: 'Sube fotos de productos y vincúlalas al catálogo de Google Sheets.',
+    imagesTitle: 'Imágenes de productos',
+    imagesIntro: 'Elige un producto del catálogo y sube la foto que debe aparecer en la tienda.',
+    imagesProductLabel: 'Producto',
+    imagesColorLabel: 'Imagen para',
+    imagesDefaultColor: 'Imagen principal (tarjetas y alternativa)',
+    imagesColorHint: 'Elige un color para asignarle su propia foto a esa variante.',
+    imagesFileLabel: 'Imagen',
+    imagesFileHint: 'JPEG, PNG o WebP. Máximo 8 MB.',
+    imagesUpload: 'Subir imagen',
+    imagesUploading: 'Subiendo...',
+    imagesUploadSuccess: 'Imagen subida y guardada en el catálogo.',
+    imagesUploadError: 'No se pudo subir la imagen. Inténtalo de nuevo.',
+    imagesLoadError: 'No se pudieron cargar los productos del catálogo.',
+    imagesInvalidFile: 'Elige una imagen JPEG, PNG o WebP válida de hasta 8 MB.',
+    imagesLoading: 'Cargando productos...',
+    imagesNoProducts: 'No se encontraron productos',
+    imagesCurrent: 'Imagen actual',
+    imagesNewPreview: 'Vista previa de la imagen nueva',
+    imagesNoImage: 'No hay ninguna imagen subida',
     editorTitle: 'Editor del diario',
     newPost: 'Nuevo post',
     editPost: 'Editar post',
@@ -860,15 +989,14 @@ const esES: Messages = {
     shopCta: 'Visitar la tienda',
     journalCta: 'Leer el diario',
     highlightsHeading: 'Destacados del mes',
-    recentHeading: 'Recién terminados',
+    storeHeading: 'Disponible en la tienda',
     viewAll: 'Ver todo →',
     journalHeading: 'Del diario',
     allEntries: 'Todas las entradas →',
-    featured: [
-      { icon: '🐙', name: 'Ollie the Octopus', tag: 'Hilo de algodón · 6 patas (por ahora)' },
-      { icon: '🐻', name: 'Mochi Bear', tag: 'Verde salvia · ojos de botón' },
-      { icon: '🐰', name: 'Clover the Bunny', tag: 'Rosa empolvado · orejas caídas' },
-    ],
+    youtubeHeading: 'Mira Togurumi en YouTube',
+    youtubeIntro: 'Mira cómo Bella da vida al hilo, puntada a puntada. Empieza por el video más reciente de Togurumi.',
+    youtubeVideoCta: 'Ver el video más reciente',
+    youtubeChannelCta: 'Visitar el canal',
   },
   shop: {
     eyebrow: 'Tienda',
@@ -883,9 +1011,17 @@ const esES: Messages = {
     newBadge: '¡NUEVO!',
     backLink: 'Volver a la tienda',
     yarnLabel: 'Hilo',
-    eyesLabel: 'Ojos',
+    coresLabel: 'Colores',
+    chooseColorLabel: 'Elige un color',
+    selectedColorLabel: 'Color elegido',
+    designerLabel: 'Diseñador',
+    photoComingSoon: 'Foto próximamente',
+    comingSoonTitle: '¡Más amiguitos próximamente!',
+    comingSoonBody: 'Bella está preparando nuevas piezas hechas a mano. ¡Vuelve pronto!',
     addToCart: 'Añadir al carrito',
     addedToCart: '¡Añadido al carrito!',
+    deliveryNotice:
+      'Por ahora, las entregas son solo para Curitiba y su región metropolitana. Más adelante enviaremos a todos los estados de Brasil.',
     galleryHeading: 'Amiguitos terminados y trabajos en progreso',
     galleryItems: [
       { icon: '🐙', name: 'Ollie the Octopus', tag: 'Hilo de algodón · 6 patas (por ahora)' },
@@ -900,6 +1036,7 @@ const esES: Messages = {
     patternsHeading: 'Patrones y encargos',
     patternsIntro:
       'Aquí vivirán patrones gratuitos y de pago, junto con enlaces a Ravelry, Etsy o descargas en PDF cuando estén listos. Por ahora, esto es lo que está en marcha.',
+    commissionCta: 'Enviar mensaje privado',
     patternsItems: [
       {
         name: 'Mochi Bear',
@@ -919,7 +1056,8 @@ const esES: Messages = {
       {
         name: 'Encargos personalizados',
         status: 'Abierto',
-        description: '¿Tienes un personaje en mente? Contáctame desde la página de contacto.',
+        description: '¿Tienes un personaje en mente? Envía un mensaje privado a @togurumi en Instagram.',
+        action: 'commission',
       },
     ],
   },
@@ -950,9 +1088,11 @@ const esES: Messages = {
     title: 'Saluda',
     intro: '¿Preguntas sobre una pieza, interesado en un encargo, o solo quieres charlar sobre hilos? Escríbeme.',
     instagram: 'Instagram',
+    youtube: 'YouTube',
     email: 'Correo electrónico',
     commissions: 'Encargos',
-    commissionsBody: 'Personajes personalizados son bienvenidos, envía un mensaje con tu idea y fotos de referencia, si tienes.',
+    commissionsBody:
+      'Personajes personalizados son bienvenidos. Toca aquí para enviar un mensaje privado a @togurumi en Instagram con tu idea y fotos de referencia, si tienes.',
   },
   notFound: {
     eyebrow: '404',
@@ -1027,10 +1167,14 @@ const esES: Messages = {
       shopCta: 'Texto del botón de la tienda',
       journalCta: 'Texto del botón del blog',
       highlightsHeading: 'Título de destacados',
-      recentHeading: 'Título de recientes',
+      storeHeading: 'Título de la sección de la tienda',
       viewAll: 'Texto del enlace "ver todo"',
       journalHeading: 'Título del blog',
       allEntries: 'Texto del enlace "todas las entradas"',
+      youtubeHeading: 'Título de YouTube',
+      youtubeIntro: 'Texto de introducción de YouTube',
+      youtubeVideoCta: 'Texto del botón del video más reciente',
+      youtubeChannelCta: 'Texto del botón del canal de YouTube',
       storyHeading: 'Título de la historia',
       storyBody: 'Texto de la historia',
       whyHeading: 'Título de "por qué amigurumi"',
@@ -1038,6 +1182,7 @@ const esES: Messages = {
       nameHeading: 'Título del significado del nombre',
       nameBody: 'Texto del significado del nombre',
       instagram: 'Etiqueta de Instagram',
+      youtube: 'Etiqueta de YouTube',
       email: 'Etiqueta de correo',
       commissions: 'Título de encargos',
       commissionsBody: 'Texto de encargos',
@@ -1050,5 +1195,3 @@ export function getMessages(locale: SupportedLocale): Messages {
   if (locale === 'es-ES') return esES
   return enUS
 }
-
-

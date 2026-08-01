@@ -12,6 +12,7 @@ import {
 } from './authSession'
 import { SESSION_COOKIE, clearCookieOptions, sessionCookieOptions } from './cookies'
 import { fetchGoogleProfile, googleAuthUrl, googleEnabled } from './google'
+import { deleteImageKitFile, ImageKitError, imageKitEnabled, uploadProductImage } from './imageKit'
 import {
   JournalError,
   createPost,
@@ -28,7 +29,7 @@ import { ReviewError, addReview, deleteReview, listReviews } from './reviews'
 import { SiteContentError, getSiteContentSection, updateSiteContentSection } from './siteContent'
 import { FileSessionStore } from './sessionStore'
 import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sheets'
-import { getShopProducts } from './shop'
+import { getProductImageTargets, getShopProducts, setProductImage } from './shop'
 import { ensureSeedUser, findUser, createGoogleUser, findUserByGoogleId, saveUser, type UserRecord } from './store'
 
 const PORT = Number(process.env.API_PORT ?? 8788)
@@ -55,6 +56,7 @@ app.set('trust proxy', 1)
 
 const loginAttempts = new Map<string, { count: number; until: number }>()
 const reviewSubmissions = new Map<string, number>()
+const imageUploadAttempts = new Map<string, number[]>()
 
 app.use(cookieParser())
 app.use(express.json())
@@ -115,6 +117,32 @@ function requireAuth(req: express.Request, res: express.Response, next: express.
     return
   }
   next()
+}
+
+async function requireStaff(req: express.Request, res: express.Response, next: express.NextFunction) {
+  if (!req.session.userId) {
+    res.status(401).json({ error: 'unauthorized' })
+    return
+  }
+
+  const user = await findUser(req.session.userId)
+  if (!user || !['admin', 'moderator'].includes(user.role)) {
+    res.status(403).json({ error: 'forbidden' })
+    return
+  }
+
+  next()
+}
+
+function allowImageUpload(userId: string) {
+  const now = Date.now()
+  const windowStart = now - 15 * 60 * 1000
+  const recent = (imageUploadAttempts.get(userId) ?? []).filter((time) => time > windowStart)
+  if (recent.length >= 20) return false
+
+  recent.push(now)
+  imageUploadAttempts.set(userId, recent)
+  return true
 }
 
 function rateLimit(key: string) {
@@ -386,6 +414,77 @@ app.get('/api/shop/products', async (_req, res) => {
     throw err
   }
 })
+
+app.get('/api/shop/product-images', requireStaff, async (_req, res) => {
+  if (!imageKitEnabled()) {
+    res.status(503).json({ error: 'imagekit_disabled' })
+    return
+  }
+
+  try {
+    const products = await getProductImageTargets()
+    res.json({ products })
+  } catch (err) {
+    if (err instanceof SheetsError) {
+      const status = err.code === 'disabled' ? 503 : err.code === 'invalid_tab' ? 400 : 502
+      res.status(status).json({ error: err.code })
+      return
+    }
+    throw err
+  }
+})
+
+app.put(
+  '/api/shop/product-images/:rowNumber',
+  requireStaff,
+  express.raw({ type: () => true, limit: '8mb' }),
+  async (req, res) => {
+    const userId = req.session.userId ?? ''
+    if (!allowImageUpload(userId)) {
+      res.status(429).json({ error: 'too_many_attempts' })
+      return
+    }
+
+    const rowNumber = Number(req.params.rowNumber)
+    const productName = String(req.query.name ?? '').trim()
+    const color = String(req.query.color ?? '').trim()
+    if (
+      !Number.isInteger(rowNumber) ||
+      rowNumber < 2 ||
+      !productName ||
+      productName.length > 500 ||
+      color.length > 200 ||
+      !Buffer.isBuffer(req.body)
+    ) {
+      res.status(400).json({ error: 'invalid_image' })
+      return
+    }
+
+    let uploaded: Awaited<ReturnType<typeof uploadProductImage>> | null = null
+    try {
+      uploaded = await uploadProductImage(req.body)
+      const images = await setProductImage(rowNumber, productName, color, uploaded.url)
+      res.json({
+        url: uploaded.url,
+        defaultImage: images.default,
+        imagesByColor: images.colors,
+      })
+    } catch (err) {
+      if (err instanceof SheetsError) {
+        if (uploaded) await deleteImageKitFile(uploaded.fileId)
+        const status = err.code === 'row_changed' ? 409 : err.code === 'disabled' ? 503 : 502
+        res.status(status).json({ error: err.code })
+        return
+      }
+      if (err instanceof ImageKitError) {
+        const status = err.code === 'invalid_image' ? 400 : err.code === 'disabled' ? 503 : 502
+        res.status(status).json({ error: err.code })
+        return
+      }
+      throw err
+    }
+  },
+)
 
 app.get('/api/reviews', async (_req, res) => {
   const reviews = await listReviews()

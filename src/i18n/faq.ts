@@ -40,7 +40,7 @@ const enUS: FaqContent = {
     {
       question: 'How do shipping and delivery work?',
       answer:
-        'Orders are packed with care and shipped within a few business days. Delivery times depend on your location, we will share tracking details as soon as your order is on its way.',
+        'For now, delivery is available only in Curitiba and the metropolitan region. Shipping to all Brazilian states is planned for the future. Orders are packed with care, and delivery details are arranged at checkout.',
     },
     {
       question: 'What materials do you use?',
@@ -88,7 +88,7 @@ const ptBR: FaqContent = {
     {
       question: 'Como funciona o envio?',
       answer:
-        'Os pedidos são embalados com cuidado e enviados em poucos dias úteis. O prazo de entrega depende da sua localização, e o código de rastreio é enviado assim que o pedido sai.',
+        'Por enquanto, as entregas são somente para Curitiba e região metropolitana. Futuramente, atenderemos todos os estados do Brasil. Os pedidos são embalados com cuidado e os detalhes de entrega são combinados no fechamento da compra.',
     },
     {
       question: 'Quais materiais vocês usam?',
@@ -136,7 +136,7 @@ const esES: FaqContent = {
     {
       question: '¿Cómo funciona el envío?',
       answer:
-        'Los pedidos se empacan con cuidado y se envían en pocos días hábiles. El tiempo de entrega depende de tu ubicación, y el seguimiento se envía en cuanto el pedido sale.',
+        'Por ahora, las entregas son solo para Curitiba y su región metropolitana. Más adelante enviaremos a todos los estados de Brasil. Los pedidos se empacan con cuidado y los detalles de entrega se coordinan al finalizar la compra.',
     },
     {
       question: '¿Qué materiales usan?',

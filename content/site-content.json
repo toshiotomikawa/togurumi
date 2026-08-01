@@ -7,7 +7,7 @@
       "shopCta": "Visit the shop",
       "journalCta": "Read the journal",
       "highlightsHeading": "Highlights of the month",
-      "recentHeading": "Recently finished",
+      "storeHeading": "Available in the shop",
       "viewAll": "View all →",
       "journalHeading": "From the journal",
       "allEntries": "All entries →"
@@ -29,7 +29,7 @@
       "instagram": "Instagram",
       "email": "Email",
       "commissions": "Commissions",
-      "commissionsBody": "Custom characters welcome, send a message with your idea and any reference photos."
+      "commissionsBody": "Custom characters are welcome. Tap here to send a private message to @togurumi on Instagram with your idea and any reference photos."
     },
     "shop": {
       "eyebrow": "Shop",
@@ -53,11 +53,11 @@
       "title": "Pontinhos pequenos, histórias macias.",
       "intro": "Amigurumis feitos à mão e anotações de crochê da agulha da Bella: amiguinhos prontos, trabalhos em andamento e o artesanato tranquilo no meio do caminho.",
       "shopCta": "Visitar a loja",
-      "journalCta": "Ler o diário",
+      "journalCta": "Ler o blog",
       "highlightsHeading": "Destaques do mês",
-      "recentHeading": "Recém-finalizados",
+      "storeHeading": "Disponível na loja",
       "viewAll": "Ver tudo →",
-      "journalHeading": "Do diário",
+      "journalHeading": "Do blog",
       "allEntries": "Todas as entradas →"
     },
     "about": {
@@ -69,7 +69,7 @@
       "whyHeading": "Por que amigurumi?",
       "whyBody": "Essa arte de transformar um novelo em algo com personalidade, que pode ser apreciado por diferentes faixas etárias, é mágica pra mim. Criar uma peça que pode ser usada tanto como chaveiro de um adolescente, brinquedo de uma criança, ou um \"cacareco\" querido de um adulto é o que me move a explorar diferentes formas e cores, para deixar a sua rotina um pouco menos monótona.",
       "nameHeading": "O que \"Togurumi\" significa",
-      "nameBody": "Uma pequena brincadeira de palavras: \"To\" do meu sobrenome, Tomikawa (富川), e \"gurumi\" de \"amigurumi\". É o meu cantinho para isso: galeria, diário e (eventualmente) moldes para baixar ou encomendar."
+      "nameBody": "Uma pequena brincadeira de palavras: \"To\" do meu sobrenome, Tomikawa (富川), e \"gurumi\" de \"amigurumi\". É o meu cantinho para isso: galeria, blog, encomendas e (eventualmente) receitas e padrões para baixar."
     },
     "contact": {
       "title": "Diga oi",
@@ -77,7 +77,7 @@
       "instagram": "Instagram",
       "email": "E-mail",
       "commissions": "Encomendas",
-      "commissionsBody": "Personagens personalizados são bem-vindos, envie uma mensagem com sua ideia e fotos de referência, se tiver."
+      "commissionsBody": "Personagens personalizados são bem-vindos. Toque aqui para enviar uma mensagem privada para @togurumi no Instagram com sua ideia e fotos de referência, se tiver."
     },
     "shop": {
       "eyebrow": "Loja",
@@ -85,7 +85,7 @@
       "intro": "Uma coleção crescente de amigurumis, receitas em preparação e notas de encomenda: amiguinhos prontos, detalhes em close, trabalhos em andamento e links conforme ficarem prontos."
     },
     "journal": {
-      "eyebrow": "Diário",
+      "eyebrow": "Blog",
       "title": "Anotações da agulha",
       "intro": "Posts de processo: trabalhos em andamento, escolhas de fio, erros e pequenas vitórias."
     },
@@ -103,7 +103,7 @@
       "shopCta": "Visitar la tienda",
       "journalCta": "Leer el diario",
       "highlightsHeading": "Destacados del mes",
-      "recentHeading": "Recién terminados",
+      "storeHeading": "Disponible en la tienda",
       "viewAll": "Ver todo →",
       "journalHeading": "Del diario",
       "allEntries": "Todas las entradas →"
@@ -125,7 +125,7 @@
       "instagram": "Instagram",
       "email": "Correo electrónico",
       "commissions": "Encargos",
-      "commissionsBody": "Personajes personalizados son bienvenidos, envía un mensaje con tu idea y fotos de referencia, si tienes."
+      "commissionsBody": "Personajes personalizados son bienvenidos. Toca aquí para enviar un mensaje privado a @togurumi en Instagram con tu idea y fotos de referencia, si tienes."
     },
     "shop": {
       "eyebrow": "Tienda",

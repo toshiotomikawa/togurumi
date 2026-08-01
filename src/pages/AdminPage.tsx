@@ -28,6 +28,10 @@ function AdminPage() {
           <h2>{messages.auth.adminJournalCardTitle}</h2>
           <p>{messages.auth.adminJournalCardBody}</p>
         </Link>
+        <Link to="/admin/products" className="card admin-card-link">
+          <h2>{messages.auth.adminImagesCardTitle}</h2>
+          <p>{messages.auth.adminImagesCardBody}</p>
+        </Link>
       </div>
 
       <div className="admin-actions">

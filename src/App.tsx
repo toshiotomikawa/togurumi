@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute'
 import SiteFooter from './components/SiteFooter'
 import SiteHeader from './components/SiteHeader'
@@ -15,7 +15,7 @@ import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 import ProductPage from './pages/ProductPage'
-import ReviewsPage from './pages/ReviewsPage'
+import ProductImagesPage from './pages/ProductImagesPage'
 import SearchPage from './pages/SearchPage'
 import ShopPage from './pages/ShopPage'
 
@@ -32,7 +32,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/journal" element={<JournalPage />} />
           <Route path="/journal/:slug" element={<JournalPostPage />} />
-          <Route path="/reviews" element={<ReviewsPage />} />
+          <Route path="/reviews" element={<Navigate to="/#reviews" replace />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
@@ -40,7 +40,7 @@ function App() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute roles={['admin']}>
+              <ProtectedRoute roles={['admin', 'moderator']}>
                 <AdminPage />
               </ProtectedRoute>
             }
@@ -50,6 +50,14 @@ function App() {
             element={
               <ProtectedRoute roles={['admin', 'moderator']}>
                 <JournalEditorPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/products"
+            element={
+              <ProtectedRoute roles={['admin', 'moderator']}>
+                <ProductImagesPage />
               </ProtectedRoute>
             }
           />

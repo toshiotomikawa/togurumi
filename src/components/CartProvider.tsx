@@ -3,6 +3,10 @@ import { CartContext, type CartItem, type CartContextValue } from '../context/ca
 
 const CART_STORAGE_KEY = 'togurumi-cart'
 
+function isSameVariant(item: Pick<CartItem, 'slug' | 'color'>, slug: string, color?: string) {
+  return item.slug === slug && (item.color ?? '') === (color ?? '')
+}
+
 function readStoredCart(): CartItem[] {
   try {
     const raw = localStorage.getItem(CART_STORAGE_KEY)
@@ -28,26 +32,30 @@ function CartProvider({ children }: { children: ReactNode }) {
   const value = useMemo<CartContextValue>(() => {
     const addItem: CartContextValue['addItem'] = (item) => {
       setItems((current) => {
-        const existing = current.find((entry) => entry.slug === item.slug)
+        const existing = current.find((entry) => isSameVariant(entry, item.slug, item.color))
         if (existing) {
           return current.map((entry) =>
-            entry.slug === item.slug ? { ...entry, quantity: entry.quantity + 1 } : entry,
+            isSameVariant(entry, item.slug, item.color)
+              ? { ...entry, quantity: entry.quantity + 1 }
+              : entry,
           )
         }
         return [...current, { ...item, quantity: 1 }]
       })
     }
 
-    const removeItem: CartContextValue['removeItem'] = (slug) => {
-      setItems((current) => current.filter((entry) => entry.slug !== slug))
+    const removeItem: CartContextValue['removeItem'] = (slug, color) => {
+      setItems((current) => current.filter((entry) => !isSameVariant(entry, slug, color)))
     }
 
-    const updateQuantity: CartContextValue['updateQuantity'] = (slug, quantity) => {
+    const updateQuantity: CartContextValue['updateQuantity'] = (slug, quantity, color) => {
       if (quantity <= 0) {
-        setItems((current) => current.filter((entry) => entry.slug !== slug))
+        setItems((current) => current.filter((entry) => !isSameVariant(entry, slug, color)))
         return
       }
-      setItems((current) => current.map((entry) => (entry.slug === slug ? { ...entry, quantity } : entry)))
+      setItems((current) =>
+        current.map((entry) => (isSameVariant(entry, slug, color) ? { ...entry, quantity } : entry)),
+      )
     }
 
     return {

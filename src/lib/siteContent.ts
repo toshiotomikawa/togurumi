@@ -5,10 +5,14 @@ export type HomeContent = {
   shopCta: string
   journalCta: string
   highlightsHeading: string
-  recentHeading: string
+  storeHeading: string
   viewAll: string
   journalHeading: string
   allEntries: string
+  youtubeHeading: string
+  youtubeIntro: string
+  youtubeVideoCta: string
+  youtubeChannelCta: string
 }
 
 export type AboutContent = {
@@ -27,6 +31,7 @@ export type ContactContent = {
   title: string
   intro: string
   instagram: string
+  youtube: string
   email: string
   commissions: string
   commissionsBody: string
@@ -57,13 +62,17 @@ export const SITE_CONTENT_FIELDS: { [K in SiteContentSection]: (keyof SiteConten
     'shopCta',
     'journalCta',
     'highlightsHeading',
-    'recentHeading',
+    'storeHeading',
     'viewAll',
     'journalHeading',
     'allEntries',
+    'youtubeHeading',
+    'youtubeIntro',
+    'youtubeVideoCta',
+    'youtubeChannelCta',
   ],
   about: ['eyebrow', 'title', 'intro', 'storyHeading', 'storyBody', 'whyHeading', 'whyBody', 'nameHeading', 'nameBody'],
-  contact: ['title', 'intro', 'instagram', 'email', 'commissions', 'commissionsBody'],
+  contact: ['title', 'intro', 'instagram', 'youtube', 'email', 'commissions', 'commissionsBody'],
   shop: ['eyebrow', 'title', 'intro'],
   journal: ['eyebrow', 'title', 'intro'],
   reviews: ['eyebrow', 'title', 'intro'],
