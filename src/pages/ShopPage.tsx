@@ -4,6 +4,7 @@ import ProductCard from '../components/ProductCard'
 import { useEditableContent } from '../hooks/useEditableContent'
 import { useLocale } from '../hooks/useLocale'
 import { useShopProducts } from '../hooks/useShopProducts'
+import { TOGURUMI_INSTAGRAM_DM } from '../lib/togurumi'
 
 function ShopPage() {
   const { messages, locale } = useLocale()
@@ -66,6 +67,7 @@ function ShopPage() {
         <div className="section__head">
           <h2>{messages.shop.availableHeading}</h2>
         </div>
+        <p className="shop-delivery-note">{messages.shop.deliveryNotice}</p>
         {products.length > 0 ? (
           <>
             {categories.length > 1 && (
@@ -102,34 +104,32 @@ function ShopPage() {
 
       <section className="section">
         <div className="section__head">
-          <h2>{messages.shop.galleryHeading}</h2>
-        </div>
-        <div className="gallery-grid">
-          {messages.shop.galleryItems.map((item) => (
-            <div className="gallery-item" key={item.name}>
-              <span className="gallery-item__icon" aria-hidden="true">
-                {item.icon}
-              </span>
-              <span className="gallery-item__name">{item.name}</span>
-              <span className="gallery-item__tag">{item.tag}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="section__head">
           <h2>{messages.shop.patternsHeading}</h2>
         </div>
         <p>{messages.shop.patternsIntro}</p>
         <div className="card-grid">
-          {messages.shop.patternsItems.map((pattern) => (
-            <div className="card pattern-card" key={pattern.name}>
-              <span className="pattern-card__status">{pattern.status}</span>
-              <h3>{pattern.name}</h3>
-              <p>{pattern.description}</p>
-            </div>
-          ))}
+          {messages.shop.patternsItems.map((pattern) =>
+            pattern.action === 'commission' ? (
+              <a
+                className="card pattern-card pattern-card--link"
+                href={TOGURUMI_INSTAGRAM_DM}
+                target="_blank"
+                rel="noopener noreferrer"
+                key={pattern.name}
+              >
+                <span className="pattern-card__status">{pattern.status}</span>
+                <h3>{pattern.name}</h3>
+                <p>{pattern.description}</p>
+                <span className="pattern-card__cta">{messages.shop.commissionCta}</span>
+              </a>
+            ) : (
+              <div className="card pattern-card" key={pattern.name}>
+                <span className="pattern-card__status">{pattern.status}</span>
+                <h3>{pattern.name}</h3>
+                <p>{pattern.description}</p>
+              </div>
+            ),
+          )}
         </div>
       </section>
     </div>

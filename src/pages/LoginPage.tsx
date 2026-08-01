@@ -38,7 +38,7 @@ function LoginPage() {
 
   useEffect(() => {
     if (!user) return
-    navigate(user.role === 'admin' ? '/admin' : '/admin/journal', { replace: true })
+    navigate('/admin', { replace: true })
   }, [navigate, user])
 
   function getErrorMessage(code: string) {

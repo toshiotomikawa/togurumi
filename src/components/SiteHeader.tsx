@@ -4,7 +4,10 @@ import cartIcon from '../assets/shopping-cart.png'
 import logo from '../assets/togurumi-logo.png'
 import { useCart } from '../hooks/useCart'
 import { useLocale } from '../hooks/useLocale'
-import AccountMenu from './AccountMenu'
+import { useTheme } from '../hooks/useTheme'
+import { localePreferences, type LocalePreference } from '../lib/i18n'
+import { themeModes, type ThemeMode } from '../lib/theme'
+import AccountMenu, { LocaleIcon, ThemeIcon } from './AccountMenu'
 
 function SearchIcon() {
   return (
@@ -79,6 +82,68 @@ function CartLink({ onNavigate }: { onNavigate?: () => void }) {
   )
 }
 
+function MobilePreferenceControls() {
+  const { messages, preference, setPreference } = useLocale()
+  const { theme, setTheme } = useTheme()
+
+  const localeLabels: Record<LocalePreference, string> = {
+    system: messages.locale.system,
+    'en-US': messages.locale.enUS,
+    'pt-BR': messages.locale.ptBR,
+    'es-ES': messages.locale.esES,
+  }
+
+  const themeLabels: Record<ThemeMode, string> = {
+    system: messages.theme.system,
+    day: messages.theme.day,
+    night: messages.theme.night,
+  }
+
+  return (
+    <div className="mobile-preferences" aria-label={`${messages.locale.menuLabel} / ${messages.theme.menuLabel}`}>
+      <div className="mobile-preferences__group">
+        <span className="mobile-preferences__label">{messages.locale.menuLabel}</span>
+        <div className="mobile-preferences__buttons" role="radiogroup" aria-label={messages.locale.menuLabel}>
+          {localePreferences.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              role="radio"
+              aria-checked={preference === option.id}
+              aria-label={`${messages.locale.menuLabel}: ${localeLabels[option.id]}`}
+              title={localeLabels[option.id]}
+              className={`mobile-preferences__button${preference === option.id ? ' is-active' : ''}`}
+              onClick={() => setPreference(option.id)}
+            >
+              <LocaleIcon preference={option.id} />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mobile-preferences__group">
+        <span className="mobile-preferences__label">{messages.theme.menuLabel}</span>
+        <div className="mobile-preferences__buttons" role="radiogroup" aria-label={messages.theme.menuLabel}>
+          {themeModes.map((mode) => (
+            <button
+              key={mode.id}
+              type="button"
+              role="radio"
+              aria-checked={theme === mode.id}
+              aria-label={`${messages.theme.menuLabel}: ${themeLabels[mode.id]}`}
+              title={themeLabels[mode.id]}
+              className={`mobile-preferences__button${theme === mode.id ? ' is-active' : ''}`}
+              onClick={() => setTheme(mode.id)}
+            >
+              <ThemeIcon mode={mode.id} />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function SiteHeader() {
   const { pathname } = useLocation()
   const { messages } = useLocale()
@@ -89,7 +154,6 @@ function SiteHeader() {
     { to: '/', label: messages.nav.home },
     { to: '/shop', label: messages.nav.shop },
     { to: '/journal', label: messages.nav.journal },
-    { to: '/reviews', label: messages.nav.reviews },
     { to: '/faq', label: messages.nav.faq },
     { to: '/contact', label: messages.nav.contact },
   ]
@@ -172,10 +236,12 @@ function SiteHeader() {
           })}
         </nav>
 
+        <MobilePreferenceControls />
+
         <div className="site-mobile-panel__actions">
           <SearchBox onNavigate={closeNav} />
           <CartLink onNavigate={closeNav} />
-          <AccountMenu onNavigate={closeNav} />
+          <AccountMenu onNavigate={closeNav} showPreferences={false} />
         </div>
       </div>
     </header>

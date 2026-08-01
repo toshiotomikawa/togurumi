@@ -1,18 +1,21 @@
 import { Link } from 'react-router-dom'
 import { EditActions, EditFeedback, EditField } from '../components/EditableContent'
-import ProductCard from '../components/ProductCard'
+import ProductCard, { ProductComingSoonCard } from '../components/ProductCard'
+import ReviewsSection from '../components/ReviewsSection'
 import { useEditableContent } from '../hooks/useEditableContent'
 import { useLocale } from '../hooks/useLocale'
 import { useShopProducts } from '../hooks/useShopProducts'
 import { getJournalPosts } from '../lib/journal'
+import { TOGURUMI_LATEST_VIDEO, TOGURUMI_YOUTUBE } from '../lib/togurumi'
 
 function HomePage() {
   const { messages, locale } = useLocale()
   const latest = getJournalPosts(locale)[0]
-  const { products } = useShopProducts()
+  const { products, loaded } = useShopProducts()
   const editor = useEditableContent('home', locale, messages.home, messages.contentEditor.draftRestored)
 
   const highlights = products.filter((product) => product.highlight)
+  const comingSoonSlots = products.length > 0 ? (3 - (products.length % 3)) % 3 : 0
 
   return (
     <div className="page">
@@ -51,9 +54,9 @@ function HomePage() {
               onChange={(value) => editor.updateField('highlightsHeading', value)}
             />
             <EditField
-              label={messages.contentEditor.fields.recentHeading}
-              value={editor.draft.recentHeading}
-              onChange={(value) => editor.updateField('recentHeading', value)}
+              label={messages.contentEditor.fields.storeHeading}
+              value={editor.draft.storeHeading}
+              onChange={(value) => editor.updateField('storeHeading', value)}
             />
             <EditField
               label={messages.contentEditor.fields.viewAll}
@@ -69,6 +72,27 @@ function HomePage() {
               label={messages.contentEditor.fields.allEntries}
               value={editor.draft.allEntries}
               onChange={(value) => editor.updateField('allEntries', value)}
+            />
+            <EditField
+              label={messages.contentEditor.fields.youtubeHeading}
+              value={editor.draft.youtubeHeading}
+              onChange={(value) => editor.updateField('youtubeHeading', value)}
+            />
+            <EditField
+              label={messages.contentEditor.fields.youtubeIntro}
+              value={editor.draft.youtubeIntro}
+              multiline
+              onChange={(value) => editor.updateField('youtubeIntro', value)}
+            />
+            <EditField
+              label={messages.contentEditor.fields.youtubeVideoCta}
+              value={editor.draft.youtubeVideoCta}
+              onChange={(value) => editor.updateField('youtubeVideoCta', value)}
+            />
+            <EditField
+              label={messages.contentEditor.fields.youtubeChannelCta}
+              value={editor.draft.youtubeChannelCta}
+              onChange={(value) => editor.updateField('youtubeChannelCta', value)}
             />
           </div>
         </section>
@@ -120,19 +144,43 @@ function HomePage() {
 
       <section className="section">
         <div className="section__head">
-          <h2>{editor.content.recentHeading}</h2>
+          <h2>{editor.content.storeHeading}</h2>
           <Link to="/shop">{editor.content.viewAll}</Link>
         </div>
-        <div className="gallery-grid">
-          {messages.home.featured.map((item) => (
-            <div className="gallery-item" key={item.name}>
-              <span className="gallery-item__icon" aria-hidden="true">
-                {item.icon}
-              </span>
-              <span className="gallery-item__name">{item.name}</span>
-              <span className="gallery-item__tag">{item.tag}</span>
-            </div>
-          ))}
+        {products.length > 0 ? (
+          <div className="card-grid">
+            {products.map((product) => (
+              <ProductCard product={product} key={product.name} />
+            ))}
+            {Array.from({ length: comingSoonSlots }, (_, index) => (
+              <ProductComingSoonCard key={`coming-soon-${index}`} />
+            ))}
+          </div>
+        ) : loaded ? (
+          <p>{messages.shop.availableEmpty}</p>
+        ) : null}
+      </section>
+
+      <section className="section youtube-feature">
+        <div className="youtube-feature__mark" aria-hidden="true">
+          <span />
+        </div>
+        <div className="youtube-feature__content">
+          <h2>{editor.content.youtubeHeading}</h2>
+          <p>{editor.content.youtubeIntro}</p>
+          <div className="youtube-feature__actions">
+            <a
+              href={TOGURUMI_LATEST_VIDEO}
+              className="button button--primary"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {editor.content.youtubeVideoCta}
+            </a>
+            <a href={TOGURUMI_YOUTUBE} className="button button--youtube" target="_blank" rel="noopener noreferrer">
+              {editor.content.youtubeChannelCta}
+            </a>
+          </div>
         </div>
       </section>
 
@@ -151,6 +199,8 @@ function HomePage() {
           </div>
         </section>
       ) : null}
+
+      <ReviewsSection />
     </div>
   )
 }

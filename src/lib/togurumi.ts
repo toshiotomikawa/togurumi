@@ -1,2 +1,5 @@
 export const TOGURUMI_INSTAGRAM = 'https://www.instagram.com/togurumi'
+export const TOGURUMI_INSTAGRAM_DM = 'https://ig.me/m/togurumi'
+export const TOGURUMI_YOUTUBE = 'https://www.youtube.com/@togurumi'
+export const TOGURUMI_LATEST_VIDEO = 'https://youtu.be/SHI8ix6FmjI'
 export const TOGURUMI_EMAIL = 'togurumi@gmail.com'
