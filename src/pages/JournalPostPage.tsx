@@ -4,6 +4,10 @@ import { useLocale } from '../hooks/useLocale'
 import { getJournalPost } from '../lib/journal'
 import NotFoundPage from './NotFoundPage'
 
+function fillAuthor(template: string, author: string) {
+  return template.replaceAll('{{author}}', author)
+}
+
 function JournalPostPage() {
   const { slug } = useParams<{ slug: string }>()
   const { messages, locale } = useLocale()
@@ -11,21 +15,34 @@ function JournalPostPage() {
 
   if (!post) return <NotFoundPage />
 
+  const hasIsoDate = /^\d{4}-\d{2}-\d{2}$/.test(post.date)
+
   return (
-    <div className="page page--narrow">
-      <Link to="/journal" className="back-link">
-        {messages.journal.backLink}
-      </Link>
-      <article>
-        <h1>{post.title}</h1>
-        <p className="journal-post__meta">
-          {post.date}
-          {' · '}
-          <Link to={`/journal?author=${encodeURIComponent(post.author)}`} className="journal-post__author">
-            {messages.journal.byAuthor.replace('{{author}}', post.author)}
-          </Link>
-        </p>
-        <div className="journal-post__body">
+    <div className="page page--journal-post">
+      <nav className="journal-post-nav" aria-label={messages.journal.backLink}>
+        <Link to="/journal" className="journal-post-nav__back">
+          {messages.journal.backLink}
+        </Link>
+      </nav>
+
+      <article className="journal-article">
+        <header className="journal-article__header">
+          <h1 className="journal-article__title">{post.title}</h1>
+          <p className="journal-article__meta">
+            {hasIsoDate ? <time dateTime={post.date}>{post.date}</time> : <span>{post.date}</span>}
+            <span className="journal-article__meta-sep" aria-hidden="true">
+              ·
+            </span>
+            <Link
+              to={`/journal?author=${encodeURIComponent(post.author)}`}
+              className="journal-article__author"
+            >
+              {fillAuthor(messages.journal.byAuthor, post.author)}
+            </Link>
+          </p>
+        </header>
+
+        <div className="journal-article__body journal-post__body">
           <ReactMarkdown>{post.body}</ReactMarkdown>
         </div>
       </article>

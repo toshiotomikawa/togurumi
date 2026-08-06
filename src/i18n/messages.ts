@@ -165,6 +165,15 @@ export type Messages = {
     intro: string
     backLink: string
     byAuthor: string
+    listLabel: string
+    manageLabel: string
+    cardActionsLabel: string
+    authorFilterLabel: string
+    clearAuthor: string
+    emptyTitle: string
+    emptyBody: string
+    emptyAuthorTitle: string
+    emptyAuthorBody: string
   }
   about: {
     eyebrow: string
@@ -519,6 +528,15 @@ const enUS: Messages = {
     intro: 'Process posts: works in progress, yarn picks, mistakes, and small wins.',
     backLink: '← Back to journal',
     byAuthor: 'By {{author}}',
+    listLabel: 'Journal posts',
+    manageLabel: 'Journal management',
+    cardActionsLabel: 'Post actions',
+    authorFilterLabel: 'Author',
+    clearAuthor: 'Clear author',
+    emptyTitle: 'The notebook is resting',
+    emptyBody: 'New process notes will appear here when they are ready for this language.',
+    emptyAuthorTitle: 'No posts by {{author}} right now',
+    emptyAuthorBody: 'Clear the author filter to see the rest of the journal in this language.',
   },
   about: {
     eyebrow: 'About',
@@ -878,6 +896,15 @@ const ptBR: Messages = {
     intro: 'Posts de processo: trabalhos em andamento, escolhas de fio, erros e pequenas vitórias.',
     backLink: '← Voltar ao blog',
     byAuthor: 'Por {{author}}',
+    listLabel: 'Posts do blog',
+    manageLabel: 'Gerenciamento do blog',
+    cardActionsLabel: 'Ações do post',
+    authorFilterLabel: 'Autor',
+    clearAuthor: 'Limpar autor',
+    emptyTitle: 'O caderno está descansando',
+    emptyBody: 'Novas anotações de processo aparecem aqui quando estiverem prontas neste idioma.',
+    emptyAuthorTitle: 'Nenhum post de {{author}} por agora',
+    emptyAuthorBody: 'Limpe o filtro de autor para ver o restante do blog neste idioma.',
   },
   about: {
     eyebrow: 'Sobre',
@@ -1237,6 +1264,15 @@ const esES: Messages = {
     intro: 'Publicaciones de proceso: trabajos en progreso, elecciones de hilo, errores y pequeños logros.',
     backLink: '← Volver al diario',
     byAuthor: 'Por {{author}}',
+    listLabel: 'Entradas del diario',
+    manageLabel: 'Gestión del diario',
+    cardActionsLabel: 'Acciones de la entrada',
+    authorFilterLabel: 'Autor',
+    clearAuthor: 'Limpiar autor',
+    emptyTitle: 'El cuaderno está en pausa',
+    emptyBody: 'Las nuevas notas de proceso aparecerán aquí cuando estén listas en este idioma.',
+    emptyAuthorTitle: 'Nada de {{author}} por ahora',
+    emptyAuthorBody: 'Limpia el filtro de autor para ver el resto del diario en este idioma.',
   },
   about: {
     eyebrow: 'Acerca de',

@@ -20,9 +20,11 @@ const rawModules = import.meta.glob('../../content/journal/*.md', {
 }) as Record<string, string>
 
 function parsePost(id: string, raw: string): JournalPost {
-  const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
+  // Normalize BOM + CRLF so frontmatter parsing works on Windows checkouts.
+  const source = raw.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n')
+  const match = source.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
   const frontmatter = match ? match[1] : ''
-  const body = (match ? match[2] : raw).trim()
+  const body = (match ? match[2] : source).trim()
 
   const fields: Record<string, string> = {}
   for (const line of frontmatter.split('\n')) {
