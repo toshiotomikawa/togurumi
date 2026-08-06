@@ -113,23 +113,23 @@ export function useEditableContent<Section extends SiteContentSection>(
   const [saving, setSaving] = useState(false)
   const [feedback, setFeedback] = useState<EditableFeedback | null>(null)
 
-  function restoreDraftBackup() {
-    const backup = canEdit ? readDraftBackup<Content>(section, locale) : null
-    if (backup) {
-      setDraft(backup)
-      setEditing(true)
-      if (draftRestoredMessage) {
-        setFeedback({ kind: 'success', text: draftRestoredMessage })
-      }
-      return
-    }
-
-    setDraft(null)
-    setEditing(false)
-  }
-
   useEffect(() => {
     let cancelled = false
+
+    function restoreDraftBackup() {
+      const backup = canEdit ? readDraftBackup<Content>(section, locale) : null
+      if (backup) {
+        setDraft(backup)
+        setEditing(true)
+        if (draftRestoredMessage) {
+          setFeedback({ kind: 'success', text: draftRestoredMessage })
+        }
+        return
+      }
+
+      setDraft(null)
+      setEditing(false)
+    }
 
     async function load() {
       if (cancelled) return
