@@ -149,6 +149,7 @@ function SiteHeader() {
   const { messages } = useLocale()
   const [navOpen, setNavOpen] = useState(false)
   const rootRef = useRef<HTMLElement>(null)
+  const panelId = 'site-mobile-panel'
 
   const links = [
     { to: '/', label: messages.nav.home },
@@ -177,6 +178,15 @@ function SiteHeader() {
     }
   }, [navOpen])
 
+  useEffect(() => {
+    if (!navOpen) return
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previous
+    }
+  }, [navOpen])
+
   function closeNav() {
     setNavOpen(false)
   }
@@ -188,11 +198,11 @@ function SiteHeader() {
           <img src={logo} alt="Togurumi" className="site-brand__logo" />
         </Link>
 
-        <nav className="site-nav site-nav--desktop" aria-label="Main">
+        <nav className="site-nav site-nav--desktop" aria-label={messages.nav.menuLabel}>
           {links.map(({ to, label }) => {
             const active = to === '/' ? pathname === '/' : pathname.startsWith(to)
             return (
-              <Link key={to} to={to} className={active ? 'is-active' : undefined}>
+              <Link key={to} to={to} className={active ? 'is-active' : undefined} aria-current={active ? 'page' : undefined}>
                 {label}
               </Link>
             )
@@ -208,8 +218,9 @@ function SiteHeader() {
         <button
           type="button"
           className={`site-nav-toggle${navOpen ? ' is-active' : ''}`}
-          aria-label="Main menu"
+          aria-label={navOpen ? messages.nav.menuCloseLabel : messages.nav.menuLabel}
           aria-expanded={navOpen}
+          aria-controls={panelId}
           onClick={() => setNavOpen((value) => !value)}
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -224,12 +235,25 @@ function SiteHeader() {
         </button>
       </div>
 
-      <div className={`site-mobile-panel${navOpen ? ' is-open' : ''}`}>
-        <nav className="site-mobile-panel__nav" aria-label="Main">
+      <div
+        id={panelId}
+        className={`site-mobile-panel${navOpen ? ' is-open' : ''}`}
+        aria-hidden={!navOpen}
+        // When closed, keep focusable descendants out of the tab order.
+        inert={!navOpen ? true : undefined}
+      >
+        <nav className="site-mobile-panel__nav" aria-label={messages.nav.menuLabel}>
           {links.map(({ to, label }) => {
             const active = to === '/' ? pathname === '/' : pathname.startsWith(to)
             return (
-              <Link key={to} to={to} className={active ? 'is-active' : undefined} onClick={closeNav}>
+              <Link
+                key={to}
+                to={to}
+                className={active ? 'is-active' : undefined}
+                aria-current={active ? 'page' : undefined}
+                onClick={closeNav}
+                tabIndex={navOpen ? undefined : -1}
+              >
                 {label}
               </Link>
             )
