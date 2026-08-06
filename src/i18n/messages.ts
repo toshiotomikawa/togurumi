@@ -132,6 +132,10 @@ export type Messages = {
     intro: string
     availableHeading: string
     availableEmpty: string
+    emptyTitle: string
+    filterEmptyTitle: string
+    filterEmptyBody: string
+    loadingLabel: string
     stockLabel: string
     outOfStock: string
     allCategories: string
@@ -407,6 +411,10 @@ const enUS: Messages = {
       "A growing collection of amigurumi pieces, pattern plans, and commission notes: finished friends, detail close-ups, works in progress, and links as they're ready.",
     availableHeading: 'Available now',
     availableEmpty: 'New pieces are on the way, check back soon!',
+    emptyTitle: 'The shelf is resting',
+    filterEmptyTitle: 'Nothing in this category right now',
+    filterEmptyBody: 'Try another filter or browse the full shop.',
+    loadingLabel: 'Loading shop products',
     stockLabel: 'In stock',
     outOfStock: 'Sold out',
     allCategories: 'All',
@@ -720,6 +728,10 @@ const ptBR: Messages = {
       'Uma coleção crescente de amigurumis, receitas em preparação e notas de encomenda: amiguinhos prontos, detalhes em close, trabalhos em andamento e links conforme ficarem prontos.',
     availableHeading: 'Disponível agora',
     availableEmpty: 'Novas peças estão a caminho, volte em breve!',
+    emptyTitle: 'A prateleira está descansando',
+    filterEmptyTitle: 'Nada nesta categoria agora',
+    filterEmptyBody: 'Tente outro filtro ou veja a loja inteira.',
+    loadingLabel: 'Carregando produtos da loja',
     stockLabel: 'Em estoque',
     outOfStock: 'Esgotado',
     allCategories: 'Todos',
@@ -1033,6 +1045,10 @@ const esES: Messages = {
       'Una colección creciente de amigurumis, patrones en preparación y notas de encargos: amiguitos terminados, primeros planos, trabajos en progreso y enlaces cuando estén listos.',
     availableHeading: 'Disponible ahora',
     availableEmpty: '¡Nuevas piezas en camino, vuelve pronto!',
+    emptyTitle: 'La estantería está descansando',
+    filterEmptyTitle: 'Nada en esta categoría por ahora',
+    filterEmptyBody: 'Prueba otro filtro o mira toda la tienda.',
+    loadingLabel: 'Cargando productos de la tienda',
     stockLabel: 'En stock',
     outOfStock: 'Agotado',
     allCategories: 'Todos',
