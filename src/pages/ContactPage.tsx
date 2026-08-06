@@ -236,7 +236,10 @@ function ContactPage() {
         )}
       </div>
 
-      <section className="section contact-channels" aria-labelledby="contact-channels-heading">
+      <section
+        className="section contact-channels"
+        aria-labelledby={editing && contact.draft ? undefined : 'contact-channels-heading'}
+      >
         {editing && contact.draft ? (
           <div className="content-editor__fields">
             <EditField
