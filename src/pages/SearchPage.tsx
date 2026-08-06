@@ -21,14 +21,18 @@ function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const { products } = useShopProducts()
   const [query, setQuery] = useState(searchParams.get('q') ?? '')
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const category = searchParams.get('category')
+  const paginationKey = `${query}\0${category ?? ''}`
+  const [pagination, setPagination] = useState({ key: paginationKey, count: PAGE_SIZE })
 
-  useEffect(() => {
-    setVisibleCount(PAGE_SIZE)
-  }, [query, category])
+  // Reset infinite-scroll window when the active filters change (React "adjust state while rendering").
+  if (pagination.key !== paginationKey) {
+    setPagination({ key: paginationKey, count: PAGE_SIZE })
+  }
+
+  const visibleCount = pagination.key === paginationKey ? pagination.count : PAGE_SIZE
 
   useEffect(() => {
     const next = new URLSearchParams(searchParams)
@@ -54,7 +58,10 @@ function SearchPage() {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) {
-          setVisibleCount((count) => Math.min(count + PAGE_SIZE, filtered.length))
+          setPagination((current) => ({
+            ...current,
+            count: Math.min(current.count + PAGE_SIZE, filtered.length),
+          }))
         }
       },
       { rootMargin: '200px' },
