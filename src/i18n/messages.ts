@@ -15,6 +15,8 @@ export type Messages = {
     faq: string
     contact: string
     privacy: string
+    menuLabel: string
+    menuCloseLabel: string
   }
   theme: { system: string; day: string; night: string; menuLabel: string }
   locale: { system: string; enUS: string; ptBR: string; esES: string; menuLabel: string }
@@ -102,7 +104,12 @@ export type Messages = {
     hidePassword: string
     accountMenuLabel: string
   }
-  footer: { tagline: string }
+  footer: {
+    tagline: string
+    note: string
+    navLabel: string
+    socialLabel: string
+  }
   home: {
     eyebrow: string
     title: string
@@ -281,6 +288,8 @@ const enUS: Messages = {
     faq: 'FAQ',
     contact: 'Contact',
     privacy: 'Privacy',
+    menuLabel: 'Menu',
+    menuCloseLabel: 'Close menu',
   },
   theme: { system: 'System', day: 'Day', night: 'Night', menuLabel: 'Theme' },
   locale: { system: 'System', enUS: 'English', ptBR: 'Portuguese (Brazil)', esES: 'Spanish', menuLabel: 'Language' },
@@ -368,7 +377,12 @@ const enUS: Messages = {
     hidePassword: 'Hide password',
     accountMenuLabel: 'Account',
   },
-  footer: { tagline: 'made with a hook and a lot of yarn' },
+  footer: {
+    tagline: 'made with a hook and a lot of yarn',
+    note: 'Handmade amigurumi by Bella · orders and custom pieces via Instagram direct @togurumi',
+    navLabel: 'Footer',
+    socialLabel: 'Social and contact',
+  },
   home: {
     eyebrow: 'トグルミ',
     title: 'Small stitches, soft stories.',
@@ -587,6 +601,8 @@ const ptBR: Messages = {
     faq: 'Dúvidas',
     contact: 'Contato',
     privacy: 'Privacidade',
+    menuLabel: 'Menu',
+    menuCloseLabel: 'Fechar menu',
   },
   theme: { system: 'Sistema', day: 'Dia', night: 'Noite', menuLabel: 'Tema' },
   locale: { system: 'Sistema', enUS: 'Inglês', ptBR: 'Português (Brasil)', esES: 'Espanhol', menuLabel: 'Idioma' },
@@ -674,7 +690,12 @@ const ptBR: Messages = {
     hidePassword: 'Ocultar senha',
     accountMenuLabel: 'Conta',
   },
-  footer: { tagline: 'feito com uma agulha e muito fio' },
+  footer: {
+    tagline: 'feito com uma agulha e muito fio',
+    note: 'Amigurumis feitos à mão pela Bella · pedidos e encomendas pelo direct @togurumi',
+    navLabel: 'Rodapé',
+    socialLabel: 'Redes e contato',
+  },
   home: {
     eyebrow: 'トグルミ',
     title: 'Pontinhos pequenos, histórias macias.',
@@ -893,6 +914,8 @@ const esES: Messages = {
     faq: 'Preguntas frecuentes',
     contact: 'Contacto',
     privacy: 'Privacidad',
+    menuLabel: 'Menú',
+    menuCloseLabel: 'Cerrar menú',
   },
   theme: { system: 'Sistema', day: 'Día', night: 'Noche', menuLabel: 'Tema' },
   locale: { system: 'Sistema', enUS: 'Inglés', ptBR: 'Portugués (Brasil)', esES: 'Español', menuLabel: 'Idioma' },
@@ -980,7 +1003,12 @@ const esES: Messages = {
     hidePassword: 'Ocultar contraseña',
     accountMenuLabel: 'Cuenta',
   },
-  footer: { tagline: 'hecho con una aguja y mucho hilo' },
+  footer: {
+    tagline: 'hecho con una aguja y mucho hilo',
+    note: 'Amigurumis hechos a mano por Bella · pedidos y encargos por el direct de Instagram @togurumi',
+    navLabel: 'Pie de página',
+    socialLabel: 'Redes y contacto',
+  },
   home: {
     eyebrow: 'トグルミ',
     title: 'Puntadas pequeñas, historias suaves.',
