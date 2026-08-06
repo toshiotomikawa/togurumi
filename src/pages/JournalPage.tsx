@@ -1,10 +1,14 @@
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { EditActions, EditFeedback, EditField } from '../components/EditableContent'
+import { EditActions, EditFeedback, EditField, Paragraphs } from '../components/EditableContent'
 import { useAuth } from '../hooks/useAuth'
 import { getApiErrorCode, useEditableContent } from '../hooks/useEditableContent'
 import { useLocale } from '../hooks/useLocale'
 import { getJournalPosts, type JournalPost } from '../lib/journal'
+
+function fillAuthor(template: string, author: string) {
+  return template.replaceAll('{{author}}', author)
+}
 
 function JournalPage() {
   const { messages, locale } = useLocale()
@@ -14,7 +18,9 @@ function JournalPage() {
   const canManage = user?.role === 'admin' || user?.role === 'moderator'
   const posts = getJournalPosts(locale, author ?? undefined, canManage)
   const editor = useEditableContent('journal', locale, messages.journal, messages.contentEditor.draftRestored)
-  const [archiveFeedback, setArchiveFeedback] = useState<{ kind: 'success' | 'error'; text: string } | null>(null)
+  const [archiveFeedback, setArchiveFeedback] = useState<{ kind: 'success' | 'error'; text: string } | null>(
+    null,
+  )
   const [archivingSlug, setArchivingSlug] = useState<string | null>(null)
 
   function clearAuthor() {
@@ -53,10 +59,12 @@ function JournalPage() {
     }
   }
 
+  const hasAuthorFilter = Boolean(author)
+
   return (
-    <div className="page page--narrow">
+    <div className="page page--journal">
       {editor.editing && editor.draft ? (
-        <section className="hero">
+        <section className="journal-hero journal-hero--editing">
           <div className="content-editor__fields">
             <EditField
               label={messages.contentEditor.fields.eyebrow}
@@ -77,15 +85,17 @@ function JournalPage() {
           </div>
         </section>
       ) : (
-        <section className="hero">
-          <span className="hero__eyebrow">{editor.content.eyebrow}</span>
-          <h1>{editor.content.title}</h1>
-          <p>{editor.content.intro}</p>
+        <section className="journal-hero">
+          <span className="journal-hero__eyebrow">{editor.content.eyebrow}</span>
+          <h1 className="journal-hero__title">{editor.content.title}</h1>
+          <div className="journal-hero__intro">
+            <Paragraphs text={editor.content.intro} />
+          </div>
         </section>
       )}
 
-      {canManage && !editor.editing && (
-        <div className="journal-manage__actions">
+      {canManage && !editor.editing ? (
+        <div className="journal-manage" role="group" aria-label={messages.journal.manageLabel}>
           <Link to={`/admin/journal?new=1&locale=${locale}`} className="button button--primary">
             {messages.auth.newPost}
           </Link>
@@ -93,9 +103,9 @@ function JournalPage() {
             {messages.contentEditor.editButton}
           </button>
         </div>
-      )}
+      ) : null}
 
-      {editor.canEdit && editor.editing && (
+      {editor.canEdit && editor.editing ? (
         <EditActions
           editLabel={messages.contentEditor.editButton}
           saveLabel={messages.contentEditor.save}
@@ -106,52 +116,96 @@ function JournalPage() {
           onSave={() => void editor.save(messages.contentEditor)}
           onCancel={editor.cancelEditing}
         />
-      )}
+      ) : null}
 
       <EditFeedback feedback={editor.feedback} />
 
-      {author && (
-        <div className="tag-filter">
-          <span className="tag-filter__active">
-            {messages.journal.byAuthor.replace('{{author}}', author)}
+      {hasAuthorFilter && author ? (
+        <div className="journal-author-filter" role="group" aria-label={messages.journal.authorFilterLabel}>
+          <span className="journal-author-filter__pill">
+            <span className="journal-author-filter__label">{messages.journal.authorFilterLabel}</span>
+            <span className="journal-author-filter__value">{author}</span>
           </span>
-          <button type="button" className="tag-filter__item" onClick={clearAuthor}>
-            {messages.search.clearFilter}
+          <button type="button" className="journal-author-filter__clear" onClick={clearAuthor}>
+            {messages.journal.clearAuthor}
           </button>
         </div>
-      )}
+      ) : null}
 
       <EditFeedback feedback={archiveFeedback} />
 
-      <div className="journal-list">
-        {posts.map((post) => (
-          <div className="journal-card" key={post.slug}>
-            <Link to={`/journal/${post.slug}`} className="journal-card__link">
-              <h3>{post.title}</h3>
-              <p className="journal-card__meta">
-                {post.date}
-                {post.archived ? <span className="locale-badge">{messages.auth.archivedBadge}</span> : null}
-              </p>
-              <p>{post.summary}</p>
-            </Link>
-            {canManage && (
-              <div className="journal-card__actions">
-                <Link to={`/admin/journal?edit=${encodeURIComponent(post.id)}`} className="button">
-                  {messages.auth.editPost}
+      {posts.length > 0 ? (
+        <ul className="journal-list" aria-label={messages.journal.listLabel}>
+          {posts.map((post) => (
+            <li
+              key={post.slug}
+              className={`journal-card${post.archived ? ' journal-card--archived' : ''}`}
+            >
+              <article>
+                <Link to={`/journal/${post.slug}`} className="journal-card__link">
+                  <h2 className="journal-card__title">{post.title}</h2>
+                  <p className="journal-card__meta">
+                    {/^\d{4}-\d{2}-\d{2}$/.test(post.date) ? (
+                      <time dateTime={post.date}>{post.date}</time>
+                    ) : (
+                      <span>{post.date}</span>
+                    )}
+                    {post.archived ? (
+                      <span className="journal-card__badge">{messages.auth.archivedBadge}</span>
+                    ) : null}
+                  </p>
+                  {post.summary ? <p className="journal-card__summary">{post.summary}</p> : null}
                 </Link>
-                <button
-                  type="button"
-                  className="button"
-                  disabled={archivingSlug === post.slug}
-                  onClick={() => void toggleArchived(post)}
-                >
-                  {post.archived ? messages.auth.unarchivePost : messages.auth.archivePost}
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+                {canManage ? (
+                  <div className="journal-card__actions" role="group" aria-label={messages.journal.cardActionsLabel}>
+                    <Link
+                      to={`/admin/journal?edit=${encodeURIComponent(post.id)}`}
+                      className="button journal-card__action"
+                    >
+                      {messages.auth.editPost}
+                    </Link>
+                    <button
+                      type="button"
+                      className="button journal-card__action"
+                      disabled={archivingSlug === post.slug}
+                      onClick={() => void toggleArchived(post)}
+                    >
+                      {post.archived ? messages.auth.unarchivePost : messages.auth.archivePost}
+                    </button>
+                  </div>
+                ) : null}
+              </article>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <section
+          className="journal-empty"
+          aria-labelledby={hasAuthorFilter ? 'journal-empty-author-title' : 'journal-empty-title'}
+        >
+          <span className="journal-empty__deco" aria-hidden="true" />
+          {hasAuthorFilter && author ? (
+            <>
+              <h2 id="journal-empty-author-title" className="journal-empty__title">
+                {fillAuthor(messages.journal.emptyAuthorTitle, author)}
+              </h2>
+              <p className="journal-empty__body">
+                {fillAuthor(messages.journal.emptyAuthorBody, author)}
+              </p>
+              <button type="button" className="button button--primary" onClick={clearAuthor}>
+                {messages.journal.clearAuthor}
+              </button>
+            </>
+          ) : (
+            <>
+              <h2 id="journal-empty-title" className="journal-empty__title">
+                {messages.journal.emptyTitle}
+              </h2>
+              <p className="journal-empty__body">{messages.journal.emptyBody}</p>
+            </>
+          )}
+        </section>
+      )}
     </div>
   )
 }
