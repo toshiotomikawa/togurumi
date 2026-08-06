@@ -141,6 +141,14 @@ function FaqPage() {
     }))
   }
 
+  function moveItemByOffset(index: number, offset: number) {
+    const target = index + offset
+    updateDraft((current) => {
+      if (target < 0 || target >= current.items.length) return current
+      return { ...current, items: moveItem(current.items, index, target) }
+    })
+  }
+
   function startDrag(index: number) {
     dragIndexRef.current = index
     overIndexRef.current = index
@@ -213,8 +221,8 @@ function FaqPage() {
 
   if (editing && draft) {
     return (
-      <div className="page page--narrow">
-        <section className="hero">
+      <div className="page page--faq page--faq-editing">
+        <section className="faq-hero faq-hero--editing">
           <label className="form-field">
             <span>{messages.faqEditor.eyebrowLabel}</span>
             <input
@@ -236,11 +244,12 @@ function FaqPage() {
             <textarea
               value={draft.intro}
               onChange={(event) => updateDraft((current) => ({ ...current, intro: event.target.value }))}
+              rows={3}
             />
           </label>
         </section>
 
-        <div className="faq-list">
+        <div className="faq-list faq-list--editing" role="list" aria-label={messages.faqEditor.questionLabel}>
           {draft.items.map((item, index) => (
             <div
               className={`faq-item faq-item--editing${dragIndex === index ? ' faq-item--dragging' : ''}${
@@ -248,26 +257,51 @@ function FaqPage() {
               }`}
               key={index}
               data-faq-index={index}
+              role="listitem"
             >
               <div className="faq-item__row">
-                <button
-                  type="button"
-                  className="faq-item__drag-handle"
-                  aria-label={messages.faqEditor.reorderLabel}
-                  title={messages.faqEditor.reorderLabel}
-                  onPointerDown={(event) => {
-                    event.preventDefault()
-                    startDrag(index)
-                  }}
-                >
-                  <DragHandleIcon />
-                </button>
+                <div className="faq-item__controls">
+                  <button
+                    type="button"
+                    className="faq-item__drag-handle"
+                    aria-label={messages.faqEditor.reorderLabel}
+                    title={messages.faqEditor.reorderLabel}
+                    disabled={saving}
+                    onPointerDown={(event) => {
+                      event.preventDefault()
+                      startDrag(index)
+                    }}
+                  >
+                    <DragHandleIcon />
+                  </button>
+                  <button
+                    type="button"
+                    className="button faq-item__move"
+                    aria-label={messages.faqEditor.moveUp}
+                    title={messages.faqEditor.moveUp}
+                    disabled={saving || index === 0}
+                    onClick={() => moveItemByOffset(index, -1)}
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    className="button faq-item__move"
+                    aria-label={messages.faqEditor.moveDown}
+                    title={messages.faqEditor.moveDown}
+                    disabled={saving || index === draft.items.length - 1}
+                    onClick={() => moveItemByOffset(index, 1)}
+                  >
+                    ↓
+                  </button>
+                </div>
                 <div className="faq-item__fields">
                   <label className="form-field">
                     <span>{messages.faqEditor.questionLabel}</span>
                     <input
                       type="text"
                       value={item.question}
+                      disabled={saving}
                       onChange={(event) =>
                         updateDraft((current) => ({
                           ...current,
@@ -282,6 +316,8 @@ function FaqPage() {
                     <span>{messages.faqEditor.answerLabel}</span>
                     <textarea
                       value={item.answer}
+                      disabled={saving}
+                      rows={4}
                       onChange={(event) =>
                         updateDraft((current) => ({
                           ...current,
@@ -292,7 +328,12 @@ function FaqPage() {
                       }
                     />
                   </label>
-                  <button type="button" className="button button--danger" onClick={() => removeItem(index)}>
+                  <button
+                    type="button"
+                    className="button button--danger"
+                    disabled={saving}
+                    onClick={() => removeItem(index)}
+                  >
                     {messages.faqEditor.removeItem}
                   </button>
                 </div>
@@ -301,8 +342,15 @@ function FaqPage() {
           ))}
         </div>
 
+        {draft.items.length === 0 ? (
+          <div className="faq-empty faq-empty--editing">
+            <p className="faq-empty__title">{messages.faq.emptyTitle}</p>
+            <p className="faq-empty__body">{messages.faq.emptyBody}</p>
+          </div>
+        ) : null}
+
         <div className="faq-editor__actions">
-          <button type="button" className="button" onClick={addItem}>
+          <button type="button" className="button" onClick={addItem} disabled={saving}>
             {messages.faqEditor.addItem}
           </button>
           <button type="button" className="button button--primary" onClick={() => void save()} disabled={saving}>
@@ -314,7 +362,10 @@ function FaqPage() {
         </div>
 
         {feedback && (
-          <p className={`editor-feedback editor-feedback--${feedback.kind}`} role="status">
+          <p
+            className={`editor-feedback editor-feedback--${feedback.kind}`}
+            role={feedback.kind === 'error' ? 'alert' : 'status'}
+          >
             {feedback.text}
           </p>
         )}
@@ -323,15 +374,15 @@ function FaqPage() {
   }
 
   return (
-    <div className="page page--narrow">
-      <section className="hero">
-        <span className="hero__eyebrow">{faq.eyebrow}</span>
-        <h1>{faq.title}</h1>
-        <p>{faq.intro}</p>
+    <div className="page page--faq">
+      <section className="faq-hero">
+        <span className="faq-hero__eyebrow">{faq.eyebrow}</span>
+        <h1 className="faq-hero__title">{faq.title}</h1>
+        <p className="faq-hero__intro">{faq.intro}</p>
       </section>
 
       {canEdit && (
-        <div className="faq-editor__actions">
+        <div className="faq-editor__actions faq-editor__actions--view">
           <button
             type="button"
             className="button icon-button"
@@ -345,19 +396,34 @@ function FaqPage() {
       )}
 
       {feedback && (
-        <p className={`editor-feedback editor-feedback--${feedback.kind}`} role="status">
+        <p
+          className={`editor-feedback editor-feedback--${feedback.kind}`}
+          role={feedback.kind === 'error' ? 'alert' : 'status'}
+        >
           {feedback.text}
         </p>
       )}
 
-      <div className="faq-list">
-        {faq.items.map((item) => (
-          <details className="faq-item" key={item.question}>
-            <summary>{item.question}</summary>
-            <p>{item.answer}</p>
-          </details>
-        ))}
-      </div>
+      {faq.items.length > 0 ? (
+        <div className="faq-list">
+          {faq.items.map((item, index) => (
+            <details className="faq-item" key={`${index}-${item.question}`}>
+              <summary>
+                <span className="faq-item__question">{item.question}</span>
+                <span className="faq-item__indicator" aria-hidden="true" />
+              </summary>
+              <div className="faq-item__answer">
+                <p>{item.answer}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+      ) : (
+        <div className="faq-empty">
+          <p className="faq-empty__title">{messages.faq.emptyTitle}</p>
+          <p className="faq-empty__body">{messages.faq.emptyBody}</p>
+        </div>
+      )}
     </div>
   )
 }
