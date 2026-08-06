@@ -50,6 +50,19 @@ function createEmptyForm(): JournalFormState {
   }
 }
 
+function resolveNewPostLocale(requestedLocale: string | null): SupportedLocale {
+  return localeOptions.includes(requestedLocale as SupportedLocale)
+    ? (requestedLocale as SupportedLocale)
+    : 'en-US'
+}
+
+/** Bootstrap "new post" form state from the URL once (avoids setState-in-effect). */
+function getNewPostBootstrap(params: URLSearchParams): { locale: SupportedLocale } | null {
+  if (params.get('edit') !== null) return null
+  if (params.get('new') === null) return null
+  return { locale: resolveNewPostLocale(params.get('locale')) }
+}
+
 function getErrorCode(payload: unknown): string | null {
   if (!payload || typeof payload !== 'object') return null
 
@@ -108,9 +121,12 @@ function JournalEditorPage() {
   const [posts, setPosts] = useState<JournalPostRecord[]>([])
   const [loadingPosts, setLoadingPosts] = useState(true)
   const [feedback, setFeedback] = useState<Feedback | null>(null)
-  const [formVisible, setFormVisible] = useState(false)
+  const [newPostBootstrap] = useState(() => getNewPostBootstrap(searchParams))
+  const [formVisible, setFormVisible] = useState(() => newPostBootstrap !== null)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [form, setForm] = useState<JournalFormState>(() => createEmptyForm())
+  const [form, setForm] = useState<JournalFormState>(() =>
+    newPostBootstrap ? { ...createEmptyForm(), locale: newPostBootstrap.locale } : createEmptyForm(),
+  )
   const [saving, setSaving] = useState(false)
 
   const loadPosts = useCallback(async () => {
@@ -160,18 +176,10 @@ function JournalEditorPage() {
       return
     }
 
-    if (searchParams.get('new') === null) return
-
-    const requestedLocale = searchParams.get('locale')
-    const nextLocale = localeOptions.includes(requestedLocale as SupportedLocale)
-      ? (requestedLocale as SupportedLocale)
-      : 'en-US'
-
-    setFeedback(null)
-    setEditingId(null)
-    setForm({ ...createEmptyForm(), locale: nextLocale })
-    setFormVisible(true)
-    setSearchParams({}, { replace: true })
+    // Form state for ?new was applied during useState init; only clear the URL here.
+    if (searchParams.get('new') !== null) {
+      setSearchParams({}, { replace: true })
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps -- open once from /journal links
 
   const groupedPosts = useMemo(() => {
