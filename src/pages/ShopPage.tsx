@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { EditActions, EditFeedback, EditField } from '../components/EditableContent'
-import ProductCard from '../components/ProductCard'
+import ProductCard, { ProductCardSkeleton } from '../components/ProductCard'
 import { useEditableContent } from '../hooks/useEditableContent'
 import { useLocale } from '../hooks/useLocale'
 import { useShopProducts } from '../hooks/useShopProducts'
 import { TOGURUMI_INSTAGRAM_DM } from '../lib/togurumi'
 
+const SKELETON_COUNT = 6
+
 function ShopPage() {
   const { messages, locale } = useLocale()
-  const { products } = useShopProducts()
+  const { products, loaded } = useShopProducts()
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const editor = useEditableContent('shop', locale, messages.shop, messages.contentEditor.draftRestored)
 
@@ -18,9 +20,9 @@ function ShopPage() {
     : products
 
   return (
-    <div className="page">
+    <div className="page page--shop">
       {editor.editing && editor.draft ? (
-        <section className="hero">
+        <section className="shop-hero">
           <div className="content-editor__fields">
             <EditField
               label={messages.contentEditor.fields.eyebrow}
@@ -41,10 +43,10 @@ function ShopPage() {
           </div>
         </section>
       ) : (
-        <section className="hero">
-          <span className="hero__eyebrow">{editor.content.eyebrow}</span>
-          <h1>{editor.content.title}</h1>
-          <p>{editor.content.intro}</p>
+        <section className="shop-hero">
+          <span className="shop-hero__eyebrow">{editor.content.eyebrow}</span>
+          <h1 className="shop-hero__title">{editor.content.title}</h1>
+          <p className="shop-hero__intro">{editor.content.intro}</p>
         </section>
       )}
 
@@ -63,18 +65,31 @@ function ShopPage() {
 
       <EditFeedback feedback={editor.feedback} />
 
-      <section className="section">
+      <section className="section shop-catalog">
         <div className="section__head">
           <h2>{messages.shop.availableHeading}</h2>
         </div>
         <p className="shop-delivery-note">{messages.shop.deliveryNotice}</p>
-        {products.length > 0 ? (
+
+        {!loaded ? (
+          <div
+            className="card-grid card-grid--products"
+            aria-busy="true"
+            aria-live="polite"
+            aria-label={messages.shop.loadingLabel}
+          >
+            {Array.from({ length: SKELETON_COUNT }, (_, index) => (
+              <ProductCardSkeleton key={`skeleton-${index}`} />
+            ))}
+          </div>
+        ) : products.length > 0 ? (
           <>
             {categories.length > 1 && (
-              <div className="tag-filter">
+              <div className="tag-filter" role="group" aria-label={messages.shop.availableHeading}>
                 <button
                   type="button"
                   className={`tag-filter__item${activeCategory === null ? ' tag-filter__item--active' : ''}`}
+                  aria-pressed={activeCategory === null}
                   onClick={() => setActiveCategory(null)}
                 >
                   {messages.shop.allCategories}
@@ -84,6 +99,7 @@ function ShopPage() {
                     type="button"
                     key={category}
                     className={`tag-filter__item${activeCategory === category ? ' tag-filter__item--active' : ''}`}
+                    aria-pressed={activeCategory === category}
                     onClick={() => setActiveCategory(category)}
                   >
                     {category}
@@ -91,23 +107,37 @@ function ShopPage() {
                 ))}
               </div>
             )}
-            <div className="card-grid">
-              {visibleProducts.map((product) => (
-                <ProductCard product={product} key={product.name} />
-              ))}
-            </div>
+
+            {visibleProducts.length > 0 ? (
+              <div className="card-grid card-grid--products">
+                {visibleProducts.map((product) => (
+                  <ProductCard product={product} key={product.name} />
+                ))}
+              </div>
+            ) : (
+              <div className="shop-empty">
+                <p className="shop-empty__title">{messages.shop.filterEmptyTitle}</p>
+                <p className="shop-empty__body">{messages.shop.filterEmptyBody}</p>
+                <button type="button" className="button" onClick={() => setActiveCategory(null)}>
+                  {messages.shop.allCategories}
+                </button>
+              </div>
+            )}
           </>
         ) : (
-          <p>{messages.shop.availableEmpty}</p>
+          <div className="shop-empty">
+            <p className="shop-empty__title">{messages.shop.emptyTitle}</p>
+            <p className="shop-empty__body">{messages.shop.availableEmpty}</p>
+          </div>
         )}
       </section>
 
-      <section className="section">
+      <section className="section shop-patterns">
         <div className="section__head">
           <h2>{messages.shop.patternsHeading}</h2>
         </div>
-        <p>{messages.shop.patternsIntro}</p>
-        <div className="card-grid">
+        <p className="shop-patterns__intro">{messages.shop.patternsIntro}</p>
+        <div className="card-grid card-grid--patterns">
           {messages.shop.patternsItems.map((pattern) =>
             pattern.action === 'commission' ? (
               <a
