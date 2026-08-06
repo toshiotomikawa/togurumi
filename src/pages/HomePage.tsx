@@ -6,6 +6,7 @@ import { useEditableContent } from '../hooks/useEditableContent'
 import { useLocale } from '../hooks/useLocale'
 import { useShopProducts } from '../hooks/useShopProducts'
 import { getJournalPosts } from '../lib/journal'
+import { formatPrice } from '../lib/shop'
 import { TOGURUMI_LATEST_VIDEO, TOGURUMI_YOUTUBE } from '../lib/togurumi'
 
 function HomePage() {
@@ -16,6 +17,7 @@ function HomePage() {
 
   const highlights = products.filter((product) => product.highlight)
   const comingSoonSlots = products.length > 0 ? (3 - (products.length % 3)) % 3 : 0
+  const featuredProduct = highlights[0] ?? products[0]
 
   return (
     <div className="page">
@@ -97,19 +99,30 @@ function HomePage() {
           </div>
         </section>
       ) : (
-        <section className="hero">
-          <span aria-hidden="true" className="hero__yarn-ball" />
-          <span className="hero__eyebrow hero__eyebrow--katakana">{editor.content.eyebrow}</span>
-          <h1>{editor.content.title}</h1>
-          <p>{editor.content.intro}</p>
-          <div className="hero__actions">
-            <Link to="/shop" className="button button--primary">
-              {editor.content.shopCta}
-            </Link>
-            <Link to="/journal" className="button">
-              {editor.content.journalCta}
-            </Link>
+        <section className={`hero${featuredProduct ? ' hero--split' : ''}`}>
+          <div className="hero__copy">
+            <span className="hero__eyebrow hero__eyebrow--katakana">{editor.content.eyebrow}</span>
+            <h1>{editor.content.title}</h1>
+            <p>{editor.content.intro}</p>
+            <div className="hero__actions">
+              <Link to="/shop" className="button button--primary">
+                {editor.content.shopCta}
+              </Link>
+              <Link to="/journal" className="button">
+                {editor.content.journalCta}
+              </Link>
+            </div>
           </div>
+          {featuredProduct?.image && (
+            <div className="hero__media">
+              <img src={featuredProduct.image} alt={featuredProduct.name} />
+              <div className="hero__media-tag">
+                <span className="hero__media-eyebrow">{messages.shop.newBadge}</span>
+                <span className="hero__media-name">{featuredProduct.name}</span>
+                <span className="hero__media-price">{formatPrice(featuredProduct.price, locale)}</span>
+              </div>
+            </div>
+          )}
         </section>
       )}
 
