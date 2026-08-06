@@ -281,6 +281,11 @@ export type Messages = {
     empty: string
     remove: string
   }
+  faq: {
+    emptyTitle: string
+    emptyBody: string
+    opensExternally: string
+  }
   faqEditor: {
     editButton: string
     doneButton: string
@@ -292,6 +297,8 @@ export type Messages = {
     addItem: string
     removeItem: string
     reorderLabel: string
+    moveUp: string
+    moveDown: string
     save: string
     cancel: string
     saveSuccess: string
@@ -649,6 +656,11 @@ const enUS: Messages = {
     empty: 'No reviews yet, be the first to share one!',
     remove: 'Remove',
   },
+  faq: {
+    emptyTitle: 'The notebook is resting',
+    emptyBody: 'No questions here yet. Check back soon, or reach out on the contact page.',
+    opensExternally: 'Opens in a new tab',
+  },
   faqEditor: {
     editButton: 'Edit this page',
     doneButton: 'Done editing',
@@ -660,6 +672,8 @@ const enUS: Messages = {
     addItem: 'Add question',
     removeItem: 'Remove',
     reorderLabel: 'Drag to reorder',
+    moveUp: 'Move question up',
+    moveDown: 'Move question down',
     save: 'Save',
     cancel: 'Cancel',
     saveSuccess: 'FAQ saved.',
@@ -1017,6 +1031,11 @@ const ptBR: Messages = {
     empty: 'Ainda não há avaliações, seja a primeira a deixar uma!',
     remove: 'Remover',
   },
+  faq: {
+    emptyTitle: 'O caderno está descansando',
+    emptyBody: 'Ainda não há perguntas por aqui. Volte em breve ou fale conosco na página de contato.',
+    opensExternally: 'Abre em uma nova aba',
+  },
   faqEditor: {
     editButton: 'Editar esta página',
     doneButton: 'Concluir edição',
@@ -1028,6 +1047,8 @@ const ptBR: Messages = {
     addItem: 'Adicionar pergunta',
     removeItem: 'Remover',
     reorderLabel: 'Arraste para reordenar',
+    moveUp: 'Mover pergunta para cima',
+    moveDown: 'Mover pergunta para baixo',
     save: 'Salvar',
     cancel: 'Cancelar',
     saveSuccess: 'Dúvidas salvas.',
@@ -1385,6 +1406,11 @@ const esES: Messages = {
     empty: 'Todavía no hay reseñas, sé la primera en dejar una.',
     remove: 'Eliminar',
   },
+  faq: {
+    emptyTitle: 'El cuaderno está en pausa',
+    emptyBody: 'Aún no hay preguntas aquí. Vuelve pronto o escríbenos en la página de contacto.',
+    opensExternally: 'Se abre en una pestaña nueva',
+  },
   faqEditor: {
     editButton: 'Editar esta página',
     doneButton: 'Terminar edición',
@@ -1396,6 +1422,8 @@ const esES: Messages = {
     addItem: 'Agregar pregunta',
     removeItem: 'Eliminar',
     reorderLabel: 'Arrastra para reordenar',
+    moveUp: 'Mover pregunta hacia arriba',
+    moveDown: 'Mover pregunta hacia abajo',
     save: 'Guardar',
     cancel: 'Cancelar',
     saveSuccess: 'Preguntas frecuentes guardadas.',
