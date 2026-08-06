@@ -1,13 +1,65 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { EditActions, EditFeedback, EditField } from '../components/EditableContent'
-import ProductCard, { ProductComingSoonCard } from '../components/ProductCard'
+import ProductCard, { ProductCardSkeleton, ProductComingSoonCard } from '../components/ProductCard'
 import ReviewsSection from '../components/ReviewsSection'
 import { useEditableContent } from '../hooks/useEditableContent'
 import { useLocale } from '../hooks/useLocale'
 import { useShopProducts } from '../hooks/useShopProducts'
+import type { SupportedLocale } from '../lib/i18n'
 import { getJournalPosts } from '../lib/journal'
-import { formatPrice } from '../lib/shop'
-import { TOGURUMI_LATEST_VIDEO, TOGURUMI_YOUTUBE } from '../lib/togurumi'
+import { formatPrice, isRecentlyReleased, type ShopProduct } from '../lib/shop'
+import {
+  TOGURUMI_INSTAGRAM_DM,
+  TOGURUMI_LATEST_VIDEO,
+  TOGURUMI_YOUTUBE,
+} from '../lib/togurumi'
+
+const STORE_SKELETON_COUNT = 6
+
+function isIsoDate(value: string) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value)
+}
+
+function HeroFeaturedMedia({
+  product,
+  locale,
+  newBadge,
+  photoComingSoon,
+}: {
+  product: ShopProduct
+  locale: SupportedLocale
+  newBadge: string
+  photoComingSoon: string
+}) {
+  // Track the failed URL so a catalog refresh with a new image can retry without loops.
+  const [failedUrl, setFailedUrl] = useState<string | null>(null)
+  const imageUrl = product.image ?? ''
+  const showImage = Boolean(imageUrl) && failedUrl !== imageUrl
+  const isNew = isRecentlyReleased(product.releaseDate)
+
+  return (
+    <div className="hero__media">
+      {showImage ? (
+        <img
+          src={imageUrl}
+          alt={product.name}
+          onError={() => setFailedUrl(imageUrl)}
+        />
+      ) : (
+        <div className="hero__media-placeholder" role="img" aria-label={photoComingSoon}>
+          <span className="hero__media-placeholder-yarn" aria-hidden="true" />
+          <span className="hero__media-placeholder-label">{photoComingSoon}</span>
+        </div>
+      )}
+      <div className="hero__media-tag">
+        {isNew ? <span className="hero__media-eyebrow">{newBadge}</span> : null}
+        <span className="hero__media-name">{product.name}</span>
+        <span className="hero__media-price">{formatPrice(product.price, locale)}</span>
+      </div>
+    </div>
+  )
+}
 
 function HomePage() {
   const { messages, locale } = useLocale()
@@ -18,9 +70,11 @@ function HomePage() {
   const highlights = products.filter((product) => product.highlight)
   const comingSoonSlots = products.length > 0 ? (3 - (products.length % 3)) % 3 : 0
   const featuredProduct = highlights[0] ?? products[0]
+  const showHeroMediaSlot = !loaded || Boolean(featuredProduct)
+  const latestHasIsoDate = latest ? isIsoDate(latest.date) : false
 
   return (
-    <div className="page">
+    <div className="page page--home">
       {editor.editing && editor.draft ? (
         <section className="hero">
           <div className="content-editor__fields">
@@ -99,7 +153,7 @@ function HomePage() {
           </div>
         </section>
       ) : (
-        <section className={`hero${featuredProduct ? ' hero--split' : ''}`}>
+        <section className={`hero${showHeroMediaSlot ? ' hero--split' : ''}`}>
           <div className="hero__copy">
             <span className="hero__eyebrow hero__eyebrow--katakana">{editor.content.eyebrow}</span>
             <h1>{editor.content.title}</h1>
@@ -113,16 +167,18 @@ function HomePage() {
               </Link>
             </div>
           </div>
-          {featuredProduct?.image && (
-            <div className="hero__media">
-              <img src={featuredProduct.image} alt={featuredProduct.name} />
-              <div className="hero__media-tag">
-                <span className="hero__media-eyebrow">{messages.shop.newBadge}</span>
-                <span className="hero__media-name">{featuredProduct.name}</span>
-                <span className="hero__media-price">{formatPrice(featuredProduct.price, locale)}</span>
-              </div>
+          {!loaded ? (
+            <div className="hero__media hero__media--skeleton" aria-hidden="true">
+              <div className="hero__media-skeleton-block" />
             </div>
-          )}
+          ) : featuredProduct ? (
+            <HeroFeaturedMedia
+              product={featuredProduct}
+              locale={locale}
+              newBadge={messages.shop.newBadge}
+              photoComingSoon={messages.shop.photoComingSoon}
+            />
+          ) : null}
         </section>
       )}
 
@@ -141,27 +197,38 @@ function HomePage() {
 
       <EditFeedback feedback={editor.feedback} />
 
-      {highlights.length > 0 && (
-        <section className="section">
+      {loaded && highlights.length > 0 ? (
+        <section className="section home-highlights">
           <div className="section__head">
             <h2>{editor.content.highlightsHeading}</h2>
             <Link to="/shop">{editor.content.viewAll}</Link>
           </div>
-          <div className="card-grid">
+          <div className="card-grid card-grid--products">
             {highlights.map((product) => (
               <ProductCard product={product} key={product.name} />
             ))}
           </div>
         </section>
-      )}
+      ) : null}
 
-      <section className="section">
+      <section className="section home-store">
         <div className="section__head">
           <h2>{editor.content.storeHeading}</h2>
           <Link to="/shop">{editor.content.viewAll}</Link>
         </div>
-        {products.length > 0 ? (
-          <div className="card-grid">
+        {!loaded ? (
+          <div
+            className="card-grid card-grid--products"
+            aria-busy="true"
+            aria-live="polite"
+            aria-label={messages.shop.loadingLabel}
+          >
+            {Array.from({ length: STORE_SKELETON_COUNT }, (_, index) => (
+              <ProductCardSkeleton key={`home-store-skeleton-${index}`} />
+            ))}
+          </div>
+        ) : products.length > 0 ? (
+          <div className="card-grid card-grid--products">
             {products.map((product) => (
               <ProductCard product={product} key={product.name} />
             ))}
@@ -169,9 +236,25 @@ function HomePage() {
               <ProductComingSoonCard key={`coming-soon-${index}`} />
             ))}
           </div>
-        ) : loaded ? (
-          <p>{messages.shop.availableEmpty}</p>
-        ) : null}
+        ) : (
+          <div className="shop-empty home-store-empty">
+            <p className="shop-empty__title">{messages.shop.emptyTitle}</p>
+            <p className="shop-empty__body">{messages.shop.availableEmpty}</p>
+            <div className="home-store-empty__actions">
+              <Link to="/shop" className="button button--primary">
+                {editor.content.shopCta}
+              </Link>
+              <a
+                href={TOGURUMI_INSTAGRAM_DM}
+                className="button"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {messages.shop.commissionCta}
+              </a>
+            </div>
+          </div>
+        )}
       </section>
 
       <section className="section youtube-feature">
@@ -190,7 +273,12 @@ function HomePage() {
             >
               {editor.content.youtubeVideoCta}
             </a>
-            <a href={TOGURUMI_YOUTUBE} className="button button--youtube" target="_blank" rel="noopener noreferrer">
+            <a
+              href={TOGURUMI_YOUTUBE}
+              className="button button--youtube"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {editor.content.youtubeChannelCta}
             </a>
           </div>
@@ -198,18 +286,25 @@ function HomePage() {
       </section>
 
       {latest ? (
-        <section className="section">
+        <section className="section home-journal-preview">
           <div className="section__head">
             <h2>{editor.content.journalHeading}</h2>
             <Link to="/journal">{editor.content.allEntries}</Link>
           </div>
-          <div className="journal-list">
-            <Link to={`/journal/${latest.slug}`} className="journal-card">
-              <h3>{latest.title}</h3>
-              <p className="journal-card__meta">{latest.date}</p>
-              <p>{latest.summary}</p>
-            </Link>
-          </div>
+          <Link to={`/journal/${latest.slug}`} className="home-journal-card">
+            <div className="home-journal-card__body">
+              <h3 className="home-journal-card__title">{latest.title}</h3>
+              <p className="home-journal-card__meta">
+                {latestHasIsoDate ? (
+                  <time dateTime={latest.date}>{latest.date}</time>
+                ) : (
+                  <span>{latest.date}</span>
+                )}
+              </p>
+              {latest.summary ? <p className="home-journal-card__summary">{latest.summary}</p> : null}
+              <span className="home-journal-card__cta">{editor.content.allEntries}</span>
+            </div>
+          </Link>
         </section>
       ) : null}
 
