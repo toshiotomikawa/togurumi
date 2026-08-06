@@ -229,11 +229,30 @@ export type Messages = {
     ariaLabel: string
     eyebrow: string
     title: string
+    intro: string
     empty: string
+    emptyTitle: string
+    emptyBody: string
     remove: string
+    removeItem: string
     total: string
     continueShopping: string
     checkoutNote: string
+    itemCountOne: string
+    itemCountMany: string
+    linesOne: string
+    linesMany: string
+    linesLabel: string
+    unitsLabel: string
+    unitPrice: string
+    lineSubtotal: string
+    summaryTitle: string
+    increaseQuantity: string
+    decreaseQuantity: string
+    quantityLabel: string
+    quantityIncreasedFeedback: string
+    quantityDecreasedFeedback: string
+    removedFeedback: string
   }
   reviews: {
     eyebrow: string
@@ -569,11 +588,30 @@ const enUS: Messages = {
     ariaLabel: 'Cart',
     eyebrow: 'Cart',
     title: 'Your cart',
+    intro: 'Review your handmade pieces here. Quantities stay on this device until you are ready to reach out.',
     empty: "Your cart is empty. Go find something to love.",
+    emptyTitle: 'Your cart is resting',
+    emptyBody: 'The shelf is full of soft friends waiting to come home. Browse the shop and add a piece you love.',
     remove: 'Remove',
+    removeItem: 'Remove {name} from cart',
     total: 'Total',
     continueShopping: 'Continue shopping',
     checkoutNote: "Checkout isn't quite ready yet, we'll let you know as soon as it's open!",
+    itemCountOne: '1 piece',
+    itemCountMany: '{count} pieces',
+    linesOne: '1 line',
+    linesMany: '{count} lines',
+    linesLabel: 'Lines',
+    unitsLabel: 'Pieces',
+    unitPrice: '{price} each',
+    lineSubtotal: 'Line total {price}',
+    summaryTitle: 'Order summary',
+    increaseQuantity: 'Increase quantity of {name}',
+    decreaseQuantity: 'Decrease quantity of {name}',
+    quantityLabel: 'Quantity of {name}: {quantity}',
+    quantityIncreasedFeedback: 'Quantity of {name} is now {quantity}.',
+    quantityDecreasedFeedback: 'Quantity of {name} is now {quantity}.',
+    removedFeedback: '{name} removed from cart.',
   },
   reviews: {
     eyebrow: 'Reviews',
@@ -909,11 +947,30 @@ const ptBR: Messages = {
     ariaLabel: 'Carrinho',
     eyebrow: 'Carrinho',
     title: 'Seu carrinho',
+    intro: 'Revise aqui as peças feitas à mão. As quantidades ficam neste aparelho até você entrar em contato.',
     empty: 'Seu carrinho está vazio. Vá encontrar algo para amar.',
+    emptyTitle: 'Seu carrinho está descansando',
+    emptyBody: 'A prateleira está cheia de amiguinhos macios esperando um lar. Explore a loja e adicione uma peça que você ame.',
     remove: 'Remover',
+    removeItem: 'Remover {name} do carrinho',
     total: 'Total',
     continueShopping: 'Continuar comprando',
     checkoutNote: 'A finalização de compra ainda não está disponível, em breve avisaremos quando estiver pronta!',
+    itemCountOne: '1 peça',
+    itemCountMany: '{count} peças',
+    linesOne: '1 linha',
+    linesMany: '{count} linhas',
+    linesLabel: 'Linhas',
+    unitsLabel: 'Peças',
+    unitPrice: '{price} cada',
+    lineSubtotal: 'Subtotal da linha {price}',
+    summaryTitle: 'Resumo do pedido',
+    increaseQuantity: 'Aumentar quantidade de {name}',
+    decreaseQuantity: 'Diminuir quantidade de {name}',
+    quantityLabel: 'Quantidade de {name}: {quantity}',
+    quantityIncreasedFeedback: 'Quantidade de {name} agora é {quantity}.',
+    quantityDecreasedFeedback: 'Quantidade de {name} agora é {quantity}.',
+    removedFeedback: '{name} removido do carrinho.',
   },
   reviews: {
     eyebrow: 'Avaliações',
@@ -1249,11 +1306,30 @@ const esES: Messages = {
     ariaLabel: 'Carrito',
     eyebrow: 'Carrito',
     title: 'Tu carrito',
+    intro: 'Revisa aquí las piezas hechas a mano. Las cantidades se guardan en este dispositivo hasta que contactes.',
     empty: 'Tu carrito está vacío. Ve a encontrar algo para amar.',
+    emptyTitle: 'Tu carrito está en pausa',
+    emptyBody: 'La estantería está llena de amiguitos suaves esperando un hogar. Explora la tienda y añade una pieza que ames.',
     remove: 'Eliminar',
+    removeItem: 'Eliminar {name} del carrito',
     total: 'Total',
     continueShopping: 'Seguir comprando',
     checkoutNote: 'El pago todavía no está disponible, ¡te avisaremos en cuanto esté listo!',
+    itemCountOne: '1 pieza',
+    itemCountMany: '{count} piezas',
+    linesOne: '1 línea',
+    linesMany: '{count} líneas',
+    linesLabel: 'Líneas',
+    unitsLabel: 'Piezas',
+    unitPrice: '{price} cada una',
+    lineSubtotal: 'Subtotal de la línea {price}',
+    summaryTitle: 'Resumen del pedido',
+    increaseQuantity: 'Aumentar cantidad de {name}',
+    decreaseQuantity: 'Disminuir cantidad de {name}',
+    quantityLabel: 'Cantidad de {name}: {quantity}',
+    quantityIncreasedFeedback: 'La cantidad de {name} ahora es {quantity}.',
+    quantityDecreasedFeedback: 'La cantidad de {name} ahora es {quantity}.',
+    removedFeedback: '{name} eliminado del carrito.',
   },
   reviews: {
     eyebrow: 'Reseñas',
