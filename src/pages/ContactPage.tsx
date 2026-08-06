@@ -24,7 +24,15 @@ function YouTubeIcon() {
 
 function MailIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
       <rect x="3" y="5" width="18" height="14" rx="2" />
       <path d="m3 7 9 6 9-6" />
     </svg>
@@ -33,7 +41,15 @@ function MailIcon() {
 
 function CommissionIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
       <path d="M12 3 13.4 7.6 18 9l-4.6 1.4L12 15l-1.4-4.6L6 9l4.6-1.4L12 3Z" />
       <path d="m18.5 14 .8 2.7 2.7.8-2.7.8-.8 2.7-.8-2.7-2.7-.8 2.7-.8.8-2.7Z" />
       <path d="m5 13 .7 2.3L8 16l-2.3.7L5 19l-.7-2.3L2 16l2.3-.7L5 13Z" />
@@ -96,9 +112,9 @@ function ContactPage() {
   }
 
   return (
-    <div className="page page--narrow">
+    <div className="page page--contact">
       {editing && about.draft ? (
-        <section className="hero">
+        <section className="contact-hero contact-hero--editing">
           <div className="content-editor__fields">
             <EditField
               label={messages.contentEditor.fields.eyebrow}
@@ -119,10 +135,12 @@ function ContactPage() {
           </div>
         </section>
       ) : (
-        <section className="hero">
-          <span className="hero__eyebrow">{about.content.eyebrow}</span>
-          <h1>{about.content.title}</h1>
-          <Paragraphs text={about.content.intro} />
+        <section className="contact-hero">
+          <span className="contact-hero__eyebrow">{about.content.eyebrow}</span>
+          <h1 className="contact-hero__title">{about.content.title}</h1>
+          <div className="contact-hero__intro">
+            <Paragraphs text={about.content.intro} />
+          </div>
         </section>
       )}
 
@@ -141,77 +159,88 @@ function ContactPage() {
 
       <EditFeedback feedback={feedback} />
 
-      {editing && about.draft ? (
-        <section className="section">
-          <div className="content-editor__fields">
-            <EditField
-              label={messages.contentEditor.fields.storyHeading}
-              value={about.draft.storyHeading}
-              onChange={(value) => about.updateField('storyHeading', value)}
-            />
-            <EditField
-              label={messages.contentEditor.fields.storyBody}
-              value={about.draft.storyBody}
-              multiline
-              onChange={(value) => about.updateField('storyBody', value)}
-            />
-          </div>
-        </section>
-      ) : (
-        <section className="section">
-          <h2>{about.content.storyHeading}</h2>
-          <Paragraphs text={about.content.storyBody} />
-        </section>
-      )}
+      <div className="contact-story-grid">
+        {editing && about.draft ? (
+          <section className="contact-story-card contact-story-card--editing">
+            <div className="content-editor__fields">
+              <EditField
+                label={messages.contentEditor.fields.storyHeading}
+                value={about.draft.storyHeading}
+                onChange={(value) => about.updateField('storyHeading', value)}
+              />
+              <EditField
+                label={messages.contentEditor.fields.storyBody}
+                value={about.draft.storyBody}
+                multiline
+                onChange={(value) => about.updateField('storyBody', value)}
+              />
+            </div>
+          </section>
+        ) : (
+          <section className="contact-story-card">
+            <h2 className="contact-story-card__title">{about.content.storyHeading}</h2>
+            <div className="contact-story-card__body">
+              <Paragraphs text={about.content.storyBody} />
+            </div>
+          </section>
+        )}
 
-      {editing && about.draft ? (
-        <section className="section">
-          <div className="content-editor__fields">
-            <EditField
-              label={messages.contentEditor.fields.whyHeading}
-              value={about.draft.whyHeading}
-              onChange={(value) => about.updateField('whyHeading', value)}
-            />
-            <EditField
-              label={messages.contentEditor.fields.whyBody}
-              value={about.draft.whyBody}
-              multiline
-              onChange={(value) => about.updateField('whyBody', value)}
-            />
-          </div>
-        </section>
-      ) : (
-        <section className="section">
-          <h2>{about.content.whyHeading}</h2>
-          <Paragraphs text={about.content.whyBody} />
-        </section>
-      )}
+        {editing && about.draft ? (
+          <section className="contact-story-card contact-story-card--editing">
+            <div className="content-editor__fields">
+              <EditField
+                label={messages.contentEditor.fields.whyHeading}
+                value={about.draft.whyHeading}
+                onChange={(value) => about.updateField('whyHeading', value)}
+              />
+              <EditField
+                label={messages.contentEditor.fields.whyBody}
+                value={about.draft.whyBody}
+                multiline
+                onChange={(value) => about.updateField('whyBody', value)}
+              />
+            </div>
+          </section>
+        ) : (
+          <section className="contact-story-card">
+            <h2 className="contact-story-card__title">{about.content.whyHeading}</h2>
+            <div className="contact-story-card__body">
+              <Paragraphs text={about.content.whyBody} />
+            </div>
+          </section>
+        )}
 
-      {editing && about.draft ? (
-        <section className="section">
-          <div className="content-editor__fields">
-            <EditField
-              label={messages.contentEditor.fields.nameHeading}
-              value={about.draft.nameHeading}
-              onChange={(value) => about.updateField('nameHeading', value)}
-            />
-            <EditField
-              label={messages.contentEditor.fields.nameBody}
-              value={about.draft.nameBody}
-              multiline
-              onChange={(value) => about.updateField('nameBody', value)}
-            />
-          </div>
-        </section>
-      ) : (
-        <section className="section">
-          <h2>{about.content.nameHeading}</h2>
-          <Paragraphs text={about.content.nameBody} />
-        </section>
-      )}
+        {editing && about.draft ? (
+          <section className="contact-story-card contact-story-card--editing contact-story-card--wide">
+            <div className="content-editor__fields">
+              <EditField
+                label={messages.contentEditor.fields.nameHeading}
+                value={about.draft.nameHeading}
+                onChange={(value) => about.updateField('nameHeading', value)}
+              />
+              <EditField
+                label={messages.contentEditor.fields.nameBody}
+                value={about.draft.nameBody}
+                multiline
+                onChange={(value) => about.updateField('nameBody', value)}
+              />
+            </div>
+          </section>
+        ) : (
+          <section className="contact-story-card contact-story-card--wide">
+            <h2 className="contact-story-card__title">{about.content.nameHeading}</h2>
+            <div className="contact-story-card__body">
+              <Paragraphs text={about.content.nameBody} />
+            </div>
+          </section>
+        )}
+      </div>
 
-      {editing && contact.draft ? (
-        <section className="section">
+      <section
+        className="section contact-channels"
+        aria-labelledby={editing && contact.draft ? undefined : 'contact-channels-heading'}
+      >
+        {editing && contact.draft ? (
           <div className="content-editor__fields">
             <EditField
               label={messages.contentEditor.fields.title}
@@ -224,82 +253,88 @@ function ContactPage() {
               multiline
               onChange={(value) => contact.updateField('intro', value)}
             />
+            <EditField
+              label={messages.contentEditor.fields.instagram}
+              value={contact.draft.instagram}
+              onChange={(value) => contact.updateField('instagram', value)}
+            />
+            <EditField
+              label={messages.contentEditor.fields.youtube}
+              value={contact.draft.youtube}
+              onChange={(value) => contact.updateField('youtube', value)}
+            />
+            <EditField
+              label={messages.contentEditor.fields.email}
+              value={contact.draft.email}
+              onChange={(value) => contact.updateField('email', value)}
+            />
+            <EditField
+              label={messages.contentEditor.fields.commissions}
+              value={contact.draft.commissions}
+              onChange={(value) => contact.updateField('commissions', value)}
+            />
+            <EditField
+              label={messages.contentEditor.fields.commissionsBody}
+              value={contact.draft.commissionsBody}
+              multiline
+              onChange={(value) => contact.updateField('commissionsBody', value)}
+            />
           </div>
-        </section>
-      ) : (
-        <section className="section">
-          <h2>{contact.content.title}</h2>
-          <Paragraphs text={contact.content.intro} />
-        </section>
-      )}
-
-      {editing && contact.draft ? (
-        <div className="content-editor__fields">
-          <EditField
-            label={messages.contentEditor.fields.instagram}
-            value={contact.draft.instagram}
-            onChange={(value) => contact.updateField('instagram', value)}
-          />
-          <EditField
-            label={messages.contentEditor.fields.youtube}
-            value={contact.draft.youtube}
-            onChange={(value) => contact.updateField('youtube', value)}
-          />
-          <EditField
-            label={messages.contentEditor.fields.email}
-            value={contact.draft.email}
-            onChange={(value) => contact.updateField('email', value)}
-          />
-          <EditField
-            label={messages.contentEditor.fields.commissions}
-            value={contact.draft.commissions}
-            onChange={(value) => contact.updateField('commissions', value)}
-          />
-          <EditField
-            label={messages.contentEditor.fields.commissionsBody}
-            value={contact.draft.commissionsBody}
-            multiline
-            onChange={(value) => contact.updateField('commissionsBody', value)}
-          />
-        </div>
-      ) : (
-        <>
-          <div className="contact-list">
-            {contactMethods.map((method) => (
-              <div className="card contact-card" key={method.id}>
-                <span className={`contact-card__icon ${method.iconClassName}`}>{method.icon}</span>
-                <div className="contact-card__content">
-                  <h3>{method.label}</h3>
-                  <p>
-                    <a
-                      href={method.href}
-                      target={method.external ? '_blank' : undefined}
-                      rel={method.external ? 'noopener noreferrer' : undefined}
-                    >
-                      {method.value}
-                    </a>
-                  </p>
-                </div>
+        ) : (
+          <>
+            <div className="contact-channels__intro">
+              <h2 id="contact-channels-heading" className="contact-channels__title">
+                {contact.content.title}
+              </h2>
+              <div className="contact-channels__body">
+                <Paragraphs text={contact.content.intro} />
               </div>
-            ))}
-          </div>
-
-          <a
-            className="card contact-commission contact-commission--link"
-            href={TOGURUMI_INSTAGRAM_DM}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span className="contact-card__icon contact-card__icon--commissions">
-              <CommissionIcon />
-            </span>
-            <div className="contact-card__content">
-              <h3>{contact.content.commissions}</h3>
-              <Paragraphs text={contact.content.commissionsBody} />
             </div>
-          </a>
-        </>
-      )}
+
+            <ul className="contact-list">
+              {contactMethods.map((method) => (
+                <li key={method.id}>
+                  <a
+                    className="card contact-card contact-card--link"
+                    href={method.href}
+                    target={method.external ? '_blank' : undefined}
+                    rel={method.external ? 'noopener noreferrer' : undefined}
+                  >
+                    <span className={`contact-card__icon ${method.iconClassName}`} aria-hidden="true">
+                      {method.icon}
+                    </span>
+                    <span className="contact-card__content">
+                      <span className="contact-card__label">{method.label}</span>
+                      <span className="contact-card__value">{method.value}</span>
+                      {method.external ? (
+                        <span className="contact-card__external">{messages.faq.opensExternally}</span>
+                      ) : null}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <a
+              className="card contact-commission contact-commission--link"
+              href={TOGURUMI_INSTAGRAM_DM}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="contact-card__icon contact-card__icon--commissions" aria-hidden="true">
+                <CommissionIcon />
+              </span>
+              <span className="contact-card__content">
+                <span className="contact-commission__title">{contact.content.commissions}</span>
+                <span className="contact-commission__body contact-commission__body--text">
+                  {contact.content.commissionsBody}
+                </span>
+                <span className="contact-card__external">{messages.faq.opensExternally}</span>
+              </span>
+            </a>
+          </>
+        )}
+      </section>
     </div>
   )
 }
