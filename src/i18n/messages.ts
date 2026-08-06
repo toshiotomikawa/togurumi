@@ -197,10 +197,33 @@ export type Messages = {
     ariaLabel: string
     eyebrow: string
     title: string
+    intro: string
     placeholder: string
     noResults: string
     filteringBy: string
     clearFilter: string
+    clearQuery: string
+    loadingLabel: string
+    resultsAll: string
+    resultsAllOne: string
+    resultsForQuery: string
+    resultsForQueryOne: string
+    resultsInCategory: string
+    resultsInCategoryOne: string
+    resultsForQueryInCategory: string
+    resultsForQueryInCategoryOne: string
+    showingCount: string
+    showMore: string
+    browseHint: string
+    catalogEmptySummary: string
+    catalogEmptyTitle: string
+    catalogEmptyBody: string
+    emptyQueryTitle: string
+    emptyQueryBody: string
+    emptyCategoryTitle: string
+    emptyCategoryBody: string
+    emptyBothTitle: string
+    emptyBothBody: string
   }
   cart: {
     ariaLabel: string
@@ -514,10 +537,33 @@ const enUS: Messages = {
     ariaLabel: 'Search',
     eyebrow: 'Search',
     title: 'Find a piece',
+    intro: 'Search by name, category, yarn, color, or designer. Filters stay in the URL so you can share or bookmark a result.',
     placeholder: 'Search by name, type, yarn...',
     noResults: 'No pieces match your search.',
     filteringBy: 'Filtering by',
-    clearFilter: 'Clear filter',
+    clearFilter: 'Clear category',
+    clearQuery: 'Clear search',
+    loadingLabel: 'Loading search results',
+    resultsAll: '{count} pieces in the catalog',
+    resultsAllOne: '1 piece in the catalog',
+    resultsForQuery: '{count} results for “{query}”',
+    resultsForQueryOne: '1 result for “{query}”',
+    resultsInCategory: '{count} pieces in {category}',
+    resultsInCategoryOne: '1 piece in {category}',
+    resultsForQueryInCategory: '{count} results for “{query}” in {category}',
+    resultsForQueryInCategoryOne: '1 result for “{query}” in {category}',
+    showingCount: 'Showing {visible} of {total}',
+    showMore: 'Show more',
+    browseHint: 'Start typing above to narrow the catalog, or open a piece to see details.',
+    catalogEmptySummary: 'The catalog is empty right now',
+    catalogEmptyTitle: 'The shelf is resting',
+    catalogEmptyBody: 'New handmade pieces will appear here as soon as they are ready.',
+    emptyQueryTitle: 'No pieces match “{query}”',
+    emptyQueryBody: 'Try another name, yarn, color, or designer — or clear the search to browse everything.',
+    emptyCategoryTitle: 'Nothing in {category} right now',
+    emptyCategoryBody: 'Clear the category filter to see the rest of the shop.',
+    emptyBothTitle: 'No matches for “{query}” in {category}',
+    emptyBothBody: 'Clear the search, the category, or both to widen the results.',
   },
   cart: {
     ariaLabel: 'Cart',
@@ -831,10 +877,33 @@ const ptBR: Messages = {
     ariaLabel: 'Buscar',
     eyebrow: 'Busca',
     title: 'Encontre uma peça',
+    intro: 'Busque por nome, categoria, fio, cor ou designer. Os filtros ficam na URL para você compartilhar ou salvar o resultado.',
     placeholder: 'Busque por nome, tipo, fio...',
     noResults: 'Nenhuma peça encontrada para sua busca.',
     filteringBy: 'Filtrando por',
-    clearFilter: 'Limpar filtro',
+    clearFilter: 'Limpar categoria',
+    clearQuery: 'Limpar busca',
+    loadingLabel: 'Carregando resultados da busca',
+    resultsAll: '{count} peças no catálogo',
+    resultsAllOne: '1 peça no catálogo',
+    resultsForQuery: '{count} resultados para “{query}”',
+    resultsForQueryOne: '1 resultado para “{query}”',
+    resultsInCategory: '{count} peças em {category}',
+    resultsInCategoryOne: '1 peça em {category}',
+    resultsForQueryInCategory: '{count} resultados para “{query}” em {category}',
+    resultsForQueryInCategoryOne: '1 resultado para “{query}” em {category}',
+    showingCount: 'Mostrando {visible} de {total}',
+    showMore: 'Mostrar mais',
+    browseHint: 'Digite acima para refinar o catálogo, ou abra uma peça para ver os detalhes.',
+    catalogEmptySummary: 'O catálogo está vazio no momento',
+    catalogEmptyTitle: 'A prateleira está descansando',
+    catalogEmptyBody: 'Novas peças feitas à mão aparecem aqui assim que estiverem prontas.',
+    emptyQueryTitle: 'Nenhuma peça para “{query}”',
+    emptyQueryBody: 'Tente outro nome, fio, cor ou designer — ou limpe a busca para ver tudo.',
+    emptyCategoryTitle: 'Nada em {category} por agora',
+    emptyCategoryBody: 'Limpe o filtro de categoria para ver o restante da loja.',
+    emptyBothTitle: 'Nada para “{query}” em {category}',
+    emptyBothBody: 'Limpe a busca, a categoria ou as duas para ampliar os resultados.',
   },
   cart: {
     ariaLabel: 'Carrinho',
@@ -1148,10 +1217,33 @@ const esES: Messages = {
     ariaLabel: 'Buscar',
     eyebrow: 'Búsqueda',
     title: 'Encuentra una pieza',
+    intro: 'Busca por nombre, categoría, hilo, color o diseñador. Los filtros se guardan en la URL para compartir o guardar el resultado.',
     placeholder: 'Busca por nombre, tipo, hilo...',
     noResults: 'Ninguna pieza coincide con tu búsqueda.',
     filteringBy: 'Filtrando por',
-    clearFilter: 'Limpiar filtro',
+    clearFilter: 'Limpiar categoría',
+    clearQuery: 'Limpiar búsqueda',
+    loadingLabel: 'Cargando resultados de búsqueda',
+    resultsAll: '{count} piezas en el catálogo',
+    resultsAllOne: '1 pieza en el catálogo',
+    resultsForQuery: '{count} resultados para “{query}”',
+    resultsForQueryOne: '1 resultado para “{query}”',
+    resultsInCategory: '{count} piezas en {category}',
+    resultsInCategoryOne: '1 pieza en {category}',
+    resultsForQueryInCategory: '{count} resultados para “{query}” en {category}',
+    resultsForQueryInCategoryOne: '1 resultado para “{query}” en {category}',
+    showingCount: 'Mostrando {visible} de {total}',
+    showMore: 'Mostrar más',
+    browseHint: 'Escribe arriba para afinar el catálogo, o abre una pieza para ver los detalles.',
+    catalogEmptySummary: 'El catálogo está vacío por ahora',
+    catalogEmptyTitle: 'La estantería está en pausa',
+    catalogEmptyBody: 'Las nuevas piezas hechas a mano aparecerán aquí en cuanto estén listas.',
+    emptyQueryTitle: 'Ninguna pieza para “{query}”',
+    emptyQueryBody: 'Prueba otro nombre, hilo, color o diseñador — o limpia la búsqueda para verlo todo.',
+    emptyCategoryTitle: 'Nada en {category} por ahora',
+    emptyCategoryBody: 'Limpia el filtro de categoría para ver el resto de la tienda.',
+    emptyBothTitle: 'Nada para “{query}” en {category}',
+    emptyBothBody: 'Limpia la búsqueda, la categoría o ambas para ampliar los resultados.',
   },
   cart: {
     ariaLabel: 'Carrito',
