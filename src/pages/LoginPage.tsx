@@ -27,6 +27,31 @@ function GoogleIcon() {
   )
 }
 
+function LockIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="auth-lock__icon">
+      <rect
+        x="4.5"
+        y="10.5"
+        width="15"
+        height="10"
+        rx="3"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <path
+        d="M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <circle cx="12" cy="15.4" r="1.5" fill="currentColor" />
+    </svg>
+  )
+}
+
 function LoginPage() {
   const { messages } = useLocale()
   const { user, loading, login } = useAuth()
@@ -49,32 +74,44 @@ function LoginPage() {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (submitting) return
+
     setError(null)
     setSubmitting(true)
 
-    const result = await login(username, password)
-    if (!result.ok) {
-      setError(getErrorMessage(result.error))
+    try {
+      const result = await login(username, password)
+      if (!result.ok) setError(getErrorMessage(result.error))
+    } catch {
+      setError(messages.auth.genericError)
+    } finally {
       setSubmitting(false)
-      return
     }
-
-    setSubmitting(false)
   }
 
   if (loading || user) {
     return (
-      <div className="auth-route-loading" aria-live="polite">
+      <div className="auth-route-loading" role="status" aria-live="polite">
         <span className="spinner" aria-hidden="true" />
+        <span className="visually-hidden">{messages.auth.loadingLabel}</span>
       </div>
     )
   }
 
   return (
-    <div className="page page--narrow auth-page">
+    <div className="page page--auth auth-page">
+      <span className="auth-page__ornament" aria-hidden="true" />
+
       <section className="card auth-card">
-        <h1>{messages.auth.loginTitle}</h1>
-        <p>{messages.auth.loginIntro}</p>
+        <p className="auth-card__eyebrow">
+          <span className="auth-lock" aria-hidden="true">
+            <LockIcon />
+          </span>
+          {messages.auth.restrictedEyebrow}
+        </p>
+
+        <h1 className="auth-card__title">{messages.auth.loginTitle}</h1>
+        <p className="auth-card__intro">{messages.auth.loginIntro}</p>
 
         <form className="auth-form" onSubmit={onSubmit}>
           <label className="form-field">
@@ -101,7 +138,8 @@ function LoginPage() {
           </p>
 
           <button type="submit" className="button button--primary auth-submit" disabled={submitting}>
-            {messages.auth.submit}
+            {submitting && <span className="spinner spinner--inline" aria-hidden="true" />}
+            {submitting ? messages.auth.submitting : messages.auth.submit}
           </button>
         </form>
 
@@ -120,6 +158,8 @@ function LoginPage() {
           <span>{messages.auth.googleButton}</span>
           <span className="badge">{messages.auth.comingSoon}</span>
         </button>
+
+        <p className="auth-card__note">{messages.auth.restrictedNote}</p>
       </section>
     </div>
   )
