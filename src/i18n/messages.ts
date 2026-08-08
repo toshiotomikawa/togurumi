@@ -103,6 +103,10 @@ export type Messages = {
     showPassword: string
     hidePassword: string
     accountMenuLabel: string
+    restrictedEyebrow: string
+    restrictedNote: string
+    submitting: string
+    loadingLabel: string
   }
   footer: {
     tagline: string
@@ -201,6 +205,12 @@ export type Messages = {
     title: string
     body: string
     button: string
+    shopButton: string
+  }
+  legal: {
+    eyebrow: string
+    tocTitle: string
+    tocLabel: string
   }
   search: {
     ariaLabel: string
@@ -438,6 +448,11 @@ const enUS: Messages = {
     showPassword: 'Show password',
     hidePassword: 'Hide password',
     accountMenuLabel: 'Account',
+    restrictedEyebrow: 'Restricted area',
+    restrictedNote:
+      'Browsing, searching, and the shopping bag never need an account — this page is only for the Togurumi team.',
+    submitting: 'Signing in…',
+    loadingLabel: 'Loading',
   },
   footer: {
     tagline: 'made with a hook and a lot of yarn',
@@ -576,6 +591,12 @@ const enUS: Messages = {
     title: "This stitch doesn't exist",
     body: "The page you're looking for has unraveled. Let's get you back on track.",
     button: 'Back home',
+    shopButton: 'Browse the shop',
+  },
+  legal: {
+    eyebrow: 'Legal information',
+    tocTitle: 'On this page',
+    tocLabel: 'Policy sections',
   },
   search: {
     ariaLabel: 'Search',
@@ -813,6 +834,11 @@ const ptBR: Messages = {
     showPassword: 'Mostrar senha',
     hidePassword: 'Ocultar senha',
     accountMenuLabel: 'Conta',
+    restrictedEyebrow: 'Área restrita',
+    restrictedNote:
+      'Navegar, buscar e usar a sacola nunca exigem conta — esta página é apenas para a equipe do Togurumi.',
+    submitting: 'Entrando…',
+    loadingLabel: 'Carregando',
   },
   footer: {
     tagline: 'feito com uma agulha e muito fio',
@@ -951,6 +977,12 @@ const ptBR: Messages = {
     title: 'Este ponto não existe',
     body: 'A página que você procura se desfiou. Vamos te colocar de volta no caminho.',
     button: 'Voltar ao início',
+    shopButton: 'Ver a loja',
+  },
+  legal: {
+    eyebrow: 'Informações legais',
+    tocTitle: 'Nesta página',
+    tocLabel: 'Seções da política',
   },
   search: {
     ariaLabel: 'Buscar',
@@ -1188,6 +1220,11 @@ const esES: Messages = {
     showPassword: 'Mostrar contraseña',
     hidePassword: 'Ocultar contraseña',
     accountMenuLabel: 'Cuenta',
+    restrictedEyebrow: 'Área restringida',
+    restrictedNote:
+      'Navegar, buscar y usar la bolsa nunca requieren una cuenta — esta página es solo para el equipo de Togurumi.',
+    submitting: 'Entrando…',
+    loadingLabel: 'Cargando',
   },
   footer: {
     tagline: 'hecho con una aguja y mucho hilo',
@@ -1326,6 +1363,12 @@ const esES: Messages = {
     title: 'Esta puntada no existe',
     body: 'La página que buscas se ha deshilado. Vamos a regresarte al buen camino.',
     button: 'Volver al inicio',
+    shopButton: 'Ver la tienda',
+  },
+  legal: {
+    eyebrow: 'Información legal',
+    tocTitle: 'En esta página',
+    tocLabel: 'Secciones de la política',
   },
   search: {
     ariaLabel: 'Buscar',
