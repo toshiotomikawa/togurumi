@@ -217,6 +217,26 @@ a:active {
   flex: 1;
 }
 
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  z-index: 100;
+  width: max-content;
+  max-width: calc(100% - 24px);
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--ink);
+  color: var(--ink-soft);
+  font-weight: 700;
+  text-align: center;
+  transform: translate(-50%, -200%);
+}
+
+.skip-link:focus {
+  transform: translate(-50%, 0);
+}
+
 /* Global focus ring (v3 a11y) */
 :focus-visible {
   outline: 2px solid var(--accent);
@@ -872,8 +892,8 @@ a:active {
 }
 
 .button--youtube {
-  background: #ff0033;
-  border-color: #ff0033;
+  background: #df002c;
+  border-color: #df002c;
   color: #fff;
 }
 
