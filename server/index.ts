@@ -30,7 +30,8 @@ import { SiteContentError, getSiteContentSection, updateSiteContentSection } fro
 import { FileSessionStore } from './sessionStore'
 import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sheets'
 import { getProductImageTargets, getShopProducts, setProductImage } from './shop'
-import { ensureSeedUser, findUser, createGoogleUser, findUserByGoogleId, saveUser, type UserRecord } from './store'
+import { createRuntimeUserStore } from './persistence/userStore'
+import type { UserRecord } from './store'
 
 const PORT = Number(process.env.API_PORT ?? 8788)
 const APP_URL = process.env.APP_URL ?? 'http://localhost:5174'
@@ -38,6 +39,7 @@ const SESSION_SECRET = process.env.SESSION_SECRET ?? 'dev-only-change-me'
 const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000
 const ALLOWED_ORIGINS = buildAllowedOrigins(APP_URL)
 const sessionStore = new FileSessionStore(SESSION_SECRET)
+const userStore = createRuntimeUserStore()
 
 if (process.env.NODE_ENV === 'production' && SESSION_SECRET === 'dev-only-change-me') {
   throw new Error('Set SESSION_SECRET in production')
@@ -125,7 +127,7 @@ async function requireStaff(req: express.Request, res: express.Response, next: e
     return
   }
 
-  const user = await findUser(req.session.userId)
+  const user = await userStore.findByUsername(req.session.userId)
   if (!user || !['admin', 'moderator'].includes(user.role)) {
     res.status(403).json({ error: 'forbidden' })
     return
@@ -179,7 +181,7 @@ app.get('/api/auth/me', async (req, res) => {
     return
   }
 
-  const user = await findUser(req.session.userId)
+  const user = await userStore.findByUsername(req.session.userId)
   if (!user) {
     req.session.destroy(() => undefined)
     res.json({ user: null })
@@ -203,7 +205,7 @@ app.post('/api/auth/login', async (req, res) => {
     return
   }
 
-  const user = await findUser(username)
+  const user = await userStore.findByUsername(username)
 
   if (!user || !user.passwordHash || !(await bcrypt.compare(password, user.passwordHash))) {
     registerFailure(key)
@@ -222,7 +224,7 @@ function isValidEmail(value: string) {
 app.post('/api/auth/password', requireAuth, async (req, res) => {
   const currentPassword = String(req.body?.currentPassword ?? '')
   const newPassword = String(req.body?.newPassword ?? '')
-  const user = await findUser(req.session.userId ?? '')
+  const user = await userStore.findByUsername(req.session.userId ?? '')
 
   if (!user) {
     res.status(401).json({ error: 'unauthorized' })
@@ -240,12 +242,12 @@ app.post('/api/auth/password', requireAuth, async (req, res) => {
   }
 
   user.passwordHash = await bcrypt.hash(newPassword, 12)
-  await saveUser(user)
+  await userStore.save(user)
   res.json({ ok: true })
 })
 
 app.post('/api/auth/profile', requireAuth, async (req, res) => {
-  const user = await findUser(req.session.userId ?? '')
+  const user = await userStore.findByUsername(req.session.userId ?? '')
 
   if (!user) {
     res.status(401).json({ error: 'unauthorized' })
@@ -270,7 +272,7 @@ app.post('/api/auth/profile', requireAuth, async (req, res) => {
     user.displayName = displayName
   }
 
-  await saveUser(user)
+  await userStore.save(user)
   res.json({ user: toPublicUser(user) })
 })
 
@@ -310,9 +312,9 @@ app.get('/api/auth/google/callback', async (req, res) => {
 
   try {
     const profile = await fetchGoogleProfile(code)
-    let user = await findUserByGoogleId(profile.sub)
+    let user = await userStore.findByGoogleId(profile.sub)
     if (!user) {
-      user = await createGoogleUser(profile.sub, profile.email, 'moderator')
+      user = await userStore.createWithGoogle(profile.sub, profile.email, 'moderator')
     }
 
     await establishAuthSession(req, user.username)
@@ -631,13 +633,6 @@ app.post('/api/sheets/:tab/append', requireAuth, async (req, res) => {
     throw err
   }
 })
-
-await ensureSeedUser(process.env.ADMIN_USERNAME ?? 'admin', process.env.ADMIN_PASSWORD ?? 'change-me', 'admin')
-await ensureSeedUser(
-  process.env.MODERATOR_USERNAME ?? 'moderator',
-  process.env.MODERATOR_PASSWORD ?? 'change-me',
-  'moderator',
-)
 
 app.listen(PORT, () => {
   console.log(`Auth API http://localhost:${PORT}`)
