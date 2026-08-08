@@ -10,7 +10,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "sheets:auth": "tsx server/scripts/sheets-auth.ts"
+    "sheets:auth": "tsx server/scripts/sheets-auth.ts",
+    "persistence:import": "tsx server/persistence/importLegacy.ts",
+    "test:persistence": "tsx --test server/persistence/*.test.ts"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -19,6 +21,7 @@
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "google-auth-library": "^10.7.0",
+    "pg": "^8.23.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-markdown": "^10.1.0",
@@ -26,12 +29,14 @@
     "sharp": "^0.35.2"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.4",
     "@eslint/js": "^10.0.1",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
     "@types/express-session": "^1.19.0",
     "@types/node": "^24.12.3",
+    "@types/pg": "^8.21.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
