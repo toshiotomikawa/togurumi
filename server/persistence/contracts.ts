@@ -49,4 +49,7 @@ export interface SessionStore {
 
 export interface RateLimitStore {
   consume(key: string, limit: number, windowMs: number): Promise<boolean>
+  reset(key: string): Promise<void>
+  isLoginBlocked(key: string): Promise<boolean>
+  registerLoginFailure(key: string, limit: number, blockMs: number): Promise<void>
 }
