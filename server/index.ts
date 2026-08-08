@@ -27,7 +27,7 @@ import {
 import { FaqError, getFaqContent, updateFaqContent } from './faq'
 import { ReviewError, addReview, deleteReview, listReviews } from './reviews'
 import { SiteContentError, getSiteContentSection, updateSiteContentSection } from './siteContent'
-import { FileSessionStore } from './sessionStore'
+import { createRuntimeSessionStore } from './persistence/sessionStore'
 import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sheets'
 import { getProductImageTargets, getShopProducts, setProductImage } from './shop'
 import { createRuntimeUserStore } from './persistence/userStore'
@@ -38,7 +38,7 @@ const APP_URL = process.env.APP_URL ?? 'http://localhost:5174'
 const SESSION_SECRET = process.env.SESSION_SECRET ?? 'dev-only-change-me'
 const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000
 const ALLOWED_ORIGINS = buildAllowedOrigins(APP_URL)
-const sessionStore = new FileSessionStore(SESSION_SECRET)
+const sessionStore = createRuntimeSessionStore(SESSION_SECRET, SESSION_MAX_AGE_MS)
 const userStore = createRuntimeUserStore()
 
 if (process.env.NODE_ENV === 'production' && SESSION_SECRET === 'dev-only-change-me') {
