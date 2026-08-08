@@ -4175,7 +4175,7 @@ a.product-card:hover {
   place-items: center;
   border-radius: 999px;
   background: var(--accent);
-  color: #fff;
+  color: var(--ink-soft);
   font-size: 0.66rem;
   font-weight: 700;
   line-height: 1;
