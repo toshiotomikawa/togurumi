@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute'
 import SiteFooter from './components/SiteFooter'
 import SiteHeader from './components/SiteHeader'
+import { useLocale } from './hooks/useLocale'
 import AccountPage from './pages/AccountPage'
 import AdminPage from './pages/AdminPage'
 import CartPage from './pages/CartPage'
@@ -20,10 +21,15 @@ import SearchPage from './pages/SearchPage'
 import ShopPage from './pages/ShopPage'
 
 function App() {
+  const { messages } = useLocale()
+
   return (
     <>
+      <a className="skip-link" href="#main-content">
+        {messages.nav.skipToContent}
+      </a>
       <SiteHeader />
-      <main className="site-main">
+      <main id="main-content" className="site-main" tabIndex={-1}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/shop" element={<ShopPage />} />
