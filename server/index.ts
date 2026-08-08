@@ -28,6 +28,7 @@ import { FaqError, getFaqContent, updateFaqContent } from './faq'
 import { ReviewError, addReview, deleteReview, listReviews } from './reviews'
 import { SiteContentError, getSiteContentSection, updateSiteContentSection } from './siteContent'
 import { createRuntimeSessionStore } from './persistence/sessionStore'
+import { createRuntimeRateLimitStore } from './persistence/rateLimitStore'
 import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sheets'
 import { getProductImageTargets, getShopProducts, setProductImage } from './shop'
 import { createRuntimeUserStore } from './persistence/userStore'
@@ -39,6 +40,7 @@ const SESSION_SECRET = process.env.SESSION_SECRET ?? 'dev-only-change-me'
 const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000
 const ALLOWED_ORIGINS = buildAllowedOrigins(APP_URL)
 const sessionStore = createRuntimeSessionStore(SESSION_SECRET, SESSION_MAX_AGE_MS)
+const rateLimitStore = createRuntimeRateLimitStore(SESSION_SECRET)
 const userStore = createRuntimeUserStore()
 
 if (process.env.NODE_ENV === 'production' && SESSION_SECRET === 'dev-only-change-me') {
@@ -55,10 +57,6 @@ declare module 'express-session' {
 
 const app = express()
 app.set('trust proxy', 1)
-
-const loginAttempts = new Map<string, { count: number; until: number }>()
-const reviewSubmissions = new Map<string, number>()
-const imageUploadAttempts = new Map<string, number[]>()
 
 app.use(cookieParser())
 app.use(express.json())
@@ -136,35 +134,6 @@ async function requireStaff(req: express.Request, res: express.Response, next: e
   next()
 }
 
-function allowImageUpload(userId: string) {
-  const now = Date.now()
-  const windowStart = now - 15 * 60 * 1000
-  const recent = (imageUploadAttempts.get(userId) ?? []).filter((time) => time > windowStart)
-  if (recent.length >= 20) return false
-
-  recent.push(now)
-  imageUploadAttempts.set(userId, recent)
-  return true
-}
-
-function rateLimit(key: string) {
-  const now = Date.now()
-  const entry = loginAttempts.get(key)
-  if (entry && entry.until > now) return false
-  if (entry && entry.until <= now) loginAttempts.delete(key)
-  return true
-}
-
-function registerFailure(key: string) {
-  const entry = loginAttempts.get(key) ?? { count: 0, until: 0 }
-  entry.count += 1
-  if (entry.count >= 5) {
-    entry.until = Date.now() + 15 * 60 * 1000
-    entry.count = 0
-  }
-  loginAttempts.set(key, entry)
-}
-
 function toPublicUser(user: UserRecord) {
   return {
     id: user.id,
@@ -200,7 +169,7 @@ app.post('/api/auth/login', async (req, res) => {
   const password = String(req.body?.password ?? '')
   const key = `${req.ip}:${username}`
 
-  if (!rateLimit(key)) {
+  if (await rateLimitStore.isLoginBlocked(key)) {
     res.status(429).json({ error: 'too_many_attempts' })
     return
   }
@@ -208,7 +177,7 @@ app.post('/api/auth/login', async (req, res) => {
   const user = await userStore.findByUsername(username)
 
   if (!user || !user.passwordHash || !(await bcrypt.compare(password, user.passwordHash))) {
-    registerFailure(key)
+    await rateLimitStore.registerLoginFailure(key, 5, 15 * 60 * 1000)
     res.status(401).json({ error: 'invalid_credentials' })
     return
   }
@@ -442,7 +411,7 @@ app.put(
   express.raw({ type: () => true, limit: '8mb' }),
   async (req, res) => {
     const userId = req.session.userId ?? ''
-    if (!allowImageUpload(userId)) {
+    if (!await rateLimitStore.consume(`upload:${userId}`, 20, 15 * 60 * 1000)) {
       res.status(429).json({ error: 'too_many_attempts' })
       return
     }
@@ -494,10 +463,8 @@ app.get('/api/reviews', async (_req, res) => {
 })
 
 app.post('/api/reviews', async (req, res) => {
-  const key = req.ip ?? 'unknown'
-  const now = Date.now()
-  const last = reviewSubmissions.get(key)
-  if (last && now - last < 60_000) {
+  const key = `review:${req.ip ?? 'unknown'}`
+  if (!await rateLimitStore.consume(key, 1, 60_000)) {
     res.status(429).json({ error: 'too_many_attempts' })
     return
   }
@@ -508,10 +475,10 @@ app.post('/api/reviews', async (req, res) => {
       rating: Number(req.body?.rating ?? 0),
       comment: String(req.body?.comment ?? ''),
     })
-    reviewSubmissions.set(key, now)
     res.status(201).json({ review })
   } catch (err) {
     if (err instanceof ReviewError) {
+      await rateLimitStore.reset(key)
       res.status(400).json({ error: err.code })
       return
     }
