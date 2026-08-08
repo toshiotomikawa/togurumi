@@ -25,10 +25,11 @@ import {
   type JournalPostInput,
 } from './journal'
 import { FaqError, getFaqContent, updateFaqContent } from './faq'
-import { ReviewError, addReview, deleteReview, listReviews } from './reviews'
+import { ReviewError } from './reviews'
 import { SiteContentError, getSiteContentSection, updateSiteContentSection } from './siteContent'
 import { createRuntimeSessionStore } from './persistence/sessionStore'
 import { createRuntimeRateLimitStore } from './persistence/rateLimitStore'
+import { createRuntimeReviewStore } from './persistence/reviewStore'
 import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sheets'
 import { getProductImageTargets, getShopProducts, setProductImage } from './shop'
 import { createRuntimeUserStore } from './persistence/userStore'
@@ -41,6 +42,7 @@ const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000
 const ALLOWED_ORIGINS = buildAllowedOrigins(APP_URL)
 const sessionStore = createRuntimeSessionStore(SESSION_SECRET, SESSION_MAX_AGE_MS)
 const rateLimitStore = createRuntimeRateLimitStore(SESSION_SECRET)
+const reviewStore = createRuntimeReviewStore()
 const userStore = createRuntimeUserStore()
 
 if (process.env.NODE_ENV === 'production' && SESSION_SECRET === 'dev-only-change-me') {
@@ -458,7 +460,7 @@ app.put(
 )
 
 app.get('/api/reviews', async (_req, res) => {
-  const reviews = await listReviews()
+  const reviews = await reviewStore.list()
   res.json({ reviews })
 })
 
@@ -470,7 +472,7 @@ app.post('/api/reviews', async (req, res) => {
   }
 
   try {
-    const review = await addReview({
+    const review = await reviewStore.add({
       name: String(req.body?.name ?? ''),
       rating: Number(req.body?.rating ?? 0),
       comment: String(req.body?.comment ?? ''),
@@ -487,7 +489,7 @@ app.post('/api/reviews', async (req, res) => {
 })
 
 app.delete('/api/reviews/:id', requireAuth, async (req, res) => {
-  const ok = await deleteReview(req.params.id)
+  const ok = await reviewStore.delete(req.params.id)
   if (!ok) {
     res.status(404).json({ error: 'not_found' })
     return
