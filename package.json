@@ -11,8 +11,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "sheets:auth": "tsx server/scripts/sheets-auth.ts",
+    "users:bootstrap": "tsx server/persistence/bootstrapUsers.ts",
     "persistence:import": "tsx server/persistence/importLegacy.ts",
-    "test:persistence": "tsx --test server/persistence/*.test.ts"
+    "test:persistence": "tsx --test server/persistence/*.test.ts",
+    "test:users": "tsx --test server/persistence/postgresUserStore.test.ts"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
