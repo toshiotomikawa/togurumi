@@ -16,7 +16,8 @@
     "test:persistence": "tsx --test server/persistence/*.test.ts",
     "test:users": "tsx --test server/persistence/postgresUserStore.test.ts",
     "test:sessions": "tsx --test server/persistence/redisSessionStore.test.ts",
-    "test:rate-limits": "tsx --test server/persistence/rateLimitStore.test.ts"
+    "test:rate-limits": "tsx --test server/persistence/rateLimitStore.test.ts",
+    "test:reviews": "tsx --test server/persistence/postgresReviewStore.test.ts"
   },
   "dependencies": {
     "@upstash/redis": "^1.38.2",
