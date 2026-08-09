@@ -30,6 +30,9 @@ return 1
 
 const LOGIN_FAILURE_SCRIPT = `
 local count = redis.call('INCR', KEYS[1])
+if count == 1 then
+  redis.call('PEXPIRE', KEYS[1], ARGV[2])
+end
 if count >= tonumber(ARGV[1]) then
   redis.call('SET', KEYS[1], 'blocked', 'PX', ARGV[2])
 end
@@ -38,7 +41,7 @@ return count
 
 export class LocalRateLimitStore implements RateLimitStore {
   private readonly windows = new Map<string, number[]>()
-  private readonly loginAttempts = new Map<string, { count: number; until: number }>()
+  private readonly loginAttempts = new Map<string, { count: number; until: number; expiresAt: number }>()
 
   constructor(private readonly now: () => number = Date.now) {}
 
@@ -63,11 +66,14 @@ export class LocalRateLimitStore implements RateLimitStore {
   }
 
   async registerLoginFailure(key: string, limit: number, blockMs: number) {
-    const entry = this.loginAttempts.get(key) ?? { count: 0, until: 0 }
+    const now = this.now()
+    const existing = this.loginAttempts.get(key)
+    const entry = existing && existing.expiresAt > now
+      ? existing
+      : { count: 0, until: 0, expiresAt: now + blockMs }
     entry.count += 1
     if (entry.count >= limit) {
-      entry.until = this.now() + blockMs
-      entry.count = 0
+      entry.until = now + blockMs
     }
     this.loginAttempts.set(key, entry)
   }
