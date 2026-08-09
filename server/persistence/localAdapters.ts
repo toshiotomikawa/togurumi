@@ -2,6 +2,8 @@ import {
   createPost,
   deletePost,
   getPost,
+  getPublicPost,
+  listPublicPosts,
   listAllPosts,
   setPostArchived,
   updatePost,
@@ -51,4 +53,6 @@ export const localJournalStore: JournalStore = {
   update: updatePost,
   delete: deletePost,
   setArchived: setPostArchived,
+  listPublic: listPublicPosts,
+  getPublic: getPublicPost,
 }
