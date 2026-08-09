@@ -20,11 +20,11 @@ export class SiteContentError extends Error {
   }
 }
 
-function isSiteContentLocale(value: string): value is SiteContentLocale {
+export function isSiteContentLocale(value: string): value is SiteContentLocale {
   return value === 'en-US' || value === 'pt-BR' || value === 'es-ES'
 }
 
-function isSiteContentSection(value: string): value is SiteContentSection {
+export function isSiteContentSection(value: string): value is SiteContentSection {
   return (SECTIONS as string[]).includes(value)
 }
 
@@ -55,6 +55,24 @@ const DEFAULTS: SiteContentDatabase = {
   'en-US': buildDefaults('en-US'),
   'pt-BR': buildDefaults('pt-BR'),
   'es-ES': buildDefaults('es-ES'),
+}
+
+export function getSiteContentDefaults(locale: SiteContentLocale, section: SiteContentSection): SiteContentValues {
+  return DEFAULTS[locale][section]
+}
+
+export function normalizeSiteContentUpdate(section: SiteContentSection, content: unknown): SiteContentValues {
+  const data = content as Record<string, unknown> | null
+  if (!data || typeof data !== 'object') throw new SiteContentError('invalid_content')
+
+  const fields = SITE_CONTENT_FIELDS[section] as string[]
+  const next: SiteContentValues = {}
+  for (const field of fields) {
+    const value = data[field]
+    if (typeof value !== 'string' || !value.trim()) throw new SiteContentError('invalid_content')
+    next[field] = value
+  }
+  return next
 }
 
 async function loadDb(): Promise<SiteContentDatabase> {
@@ -93,16 +111,7 @@ export async function updateSiteContentSection(locale: string, section: string, 
   if (!isSiteContentLocale(locale)) throw new SiteContentError('invalid_locale')
   if (!isSiteContentSection(section)) throw new SiteContentError('invalid_section')
 
-  const data = content as Record<string, unknown> | null
-  if (!data || typeof data !== 'object') throw new SiteContentError('invalid_content')
-
-  const fields = SITE_CONTENT_FIELDS[section] as string[]
-  const next: SiteContentValues = {}
-  for (const field of fields) {
-    const value = data[field]
-    if (typeof value !== 'string' || !value.trim()) throw new SiteContentError('invalid_content')
-    next[field] = value
-  }
+  const next = normalizeSiteContentUpdate(section, content)
 
   const db = await loadDb()
   db[locale][section] = next

@@ -25,7 +25,7 @@ export class FaqError extends Error {
   }
 }
 
-function isFaqLocale(value: string): value is FaqLocale {
+export function isFaqLocale(value: string): value is FaqLocale {
   return value === 'en-US' || value === 'pt-BR' || value === 'es-ES'
 }
 
@@ -173,6 +173,33 @@ const DEFAULTS: FaqDatabase = {
   },
 }
 
+export function getFaqDefaults(locale: FaqLocale): FaqContent {
+  return DEFAULTS[locale]
+}
+
+export function normalizeFaqUpdate(content: unknown): FaqContent {
+  const data = content as Partial<FaqContent> | null
+  if (
+    !data ||
+    typeof data.eyebrow !== 'string' ||
+    typeof data.title !== 'string' ||
+    typeof data.intro !== 'string' ||
+    !Array.isArray(data.items) ||
+    !data.items.every((item) => typeof item?.question === 'string' && typeof item?.answer === 'string')
+  ) {
+    throw new FaqError('invalid_content')
+  }
+
+  return {
+    eyebrow: data.eyebrow.trim(),
+    title: data.title.trim(),
+    intro: data.intro.trim(),
+    items: data.items
+      .map((item) => ({ question: item.question.trim(), answer: item.answer.trim() }))
+      .filter((item) => item.question && item.answer),
+  }
+}
+
 async function loadDb(): Promise<FaqDatabase> {
   try {
     const raw = await readFile(faqPath, 'utf8')
@@ -200,26 +227,7 @@ export async function getFaqContent(locale: string): Promise<FaqContent> {
 export async function updateFaqContent(locale: string, content: unknown): Promise<FaqContent> {
   if (!isFaqLocale(locale)) throw new FaqError('invalid_locale')
 
-  const data = content as Partial<FaqContent> | null
-  if (
-    !data ||
-    typeof data.eyebrow !== 'string' ||
-    typeof data.title !== 'string' ||
-    typeof data.intro !== 'string' ||
-    !Array.isArray(data.items) ||
-    !data.items.every((item) => typeof item?.question === 'string' && typeof item?.answer === 'string')
-  ) {
-    throw new FaqError('invalid_content')
-  }
-
-  const next: FaqContent = {
-    eyebrow: data.eyebrow.trim(),
-    title: data.title.trim(),
-    intro: data.intro.trim(),
-    items: data.items
-      .map((item) => ({ question: item.question.trim(), answer: item.answer.trim() }))
-      .filter((item) => item.question && item.answer),
-  }
+  const next = normalizeFaqUpdate(content)
 
   const db = await loadDb()
   db[locale] = next
