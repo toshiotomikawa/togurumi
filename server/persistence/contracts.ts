@@ -1,6 +1,12 @@
 import type { SessionData } from 'express-session'
 import type { FaqContent } from '../faq'
-import type { JournalPostInput, JournalPostRecord } from '../journal'
+import type {
+  JournalLocale,
+  JournalPostInput,
+  JournalPostRecord,
+  PublicJournalPost,
+  PublicJournalPostWithBody,
+} from '../journal'
 import type { ReviewRecord } from '../reviews'
 import type { SiteContentValues } from '../siteContent'
 import type { UserRecord, UserRole } from '../store'
@@ -37,6 +43,8 @@ export interface JournalStore {
   update(id: string, input: JournalPostInput): Promise<JournalPostRecord & { body: string }>
   delete(id: string): Promise<boolean>
   setArchived(id: string, archived: boolean): Promise<JournalPostRecord & { body: string }>
+  listPublic(locale: JournalLocale, author?: string, includeArchived?: boolean): Promise<PublicJournalPost[]>
+  getPublic(slug: string, locale: JournalLocale, includeArchived?: boolean): Promise<PublicJournalPostWithBody | null>
 }
 
 export interface SessionStore {

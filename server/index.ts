@@ -15,12 +15,7 @@ import { fetchGoogleProfile, googleAuthUrl, googleEnabled } from './google'
 import { deleteImageKitFile, ImageKitError, imageKitEnabled, uploadProductImage } from './imageKit'
 import {
   JournalError,
-  createPost,
-  deletePost,
-  getPost,
-  listAllPosts,
-  setPostArchived,
-  updatePost,
+  isJournalLocale,
   type JournalLocale,
   type JournalPostInput,
 } from './journal'
@@ -31,6 +26,7 @@ import { createRuntimeSessionStore } from './persistence/sessionStore'
 import { createRuntimeRateLimitStore } from './persistence/rateLimitStore'
 import { createRuntimeReviewStore } from './persistence/reviewStore'
 import { createRuntimeContentStores } from './persistence/contentStores'
+import { createRuntimeJournalStore } from './persistence/journalStore'
 import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sheets'
 import { getProductImageTargets, getShopProducts, setProductImage } from './shop'
 import { createRuntimeUserStore } from './persistence/userStore'
@@ -45,6 +41,7 @@ const sessionStore = createRuntimeSessionStore(SESSION_SECRET, SESSION_MAX_AGE_M
 const rateLimitStore = createRuntimeRateLimitStore(SESSION_SECRET)
 const reviewStore = createRuntimeReviewStore()
 const { siteContentStore, faqStore } = createRuntimeContentStores()
+const journalStore = createRuntimeJournalStore()
 const userStore = createRuntimeUserStore()
 
 if (process.env.NODE_ENV === 'production' && SESSION_SECRET === 'dev-only-change-me') {
@@ -311,13 +308,42 @@ function parseJournalInput(body: unknown): JournalPostInput {
   }
 }
 
+app.get('/api/public/journal', async (req, res) => {
+  const locale = String(req.query.locale ?? '')
+  if (!isJournalLocale(locale)) {
+    res.status(400).json({ error: 'invalid_input' })
+    return
+  }
+  res.setHeader('Cache-Control', 'no-store')
+  const author = String(req.query.author ?? '').trim() || undefined
+  const includeArchived = req.query.includeArchived === '1' && Boolean(req.session.userId)
+  const posts = await journalStore.listPublic(locale, author, includeArchived)
+  res.json({ posts })
+})
+
+app.get('/api/public/journal/:slug', async (req, res) => {
+  const locale = String(req.query.locale ?? '')
+  if (!isJournalLocale(locale)) {
+    res.status(400).json({ error: 'invalid_input' })
+    return
+  }
+  res.setHeader('Cache-Control', 'no-store')
+  const includeArchived = req.query.includeArchived === '1' && Boolean(req.session.userId)
+  const post = await journalStore.getPublic(req.params.slug, locale, includeArchived)
+  if (!post) {
+    res.status(404).json({ error: 'not_found' })
+    return
+  }
+  res.json({ post })
+})
+
 app.get('/api/journal', requireAuth, async (_req, res) => {
-  const posts = await listAllPosts()
+  const posts = await journalStore.list()
   res.json({ posts })
 })
 
 app.get('/api/journal/:id', requireAuth, async (req, res) => {
-  const post = await getPost(req.params.id)
+  const post = await journalStore.get(req.params.id)
   if (!post) {
     res.status(404).json({ error: 'not_found' })
     return
@@ -327,7 +353,7 @@ app.get('/api/journal/:id', requireAuth, async (req, res) => {
 
 app.post('/api/journal', requireAuth, async (req, res) => {
   try {
-    const post = await createPost(parseJournalInput(req.body))
+    const post = await journalStore.create(parseJournalInput(req.body))
     res.status(201).json({ post })
   } catch (err) {
     if (err instanceof JournalError) {
@@ -340,7 +366,7 @@ app.post('/api/journal', requireAuth, async (req, res) => {
 
 app.put('/api/journal/:id', requireAuth, async (req, res) => {
   try {
-    const post = await updatePost(req.params.id, parseJournalInput(req.body))
+    const post = await journalStore.update(req.params.id, parseJournalInput(req.body))
     res.json({ post })
   } catch (err) {
     if (err instanceof JournalError) {
@@ -353,7 +379,7 @@ app.put('/api/journal/:id', requireAuth, async (req, res) => {
 })
 
 app.delete('/api/journal/:id', requireAuth, async (req, res) => {
-  const ok = await deletePost(req.params.id)
+  const ok = await journalStore.delete(req.params.id)
   if (!ok) {
     res.status(404).json({ error: 'not_found' })
     return
@@ -364,7 +390,7 @@ app.delete('/api/journal/:id', requireAuth, async (req, res) => {
 app.patch('/api/journal/:id/archive', requireAuth, async (req, res) => {
   try {
     const archived = Boolean((req.body as Record<string, unknown> | null)?.archived)
-    const post = await setPostArchived(req.params.id, archived)
+    const post = await journalStore.setArchived(req.params.id, archived)
     res.json({ post })
   } catch (err) {
     if (err instanceof JournalError) {

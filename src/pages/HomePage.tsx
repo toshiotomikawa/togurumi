@@ -5,9 +5,9 @@ import ProductCard, { ProductCardSkeleton, ProductComingSoonCard } from '../comp
 import ReviewsSection from '../components/ReviewsSection'
 import { useEditableContent } from '../hooks/useEditableContent'
 import { useLocale } from '../hooks/useLocale'
+import { useJournalPosts } from '../hooks/useJournal'
 import { useShopProducts } from '../hooks/useShopProducts'
 import type { SupportedLocale } from '../lib/i18n'
-import { getJournalPosts } from '../lib/journal'
 import { formatPrice, isRecentlyReleased, type ShopProduct } from '../lib/shop'
 import {
   TOGURUMI_INSTAGRAM_DM,
@@ -63,7 +63,8 @@ function HeroFeaturedMedia({
 
 function HomePage() {
   const { messages, locale } = useLocale()
-  const latest = getJournalPosts(locale)[0]
+  const { posts: journalPosts, error: journalError } = useJournalPosts(locale)
+  const latest = journalPosts[0]
   const { products, loaded } = useShopProducts()
   const editor = useEditableContent('home', locale, messages.home, messages.contentEditor.draftRestored)
 
@@ -285,7 +286,13 @@ function HomePage() {
         </div>
       </section>
 
-      {latest ? (
+      {journalError ? (
+        <section className="section home-journal-preview">
+          <p className="editor-feedback editor-feedback--error" role="alert">
+            {messages.auth.genericError}
+          </p>
+        </section>
+      ) : latest ? (
         <section className="section home-journal-preview">
           <div className="section__head">
             <h2>{editor.content.journalHeading}</h2>

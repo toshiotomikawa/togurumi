@@ -25,9 +25,15 @@ export type JournalPostInput = {
   archived: boolean
 }
 
+export type PublicJournalPost = JournalPostRecord & {
+  author: string
+}
+
+export type PublicJournalPostWithBody = PublicJournalPost & { body: string }
+
 const journalDir = path.resolve('content/journal')
 
-function isJournalLocale(value: string): value is JournalLocale {
+export function isJournalLocale(value: string): value is JournalLocale {
   return value === 'en-US' || value === 'pt-BR' || value === 'es-ES'
 }
 
@@ -35,8 +41,12 @@ function idToFilename(id: string) {
   return `${id}.md`
 }
 
+export function journalPostId(slug: string, locale: JournalLocale) {
+  return locale === 'en-US' ? slug : `${slug}.${locale}`
+}
+
 function dataToFilename(slug: string, locale: JournalLocale) {
-  return locale === 'en-US' ? `${slug}.md` : `${slug}.${locale}.md`
+  return `${journalPostId(slug, locale)}.md`
 }
 
 function filenameToId(filename: string) {
@@ -60,7 +70,7 @@ function quoteIfNeeded(value: string) {
   return value
 }
 
-function parsePost(id: string, raw: string): JournalPostRecord & { body: string } {
+function parsePost(id: string, raw: string): PublicJournalPostWithBody {
   const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
   const frontmatter = match ? match[1] : ''
   const body = (match ? match[2] : raw).trim()
@@ -83,12 +93,13 @@ function parsePost(id: string, raw: string): JournalPostRecord & { body: string 
     date: fields.date ?? '',
     order: fields.order ? Number(fields.order) : 0,
     summary: fields.summary ?? '',
+    author: fields.author ?? 'Bella',
     archived: fields.archived === 'true',
     body,
   }
 }
 
-function serializePost(data: JournalPostInput): string {
+function serializePost(data: JournalPostInput, author = 'Bella'): string {
   const frontmatter = [
     `title: ${quoteIfNeeded(data.title)}`,
     `slug: ${data.slug}`,
@@ -96,6 +107,7 @@ function serializePost(data: JournalPostInput): string {
     `date: ${data.date}`,
     `order: ${data.order}`,
     `summary: ${quoteIfNeeded(data.summary)}`,
+    `author: ${quoteIfNeeded(author)}`,
     `archived: ${data.archived}`,
   ].join('\n')
 
@@ -126,7 +138,11 @@ export async function listAllPosts(): Promise<JournalPostRecord[]> {
 export async function getPost(id: string): Promise<(JournalPostRecord & { body: string }) | null> {
   try {
     const raw = await readFile(path.join(journalDir, idToFilename(id)), 'utf8')
-    return parsePost(id, raw)
+    const post = parsePost(id, raw)
+    return {
+      id: post.id, slug: post.slug, locale: post.locale, title: post.title,
+      date: post.date, order: post.order, summary: post.summary, archived: post.archived, body: post.body,
+    }
   } catch {
     return null
   }
@@ -147,14 +163,14 @@ export class JournalError extends Error {
   }
 }
 
-function validateInput(data: JournalPostInput) {
+export function validateJournalInput(data: JournalPostInput) {
   if (!data.slug || !isJournalLocale(data.locale) || !data.title || !data.date || !data.summary) {
     throw new JournalError('invalid_input')
   }
 }
 
 export async function createPost(data: JournalPostInput): Promise<JournalPostRecord & { body: string }> {
-  validateInput(data)
+  validateJournalInput(data)
   const filename = dataToFilename(data.slug, data.locale)
 
   if (await fileExists(filename)) {
@@ -166,8 +182,9 @@ export async function createPost(data: JournalPostInput): Promise<JournalPostRec
 }
 
 export async function updatePost(id: string, data: JournalPostInput): Promise<JournalPostRecord & { body: string }> {
-  validateInput(data)
-  const existing = await getPost(id)
+  validateJournalInput(data)
+  const existingRaw = await readFile(path.join(journalDir, idToFilename(id)), 'utf8').catch(() => null)
+  const existing = existingRaw ? parsePost(id, existingRaw) : null
   if (!existing) throw new JournalError('not_found')
 
   const newFilename = dataToFilename(data.slug, data.locale)
@@ -177,7 +194,7 @@ export async function updatePost(id: string, data: JournalPostInput): Promise<Jo
     throw new JournalError('slug_exists')
   }
 
-  await writeFile(path.join(journalDir, newFilename), serializePost(data), 'utf8')
+  await writeFile(path.join(journalDir, newFilename), serializePost(data, existing.author), 'utf8')
   if (newFilename !== oldFilename) {
     await rm(path.join(journalDir, oldFilename))
   }
@@ -193,7 +210,8 @@ export async function deletePost(id: string): Promise<boolean> {
 }
 
 export async function setPostArchived(id: string, archived: boolean): Promise<JournalPostRecord & { body: string }> {
-  const existing = await getPost(id)
+  const existingRaw = await readFile(path.join(journalDir, idToFilename(id)), 'utf8').catch(() => null)
+  const existing = existingRaw ? parsePost(id, existingRaw) : null
   if (!existing) throw new JournalError('not_found')
 
   const data: JournalPostInput = {
@@ -207,6 +225,38 @@ export async function setPostArchived(id: string, archived: boolean): Promise<Jo
     archived,
   }
 
-  await writeFile(path.join(journalDir, idToFilename(id)), serializePost(data), 'utf8')
+  await writeFile(path.join(journalDir, idToFilename(id)), serializePost(data, existing.author), 'utf8')
   return { id, ...data }
+}
+
+export async function listPublicPosts(
+  locale: JournalLocale,
+  author?: string,
+  includeArchived = false,
+): Promise<PublicJournalPost[]> {
+  const files = await listFiles()
+  const posts = await Promise.all(files.map(async (file) =>
+    parsePost(filenameToId(file), await readFile(path.join(journalDir, file), 'utf8')),
+  ))
+  return posts
+    .filter((post) => post.locale === locale && (includeArchived || !post.archived))
+    .filter((post) => !author || post.author.toLowerCase() === author.toLowerCase())
+    .sort((a, b) => a.order - b.order || (a.date < b.date ? 1 : -1))
+    .map((post) => ({
+      id: post.id, slug: post.slug, locale: post.locale, title: post.title,
+      date: post.date, order: post.order, summary: post.summary,
+      author: post.author, archived: post.archived,
+    }))
+}
+
+export async function getPublicPost(
+  slug: string,
+  locale: JournalLocale,
+  includeArchived = false,
+): Promise<PublicJournalPostWithBody | null> {
+  const posts = await listPublicPosts(locale, undefined, includeArchived)
+  const match = posts.find((post) => post.slug === slug)
+  if (!match) return null
+  const raw = await readFile(path.join(journalDir, idToFilename(match.id)), 'utf8')
+  return parsePost(match.id, raw)
 }
