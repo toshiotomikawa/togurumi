@@ -24,12 +24,13 @@ import {
   type JournalLocale,
   type JournalPostInput,
 } from './journal'
-import { FaqError, getFaqContent, updateFaqContent } from './faq'
+import { FaqError } from './faq'
 import { ReviewError } from './reviews'
-import { SiteContentError, getSiteContentSection, updateSiteContentSection } from './siteContent'
+import { SiteContentError } from './siteContent'
 import { createRuntimeSessionStore } from './persistence/sessionStore'
 import { createRuntimeRateLimitStore } from './persistence/rateLimitStore'
 import { createRuntimeReviewStore } from './persistence/reviewStore'
+import { createRuntimeContentStores } from './persistence/contentStores'
 import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sheets'
 import { getProductImageTargets, getShopProducts, setProductImage } from './shop'
 import { createRuntimeUserStore } from './persistence/userStore'
@@ -43,6 +44,7 @@ const ALLOWED_ORIGINS = buildAllowedOrigins(APP_URL)
 const sessionStore = createRuntimeSessionStore(SESSION_SECRET, SESSION_MAX_AGE_MS)
 const rateLimitStore = createRuntimeRateLimitStore(SESSION_SECRET)
 const reviewStore = createRuntimeReviewStore()
+const { siteContentStore, faqStore } = createRuntimeContentStores()
 const userStore = createRuntimeUserStore()
 
 if (process.env.NODE_ENV === 'production' && SESSION_SECRET === 'dev-only-change-me') {
@@ -499,7 +501,7 @@ app.delete('/api/reviews/:id', requireAuth, async (req, res) => {
 
 app.get('/api/faq/:locale', async (req, res) => {
   try {
-    const faq = await getFaqContent(req.params.locale)
+    const faq = await faqStore.get(req.params.locale)
     res.json({ faq })
   } catch (err) {
     if (err instanceof FaqError) {
@@ -512,7 +514,7 @@ app.get('/api/faq/:locale', async (req, res) => {
 
 app.put('/api/faq/:locale', requireAuth, async (req, res) => {
   try {
-    const faq = await updateFaqContent(req.params.locale, req.body)
+    const faq = await faqStore.update(req.params.locale, req.body)
     res.json({ faq })
   } catch (err) {
     if (err instanceof FaqError) {
@@ -525,7 +527,7 @@ app.put('/api/faq/:locale', requireAuth, async (req, res) => {
 
 app.get('/api/content/:locale/:section', async (req, res) => {
   try {
-    const content = await getSiteContentSection(req.params.locale, req.params.section)
+    const content = await siteContentStore.get(req.params.locale, req.params.section)
     res.json({ content })
   } catch (err) {
     if (err instanceof SiteContentError) {
@@ -538,7 +540,7 @@ app.get('/api/content/:locale/:section', async (req, res) => {
 
 app.put('/api/content/:locale/:section', requireAuth, async (req, res) => {
   try {
-    const content = await updateSiteContentSection(req.params.locale, req.params.section, req.body)
+    const content = await siteContentStore.update(req.params.locale, req.params.section, req.body)
     res.json({ content })
   } catch (err) {
     if (err instanceof SiteContentError) {
