@@ -1,6 +1,6 @@
 import { createHmac, randomUUID } from 'node:crypto'
 import { Redis } from '@upstash/redis'
-import type { RateLimitStore } from './contracts'
+import type { RateLimitStore } from './contracts.js'
 
 type RateLimitEnvironment = {
   UPSTASH_REDIS_REST_URL?: string

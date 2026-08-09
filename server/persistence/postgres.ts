@@ -7,8 +7,8 @@ import type {
   LegacyJournalPost,
   LegacyReview,
   LegacySiteContent,
-} from './legacyImport'
-import type { UserRecord } from '../store'
+} from './legacyImport.js'
+import type { UserRecord } from '../store.js'
 
 export async function runMigrations(client: PoolClient, migrationsDir: string) {
   await client.query(`

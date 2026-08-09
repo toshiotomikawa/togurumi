@@ -1,9 +1,9 @@
 import { createHash } from 'node:crypto'
 import { readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
-import type { FaqContent } from '../faq'
-import type { JournalLocale } from '../journal'
-import type { UserRecord } from '../store'
+import type { FaqContent } from '../faq.js'
+import type { JournalLocale } from '../journal.js'
+import type { UserRecord } from '../store.js'
 
 export type LegacyReview = {
   id: string

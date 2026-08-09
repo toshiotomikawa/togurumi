@@ -5,7 +5,7 @@ import {
   isFaqLocale,
   normalizeFaqUpdate,
   type FaqContent,
-} from '../faq'
+} from '../faq.js'
 import {
   getSiteContentDefaults,
   isSiteContentLocale,
@@ -13,8 +13,8 @@ import {
   normalizeSiteContentUpdate,
   SiteContentError,
   type SiteContentValues,
-} from '../siteContent'
-import type { FaqStore, SiteContentStore } from './contracts'
+} from '../siteContent.js'
+import type { FaqStore, SiteContentStore } from './contracts.js'
 
 type DatabaseClient = Pool | PoolClient
 type ContentRow = QueryResultRow & { content: Record<string, unknown> }
