@@ -63,7 +63,7 @@ function HeroFeaturedMedia({
 
 function HomePage() {
   const { messages, locale } = useLocale()
-  const { posts: journalPosts } = useJournalPosts(locale)
+  const { posts: journalPosts, error: journalError } = useJournalPosts(locale)
   const latest = journalPosts[0]
   const { products, loaded } = useShopProducts()
   const editor = useEditableContent('home', locale, messages.home, messages.contentEditor.draftRestored)
@@ -286,7 +286,13 @@ function HomePage() {
         </div>
       </section>
 
-      {latest ? (
+      {journalError ? (
+        <section className="section home-journal-preview">
+          <p className="editor-feedback editor-feedback--error" role="alert">
+            {messages.auth.genericError}
+          </p>
+        </section>
+      ) : latest ? (
         <section className="section home-journal-preview">
           <div className="section__head">
             <h2>{editor.content.journalHeading}</h2>

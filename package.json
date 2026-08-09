@@ -19,7 +19,7 @@
     "test:rate-limits": "tsx --test server/persistence/rateLimitStore.test.ts",
     "test:reviews": "tsx --test server/persistence/postgresReviewStore.test.ts",
     "test:content": "tsx --test server/persistence/postgresContentStores.test.ts",
-    "test:journal": "tsx --test server/persistence/postgresJournalStore.test.ts"
+    "test:journal": "tsx --test server/persistence/postgresJournalStore.test.ts server/persistence/journalClient.test.ts"
   },
   "dependencies": {
     "@upstash/redis": "^1.38.2",
