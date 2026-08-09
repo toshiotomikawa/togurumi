@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto'
 import bcrypt from 'bcrypt'
 import type { Pool, PoolClient, QueryResultRow } from 'pg'
-import type { UserStore } from './contracts'
-import type { UserRecord, UserRole } from '../store'
+import type { UserStore } from './contracts.js'
+import type { UserRecord, UserRole } from '../store.js'
 
 type DatabaseClient = Pool | PoolClient
 

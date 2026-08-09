@@ -1,15 +1,15 @@
 import type { SessionData } from 'express-session'
-import type { FaqContent } from '../faq'
+import type { FaqContent } from '../faq.js'
 import type {
   JournalLocale,
   JournalPostInput,
   JournalPostRecord,
   PublicJournalPost,
   PublicJournalPostWithBody,
-} from '../journal'
-import type { ReviewRecord } from '../reviews'
-import type { SiteContentValues } from '../siteContent'
-import type { UserRecord, UserRole } from '../store'
+} from '../journal.js'
+import type { ReviewRecord } from '../reviews.js'
+import type { SiteContentValues } from '../siteContent.js'
+import type { UserRecord, UserRole } from '../store.js'
 
 export interface UserStore {
   findByUsername(username: string): Promise<UserRecord | null>

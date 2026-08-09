@@ -1,5 +1,5 @@
-import type { UserStore } from './contracts'
-import type { UserRole } from '../store'
+import type { UserStore } from './contracts.js'
+import type { UserRole } from '../store.js'
 
 export type BootstrapAccount = {
   username: string

@@ -1,7 +1,7 @@
 import pg from 'pg'
-import type { ReviewStore } from './contracts'
-import { localReviewStore } from './localAdapters'
-import { PostgresReviewStore } from './postgresReviewStore'
+import type { ReviewStore } from './contracts.js'
+import { localReviewStore } from './localAdapters.js'
+import { PostgresReviewStore } from './postgresReviewStore.js'
 
 export function createRuntimeReviewStore(databaseUrl = process.env.DATABASE_URL): ReviewStore {
   const connectionString = databaseUrl?.trim()

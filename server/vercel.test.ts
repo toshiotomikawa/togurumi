@@ -4,9 +4,9 @@ import fs from 'node:fs'
 import http from 'node:http'
 import path from 'node:path'
 import { test } from 'node:test'
-import { buildAllowedOrigins, originAllowed } from './authSession'
-import app from './index'
-import { validateRuntimeEnvironment } from './runtimeConfig'
+import { buildAllowedOrigins, originAllowed } from './authSession.js'
+import app from './index.js'
+import { validateRuntimeEnvironment } from './runtimeConfig.js'
 
 const productionEnvironment = {
   NODE_ENV: 'production',

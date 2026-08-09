@@ -1,4 +1,4 @@
-import { getSheetTab, SheetsError, updateSheetCellByHeader } from './sheets'
+import { getSheetTab, SheetsError, updateSheetCellByHeader } from './sheets.js'
 
 export type ShopProduct = {
   name: string

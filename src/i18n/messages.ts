@@ -1,4 +1,4 @@
-﻿import type { SupportedLocale } from '../lib/i18n'
+﻿import type { SupportedLocale } from '../lib/i18n.js'
 
 export type GalleryItem = {
   icon: string
