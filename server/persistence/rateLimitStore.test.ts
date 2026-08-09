@@ -44,10 +44,12 @@ class FakeRedis implements RedisRateLimitClient {
     }
 
     const [limit, blockMs] = args as [number, number]
-    const current = Number(this.backend.strings.get(key)?.value ?? 0) + 1
+    const existing = this.backend.strings.get(key)
+    const current = Number(existing?.value ?? 0) + 1
+    const expiresAt = current === 1 ? this.now() + blockMs : existing?.expiresAt
     this.backend.strings.set(key, current >= limit
       ? { value: 'blocked', expiresAt: this.now() + blockMs }
-      : { value: String(current) })
+      : { value: String(current), expiresAt })
     return current as T
   }
 
@@ -125,6 +127,105 @@ test('Redis keys hide personal identifiers and reset releases a consumed key', a
   assert.equal(client.keys().some((key) => key.includes('203.0.113.4')), false)
   await store.reset('review:203.0.113.4')
   assert.equal(await store.consume('review:203.0.113.4', 1, 60_000), true)
+})
+
+test('Redis login-failure keys hide the raw network address and username', async () => {
+  const client = new FakeRedis(backend(), () => 5_000)
+  const store = new RedisRateLimitStore(client, 'secret', () => 5_000)
+  await store.registerLoginFailure('203.0.113.4:bella', 5, 900_000)
+  const keys = client.keys()
+  assert.equal(keys.some((key) => key.includes('203.0.113.4')), false)
+  assert.equal(keys.some((key) => key.includes('bella')), false)
+})
+
+test('a login failure count below the limit expires and resets to zero — local', async () => {
+  let now = 10_000
+  const store = new LocalRateLimitStore(() => now)
+  const key = 'ip:user'
+  const limit = 5
+  const blockMs = 900_000
+
+  await store.registerLoginFailure(key, limit, blockMs)
+  await store.registerLoginFailure(key, limit, blockMs)
+  await store.registerLoginFailure(key, limit, blockMs)
+  await store.registerLoginFailure(key, limit, blockMs)
+  assert.equal(await store.isLoginBlocked(key), false, '4 failures stay under the limit')
+
+  now += blockMs + 1
+  await store.registerLoginFailure(key, limit, blockMs)
+  assert.equal(
+    await store.isLoginBlocked(key),
+    false,
+    'the count must have expired with the window — a single failure afterwards must not block',
+  )
+
+  await store.registerLoginFailure(key, limit, blockMs)
+  await store.registerLoginFailure(key, limit, blockMs)
+  await store.registerLoginFailure(key, limit, blockMs)
+  assert.equal(await store.isLoginBlocked(key), false, 'still below the limit inside the fresh window')
+  await store.registerLoginFailure(key, limit, blockMs)
+  assert.equal(await store.isLoginBlocked(key), true, 'the 5th failure inside the fresh window blocks')
+})
+
+test('a login failure count below the limit expires and resets to zero — Redis', async () => {
+  let now = 11_000
+  const client = new FakeRedis(backend(), () => now)
+  const store = new RedisRateLimitStore(client, 'secret', () => now)
+  const key = 'ip:user'
+  const limit = 5
+  const blockMs = 900_000
+
+  await store.registerLoginFailure(key, limit, blockMs)
+  await store.registerLoginFailure(key, limit, blockMs)
+  await store.registerLoginFailure(key, limit, blockMs)
+  await store.registerLoginFailure(key, limit, blockMs)
+  assert.equal(await store.isLoginBlocked(key), false, '4 failures stay under the limit')
+  assert.equal(client.keys().length, 1, 'the failure counter must carry a TTL, not persist as a bare INCR key')
+
+  now += blockMs + 1
+  await store.registerLoginFailure(key, limit, blockMs)
+  assert.equal(
+    await store.isLoginBlocked(key),
+    false,
+    'the count must have expired with the window — a single failure afterwards must not block',
+  )
+
+  await store.registerLoginFailure(key, limit, blockMs)
+  await store.registerLoginFailure(key, limit, blockMs)
+  await store.registerLoginFailure(key, limit, blockMs)
+  assert.equal(await store.isLoginBlocked(key), false, 'still below the limit inside the fresh window')
+  await store.registerLoginFailure(key, limit, blockMs)
+  assert.equal(await store.isLoginBlocked(key), true, 'the 5th failure inside the fresh window blocks')
+})
+
+test('local and Redis login rate limiting produce identical blocking semantics', async () => {
+  let now = 12_000
+  const limit = 5
+  const blockMs = 900_000
+  const key = 'ip:user'
+
+  const localStore = new LocalRateLimitStore(() => now)
+  const redisStore = new RedisRateLimitStore(new FakeRedis(backend(), () => now), 'secret', () => now)
+
+  const runScenario = async (store: LocalRateLimitStore | RedisRateLimitStore) => {
+    const observed: boolean[] = []
+    for (let i = 0; i < 4; i += 1) {
+      await store.registerLoginFailure(key, limit, blockMs)
+      observed.push(await store.isLoginBlocked(key))
+    }
+    return observed
+  }
+
+  assert.deepEqual(await runScenario(localStore), await runScenario(redisStore))
+
+  await localStore.registerLoginFailure(key, limit, blockMs)
+  await redisStore.registerLoginFailure(key, limit, blockMs)
+  assert.equal(await localStore.isLoginBlocked(key), true)
+  assert.equal(await redisStore.isLoginBlocked(key), true)
+
+  now += blockMs + 1
+  assert.equal(await localStore.isLoginBlocked(key), false)
+  assert.equal(await redisStore.isLoginBlocked(key), false)
 })
 
 test('runtime selection uses local fallback and fails closed on partial Redis configuration', () => {
