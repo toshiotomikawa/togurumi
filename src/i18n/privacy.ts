@@ -15,7 +15,7 @@ export type PrivacyContent = {
 
 const enUS: PrivacyContent = {
   title: 'Privacy Policy',
-  lastUpdated: 'Last updated: August 6, 2026',
+  lastUpdated: 'Last updated: August 9, 2026',
   intro:
     'Togurumi is a small handmade crochet studio with a portfolio, a journal, and a shop catalogue. This page describes what the site actually does with information: what stays in your browser, what reaches our server, and which outside services your browser talks to while a page loads.',
   sections: [
@@ -41,9 +41,9 @@ const enUS: PrivacyContent = {
       id: 'reviews',
       title: '3. Reviews you choose to send',
       paragraphs: [
-        'The review form asks for a display name, a rating from one to five, and a comment. When you submit it, that name, rating, comment, and the moment of submission are stored on our server and published on the site, where anyone can read them.',
+        'The review form asks for a display name, a rating from one to five, and a comment. When you submit it, that name, rating, comment, and the moment of submission are stored in our hosted database (see Section 6) and published on the site, where anyone can read them.',
         'Please use only a name you are comfortable showing in public, and avoid putting addresses, phone numbers, or other personal details into the comment.',
-        'To limit spam, the server briefly remembers the network address of the most recent submission so that the same address cannot post more than once per minute. That check is held in memory only, is never written alongside your review, and is lost when the server restarts.',
+        'To limit spam, the server derives a short-lived, pseudonymised rate-limit key from the submitting network address using a one-way cryptographic transformation — the network address itself is not stored. That key allows only one submission per network address per minute and is kept in our session/rate-limit store (Section 6) only for that one-minute window before it expires automatically; it is never written alongside your review.',
         'A published review stays online until the Togurumi team removes it. You can ask for yours to be taken down by writing to togurumi@gmail.com and telling us which one is yours.',
       ],
     },
@@ -52,8 +52,8 @@ const enUS: PrivacyContent = {
       title: '4. The team area',
       paragraphs: [
         'The site has no visitor accounts. Browsing, searching, reading the journal, and using the shopping bag never require signing in. The sign-in page exists only for Bella and the people who help her manage the site.',
-        'A team account holds a username, a display name, an optional e-mail address, and the permission level of that account. When someone signs in or changes a password, the server briefly processes the password they typed in order to check it, but the stored record keeps only a one-way scrambled version of it that cannot be turned back into the original. The plain password itself is never saved.',
-        'Failed sign-in attempts are counted using a temporary pairing of the network address and the username that was tried. That pairing is held in the server’s memory only, is never written to disk, and is cleared when the server restarts.',
+        'A team account holds a username, a display name, an optional e-mail address, and the permission level of that account. When someone signs in or changes a password, the server briefly processes the password they typed in order to check it, but the stored record keeps only a one-way scrambled version of it that cannot be turned back into the original. The plain password itself is never saved. Team account records are kept in our hosted database (see Section 6).',
+        'Failed sign-in attempts are rate-limited using a pseudonymised key, again derived with a one-way cryptographic transformation from the network address and the username that was tried — the network address itself is not stored. After five failed attempts, further attempts under that key are blocked for fifteen minutes; the counter lives in the same session/rate-limit store described in Section 6 and expires automatically.',
         'The sign-in page shows a Google sign-in button that is disabled and marked as coming soon. It cannot be used, and no information is exchanged with Google through it.',
       ],
     },
@@ -61,7 +61,7 @@ const enUS: PrivacyContent = {
       id: 'cookies',
       title: '5. Cookies',
       paragraphs: [
-        'The site sets a single cookie, and only after someone from the team signs in. It carries a session identifier, can be read only by our server, is not shared with other sites, and lasts up to thirty days, renewed while the session stays in use. Signing out removes it.',
+        'The site sets a single cookie, and only after someone from the team signs in. It carries a session identifier, can be read only by our server, and is not shared with other sites. The cookie holds only that identifier; the matching session record — who is signed in and when it was last used — is kept server-side in our session store (see Section 6) for up to thirty days, renewed while the session stays in use, and removed when you sign out or it expires.',
         'For as long as a team session is open, it stays tied to the browser it was opened in. If that changes, the session is closed and a new sign-in is required.',
         'This cookie is set by our own application code, and only for the team member who has just signed in — visitors who have not signed in never receive it. The application itself sets no advertising or analytics cookies and uses no third-party trackers. The hosting and delivery services described below may have their own practices, as noted there; we have not made a legal determination about consent requirements for those.',
       ],
@@ -70,8 +70,11 @@ const enUS: PrivacyContent = {
       id: 'outside-services',
       title: '6. Outside services',
       paragraphs: [
+        'The site itself — its pages and its server code — is hosted and run on Vercel. Loading any page or submitting any form passes through Vercel’s infrastructure as ordinary technical processing of your request.',
         'The site loads its typefaces from Google Fonts. Loading a font means your browser connects to Google’s servers, which receive the technical details that every web request carries, such as your network address and your browser version.',
         'Product photos are stored and delivered by ImageKit, so opening a shop page connects your browser to ImageKit’s servers in the same way.',
+        'Team account records, published reviews, journal posts, FAQ entries, and editable page text are stored in a hosted database provided by Neon, rather than only on the machine that runs our server.',
+        'Team sign-in sessions and the short-lived rate-limit keys described in Section 3 and Section 4 are kept in a hosted store provided by Upstash.',
         'The shop catalogue is read by our server from a private Google spreadsheet that belongs to Togurumi. That request, made by the server, reads only the catalogue fields and carries no visitor information.',
         'Links to Instagram and YouTube open those platforms in a new tab, and nothing from them is embedded in our pages. Once you follow such a link, that platform’s own privacy policy applies. Writing to our e-mail address means the message is handled by that e-mail provider.',
         'We do not use analytics, advertising networks, or behavioural tracking of any kind.',
@@ -82,7 +85,7 @@ const enUS: PrivacyContent = {
       title: '7. How long information is kept',
       paragraphs: [
         'Preferences and bag contents stay in your browser until you clear them. The team session cookie lasts up to thirty days from its last use. A published review stays until it is removed.',
-        'For team account records, no fixed retention period or automatic deletion is defined in how the site is built — the repository does not establish one. Beyond what is described in this section, the application itself keeps no access logs. Services used to host and deliver the site may keep technical records under their own policies.',
+        'For team account records, no fixed retention period or automatic deletion is defined in how the site is built. The application itself does not build a general browsing history of visitors. It does keep short-lived, pseudonymised rate-limit identifiers — described in Section 3 and Section 4 — which expire automatically (within one minute for review submissions, within fifteen minutes for a blocked sign-in pairing). Beyond what is described on this page, our hosting and infrastructure providers (Vercel, Neon, and Upstash) may keep their own technical records, such as request or connection logs, under their own practices, which we have not audited.',
       ],
     },
     {
@@ -114,7 +117,7 @@ const enUS: PrivacyContent = {
 
 const ptBR: PrivacyContent = {
   title: 'Política de Privacidade',
-  lastUpdated: 'Última atualização: 6 de agosto de 2026',
+  lastUpdated: 'Última atualização: 9 de agosto de 2026',
   intro:
     'O Togurumi é um pequeno ateliê de crochê artesanal, com portfólio, blog e catálogo da loja. Esta página descreve o que o site realmente faz com as informações: o que fica no seu navegador, o que chega ao nosso servidor e com quais serviços externos o seu navegador se comunica ao carregar uma página.',
   sections: [
@@ -140,9 +143,9 @@ const ptBR: PrivacyContent = {
       id: 'reviews',
       title: '3. Avaliações que você decide enviar',
       paragraphs: [
-        'O formulário de avaliação pede um nome de exibição, uma nota de um a cinco e um comentário. Ao enviar, esse nome, a nota, o comentário e o momento do envio são armazenados no nosso servidor e publicados no site, onde qualquer pessoa pode ler.',
+        'O formulário de avaliação pede um nome de exibição, uma nota de um a cinco e um comentário. Ao enviar, esse nome, a nota, o comentário e o momento do envio são armazenados no nosso banco de dados hospedado (veja a seção 6) e publicados no site, onde qualquer pessoa pode ler.',
         'Use apenas um nome que você se sinta à vontade de mostrar publicamente e evite incluir endereços, telefones ou outros dados pessoais no comentário.',
-        'Para limitar spam, o servidor guarda por pouco tempo o endereço de rede do envio mais recente, de modo que o mesmo endereço não possa publicar mais de uma vez por minuto. Essa verificação fica apenas em memória, nunca é gravada junto da sua avaliação e se perde quando o servidor reinicia.',
+        'Para limitar spam, o servidor deriva do endereço de rede de quem envia uma chave de limitação de taxa pseudonimizada e de curta duração, usando uma transformação criptográfica de mão única — o endereço de rede em si não é armazenado. Essa chave permite apenas um envio por endereço de rede a cada minuto e fica no nosso armazenamento de sessão/limitação de taxa (seção 6) somente durante essa janela de um minuto, antes de expirar automaticamente; nunca é gravada junto da sua avaliação.',
         'Uma avaliação publicada permanece no ar até que a equipe do Togurumi a remova. Você pode pedir a remoção da sua escrevendo para togurumi@gmail.com e indicando qual é a sua.',
       ],
     },
@@ -151,8 +154,8 @@ const ptBR: PrivacyContent = {
       title: '4. A área da equipe',
       paragraphs: [
         'O site não tem contas para visitantes. Navegar, buscar, ler o blog e usar a sacola nunca exigem login. A página de acesso existe apenas para a Bella e para as pessoas que ajudam a cuidar do site.',
-        'Uma conta da equipe guarda um nome de usuário, um nome de exibição, um e-mail opcional e o nível de permissão dessa conta. Ao entrar ou trocar a senha, o servidor processa brevemente a senha digitada para conferi-la, mas o registro armazenado guarda apenas uma versão embaralhada de mão única, que não pode ser revertida ao original. A senha em texto simples nunca é salva.',
-        'As tentativas de acesso malsucedidas são contadas por uma combinação temporária do endereço de rede com o nome de usuário tentado. Essa combinação fica apenas na memória do servidor, nunca é gravada em disco e é apagada quando o servidor reinicia.',
+        'Uma conta da equipe guarda um nome de usuário, um nome de exibição, um e-mail opcional e o nível de permissão dessa conta. Ao entrar ou trocar a senha, o servidor processa brevemente a senha digitada para conferi-la, mas o registro armazenado guarda apenas uma versão embaralhada de mão única, que não pode ser revertida ao original. A senha em texto simples nunca é salva. Os registros de conta da equipe ficam no nosso banco de dados hospedado (veja a seção 6).',
+        'As tentativas de acesso malsucedidas passam por limitação de taxa usando uma chave pseudonimizada, também derivada por transformação criptográfica de mão única a partir do endereço de rede e do nome de usuário tentado — o endereço de rede em si não é armazenado. Depois de cinco tentativas malsucedidas, novas tentativas com essa chave ficam bloqueadas por quinze minutos; o contador vive no mesmo armazenamento de sessão/limitação de taxa descrito na seção 6 e expira automaticamente.',
         'A página de acesso mostra um botão de entrar com o Google que está desativado e marcado como "em breve". Ele não pode ser usado e nenhuma informação é trocada com o Google por meio dele.',
       ],
     },
@@ -160,7 +163,7 @@ const ptBR: PrivacyContent = {
       id: 'cookies',
       title: '5. Cookies',
       paragraphs: [
-        'O site define um único cookie, e somente depois que alguém da equipe faz login. Ele carrega um identificador de sessão, só pode ser lido pelo nosso servidor, não é compartilhado com outros sites e dura até trinta dias, renovados enquanto a sessão continua em uso. Sair da conta o remove.',
+        'O site define um único cookie, e somente depois que alguém da equipe faz login. Ele carrega um identificador de sessão, só pode ser lido pelo nosso servidor e não é compartilhado com outros sites. O cookie guarda só esse identificador; o registro de sessão correspondente — quem está autenticado e quando foi usado pela última vez — fica no nosso armazenamento de sessão do lado do servidor (veja a seção 6) por até trinta dias, renovados enquanto a sessão continua em uso, e é removido ao sair da conta ou quando expira.',
         'Enquanto uma sessão da equipe está aberta, ela permanece vinculada ao navegador em que foi iniciada. Se isso mudar, a sessão é encerrada e um novo login é necessário.',
         'Esse cookie é definido pelo nosso próprio código de aplicação, e apenas para a pessoa da equipe que acabou de fazer login — visitantes não autenticados nunca o recebem. A aplicação em si não define cookies de publicidade nem de análise e não usa rastreadores de terceiros. Os serviços de hospedagem e entrega descritos adiante podem ter práticas próprias, como já indicado ali; não fizemos uma avaliação jurídica sobre exigências de consentimento para esses casos.',
       ],
@@ -169,8 +172,11 @@ const ptBR: PrivacyContent = {
       id: 'outside-services',
       title: '6. Serviços externos',
       paragraphs: [
+        'O próprio site — suas páginas e o código do servidor — é hospedado e executado na Vercel. Carregar qualquer página ou enviar qualquer formulário passa pela infraestrutura da Vercel como processamento técnico comum da sua requisição.',
         'O site carrega suas fontes tipográficas do Google Fonts. Carregar uma fonte significa que o seu navegador se conecta aos servidores do Google, que recebem os dados técnicos presentes em qualquer requisição web, como o seu endereço de rede e a versão do seu navegador.',
         'As fotos dos produtos são armazenadas e entregues pelo ImageKit, então abrir uma página da loja conecta o seu navegador aos servidores do ImageKit da mesma maneira.',
+        'Os registros de conta da equipe, as avaliações publicadas, os textos do blog, as perguntas da FAQ e o conteúdo editável das páginas ficam armazenados em um banco de dados hospedado pela Neon, em vez de somente na máquina que roda o nosso servidor.',
+        'As sessões de login da equipe e as chaves de limitação de taxa de curta duração descritas nas seções 3 e 4 ficam guardadas em um armazenamento hospedado pela Upstash.',
         'O catálogo da loja é lido pelo nosso servidor a partir de uma planilha privada do Google que pertence ao Togurumi. Essa requisição, feita pelo servidor, lê apenas os campos do catálogo e não leva nenhuma informação de visitantes.',
         'Os links para o Instagram e o YouTube abrem essas plataformas em uma nova aba, e nada delas é incorporado às nossas páginas. Ao seguir um desses links, passa a valer a política de privacidade da própria plataforma. Escrever para o nosso e-mail significa que a mensagem é tratada pelo provedor desse e-mail.',
         'Não usamos analytics, redes de publicidade nem rastreamento comportamental de nenhum tipo.',
@@ -181,7 +187,7 @@ const ptBR: PrivacyContent = {
       title: '7. Por quanto tempo as informações ficam guardadas',
       paragraphs: [
         'As preferências e o conteúdo da sacola ficam no seu navegador até que você os apague. O cookie de sessão da equipe dura até trinta dias a partir do último uso. Uma avaliação publicada permanece até ser removida.',
-        'Para os registros de conta da equipe, a forma como o site foi construído não define um prazo fixo de retenção nem exclusão automática — o repositório não estabelece um. Além do que está descrito nesta seção, a aplicação em si não mantém registros de acesso. Serviços usados para hospedar e entregar o site podem manter registros técnicos conforme suas próprias políticas.',
+        'Para os registros de conta da equipe, a forma como o site foi construído não define um prazo fixo de retenção nem exclusão automática. A aplicação em si não constrói um histórico geral de navegação dos visitantes. Ela mantém, sim, identificadores de limitação de taxa pseudonimizados e de curta duração — descritos nas seções 3 e 4 — que expiram automaticamente (em até um minuto para envios de avaliação, em até quinze minutos para uma combinação de login bloqueada). Além do que está descrito nesta página, nossos provedores de hospedagem e infraestrutura (Vercel, Neon e Upstash) podem manter seus próprios registros técnicos, como logs de requisição ou de conexão, conforme suas próprias práticas, que não auditamos.',
       ],
     },
     {
@@ -213,7 +219,7 @@ const ptBR: PrivacyContent = {
 
 const esES: PrivacyContent = {
   title: 'Política de privacidad',
-  lastUpdated: 'Última actualización: 6 de agosto de 2026',
+  lastUpdated: 'Última actualización: 9 de agosto de 2026',
   intro:
     'Togurumi es un pequeño taller de crochet artesanal, con portafolio, diario y catálogo de la tienda. Esta página describe lo que el sitio hace realmente con la información: qué se queda en tu navegador, qué llega a nuestro servidor y con qué servicios externos se comunica tu navegador al cargar una página.',
   sections: [
@@ -239,9 +245,9 @@ const esES: PrivacyContent = {
       id: 'reviews',
       title: '3. Reseñas que decides enviar',
       paragraphs: [
-        'El formulario de reseñas pide un nombre visible, una puntuación del uno al cinco y un comentario. Al enviarlo, ese nombre, la puntuación, el comentario y el momento del envío se almacenan en nuestro servidor y se publican en el sitio, donde cualquier persona puede leerlos.',
+        'El formulario de reseñas pide un nombre visible, una puntuación del uno al cinco y un comentario. Al enviarlo, ese nombre, la puntuación, el comentario y el momento del envío se almacenan en nuestra base de datos alojada (ver sección 6) y se publican en el sitio, donde cualquier persona puede leerlos.',
         'Usa solo un nombre que te resulte cómodo mostrar en público y evita incluir direcciones, teléfonos u otros datos personales en el comentario.',
-        'Para limitar el spam, el servidor recuerda brevemente la dirección de red del envío más reciente, de modo que la misma dirección no pueda publicar más de una vez por minuto. Esa comprobación se mantiene solo en memoria, nunca se guarda junto a tu reseña y se pierde cuando el servidor se reinicia.',
+        'Para limitar el spam, el servidor deriva de la dirección de red de quien envía una clave de limitación de tasa pseudonimizada y de corta duración, mediante una transformación criptográfica de un solo sentido — la dirección de red en sí no se almacena. Esa clave permite solo un envío por dirección de red cada minuto y se guarda en nuestro almacenamiento de sesión/limitación de tasa (sección 6) únicamente durante esa ventana de un minuto, antes de expirar automáticamente; nunca se guarda junto a tu reseña.',
         'Una reseña publicada permanece en línea hasta que el equipo de Togurumi la elimine. Puedes pedir que se retire la tuya escribiendo a togurumi@gmail.com e indicando cuál es.',
       ],
     },
@@ -250,8 +256,8 @@ const esES: PrivacyContent = {
       title: '4. El área del equipo',
       paragraphs: [
         'El sitio no tiene cuentas para visitantes. Navegar, buscar, leer el diario y usar la bolsa nunca requieren iniciar sesión. La página de acceso existe solo para Bella y para las personas que la ayudan a gestionar el sitio.',
-        'Una cuenta del equipo guarda un nombre de usuario, un nombre visible, un correo electrónico opcional y el nivel de permisos de esa cuenta. Al iniciar sesión o cambiar la contraseña, el servidor procesa brevemente la contraseña escrita para comprobarla, pero el registro almacenado guarda solo una versión cifrada de un solo sentido, que no puede revertirse al original. La contraseña en texto simple nunca se guarda.',
-        'Los intentos de acceso fallidos se cuentan mediante una combinación temporal de la dirección de red y el nombre de usuario probado. Esa combinación se mantiene solo en la memoria del servidor, nunca se escribe en disco y se borra cuando el servidor se reinicia.',
+        'Una cuenta del equipo guarda un nombre de usuario, un nombre visible, un correo electrónico opcional y el nivel de permisos de esa cuenta. Al iniciar sesión o cambiar la contraseña, el servidor procesa brevemente la contraseña escrita para comprobarla, pero el registro almacenado guarda solo una versión cifrada de un solo sentido, que no puede revertirse al original. La contraseña en texto simple nunca se guarda. Los registros de cuenta del equipo se guardan en nuestra base de datos alojada (ver sección 6).',
+        'Los intentos de acceso fallidos pasan por limitación de tasa usando una clave pseudonimizada, también derivada mediante una transformación criptográfica de un solo sentido a partir de la dirección de red y el nombre de usuario probado — la dirección de red en sí no se almacena. Tras cinco intentos fallidos, los intentos posteriores con esa clave quedan bloqueados durante quince minutos; el contador vive en el mismo almacenamiento de sesión/limitación de tasa descrito en la sección 6 y expira automáticamente.',
         'La página de acceso muestra un botón de inicio de sesión con Google que está desactivado y marcado como próximamente. No puede usarse y no se intercambia ninguna información con Google a través de él.',
       ],
     },
@@ -259,7 +265,7 @@ const esES: PrivacyContent = {
       id: 'cookies',
       title: '5. Cookies',
       paragraphs: [
-        'El sitio establece una única cookie, y solo después de que alguien del equipo inicia sesión. Contiene un identificador de sesión, solo puede leerla nuestro servidor, no se comparte con otros sitios y dura hasta treinta días, renovados mientras la sesión sigue en uso. Al cerrar sesión se elimina.',
+        'El sitio establece una única cookie, y solo después de que alguien del equipo inicia sesión. Contiene un identificador de sesión, solo puede leerla nuestro servidor y no se comparte con otros sitios. La cookie guarda solo ese identificador; el registro de sesión correspondiente — quién ha iniciado sesión y cuándo se usó por última vez — se guarda del lado del servidor en nuestro almacenamiento de sesión (ver sección 6) hasta por treinta días, renovados mientras la sesión sigue en uso, y se elimina al cerrar sesión o cuando expira.',
         'Mientras una sesión del equipo está abierta, permanece vinculada al navegador en el que se inició. Si eso cambia, la sesión se cierra y hace falta iniciar sesión de nuevo.',
         'Esta cookie la define nuestro propio código de aplicación, y solo para la persona del equipo que acaba de iniciar sesión — los visitantes no autenticados nunca la reciben. La aplicación en sí no define cookies de publicidad ni de analítica y no usa rastreadores de terceros. Los servicios de alojamiento y entrega descritos más adelante pueden tener prácticas propias, como ya se indica allí; no hemos hecho una determinación jurídica sobre requisitos de consentimiento para esos casos.',
       ],
@@ -268,8 +274,11 @@ const esES: PrivacyContent = {
       id: 'outside-services',
       title: '6. Servicios externos',
       paragraphs: [
+        'El sitio en sí — sus páginas y el código del servidor — está alojado y se ejecuta en Vercel. Cargar cualquier página o enviar cualquier formulario pasa por la infraestructura de Vercel como procesamiento técnico ordinario de tu petición.',
         'El sitio carga sus tipografías desde Google Fonts. Cargar una fuente significa que tu navegador se conecta a los servidores de Google, que reciben los datos técnicos presentes en cualquier petición web, como tu dirección de red y la versión de tu navegador.',
         'Las fotos de los productos se almacenan y se entregan mediante ImageKit, así que abrir una página de la tienda conecta tu navegador a los servidores de ImageKit de la misma manera.',
+        'Los registros de cuenta del equipo, las reseñas publicadas, las entradas del diario, las preguntas de la FAQ y el contenido editable de las páginas se guardan en una base de datos alojada por Neon, en lugar de solo en la máquina que ejecuta nuestro servidor.',
+        'Las sesiones de inicio de sesión del equipo y las claves de limitación de tasa de corta duración descritas en las secciones 3 y 4 se guardan en un almacenamiento alojado por Upstash.',
         'Nuestro servidor lee el catálogo de la tienda desde una hoja de cálculo privada de Google que pertenece a Togurumi. Esa petición, hecha por el servidor, lee solo los campos del catálogo y no lleva ninguna información de los visitantes.',
         'Los enlaces a Instagram y YouTube abren esas plataformas en una pestaña nueva, y no incrustamos nada de ellas en nuestras páginas. Al seguir uno de esos enlaces, pasa a aplicarse la política de privacidad de la propia plataforma. Escribir a nuestro correo significa que el mensaje lo gestiona ese proveedor de correo.',
         'No usamos analítica, redes publicitarias ni seguimiento del comportamiento de ningún tipo.',
@@ -280,7 +289,7 @@ const esES: PrivacyContent = {
       title: '7. Cuánto tiempo se conserva la información',
       paragraphs: [
         'Las preferencias y el contenido de la bolsa permanecen en tu navegador hasta que los borres. La cookie de sesión del equipo dura hasta treinta días desde su último uso. Una reseña publicada permanece hasta que se elimine.',
-        'Para los registros de cuenta del equipo, la forma en que el sitio está construido no define un plazo fijo de conservación ni una eliminación automática — el repositorio no establece ninguno. Más allá de lo descrito en esta sección, la aplicación en sí no mantiene registros de acceso. Los servicios usados para alojar y entregar el sitio pueden mantener registros técnicos según sus propias políticas.',
+        'Para los registros de cuenta del equipo, la forma en que el sitio está construido no define un plazo fijo de conservación ni una eliminación automática. La aplicación en sí no construye un historial general de navegación de los visitantes. Sí mantiene identificadores de limitación de tasa pseudonimizados y de corta duración — descritos en las secciones 3 y 4 — que expiran automáticamente (en hasta un minuto para los envíos de reseñas, en hasta quince minutos para una combinación de inicio de sesión bloqueada). Más allá de lo descrito en esta página, nuestros proveedores de alojamiento e infraestructura (Vercel, Neon y Upstash) pueden mantener sus propios registros técnicos, como registros de peticiones o de conexión, según sus propias prácticas, que no hemos auditado.',
       ],
     },
     {
