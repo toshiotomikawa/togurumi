@@ -25,3 +25,4 @@ mcps/
 # Agent session artifacts
 .claude/
 terminals/
+.vercel/
