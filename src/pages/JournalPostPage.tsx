@@ -14,12 +14,22 @@ function JournalPostPage() {
   const { messages, locale } = useLocale()
   const { user } = useAuth()
   const canManage = user?.role === 'admin' || user?.role === 'moderator'
-  const { post, loaded } = useJournalPost(slug, locale, canManage, user?.id)
+  const { post, loaded, error } = useJournalPost(slug, locale, canManage, user?.id)
 
   if (!loaded) {
     return (
       <div className="page auth-route-loading" aria-live="polite">
         <span className="spinner" aria-hidden="true" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="page page--journal-post">
+        <p className="editor-feedback editor-feedback--error" role="alert">
+          {messages.auth.genericError}
+        </p>
       </div>
     )
   }

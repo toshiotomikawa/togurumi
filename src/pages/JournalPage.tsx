@@ -17,7 +17,7 @@ function JournalPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const author = searchParams.get('author')
   const canManage = user?.role === 'admin' || user?.role === 'moderator'
-  const { posts, loaded, reload } = useJournalPosts(locale, author ?? undefined, canManage, user?.id)
+  const { posts, loaded, error, reload } = useJournalPosts(locale, author ?? undefined, canManage, user?.id)
   const editor = useEditableContent('journal', locale, messages.journal, messages.contentEditor.draftRestored)
   const [archiveFeedback, setArchiveFeedback] = useState<{ kind: 'success' | 'error'; text: string } | null>(
     null,
@@ -140,6 +140,10 @@ function JournalPage() {
         <div className="auth-route-loading" aria-live="polite">
           <span className="spinner" aria-hidden="true" />
         </div>
+      ) : error ? (
+        <p className="editor-feedback editor-feedback--error" role="alert">
+          {messages.auth.genericError}
+        </p>
       ) : posts.length > 0 ? (
         <ul className="journal-list" aria-label={messages.journal.listLabel}>
           {posts.map((post) => (
