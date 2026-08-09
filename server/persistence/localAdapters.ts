@@ -7,10 +7,10 @@ import {
   listAllPosts,
   setPostArchived,
   updatePost,
-} from '../journal'
-import { getFaqContent, updateFaqContent } from '../faq'
-import { addReview, deleteReview, listReviews } from '../reviews'
-import { getSiteContentSection, updateSiteContentSection } from '../siteContent'
+} from '../journal.js'
+import { getFaqContent, updateFaqContent } from '../faq.js'
+import { addReview, deleteReview, listReviews } from '../reviews.js'
+import { getSiteContentSection, updateSiteContentSection } from '../siteContent.js'
 import {
   createGoogleUser,
   createUser,
@@ -18,8 +18,8 @@ import {
   findUser,
   findUserByGoogleId,
   saveUser,
-} from '../store'
-import type { FaqStore, JournalStore, ReviewStore, SiteContentStore, UserStore } from './contracts'
+} from '../store.js'
+import type { FaqStore, JournalStore, ReviewStore, SiteContentStore, UserStore } from './contracts.js'
 
 export const localUserStore: UserStore = {
   findByUsername: findUser,

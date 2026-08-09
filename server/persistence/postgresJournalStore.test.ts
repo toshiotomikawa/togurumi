@@ -4,12 +4,12 @@ import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { PGlite } from '@electric-sql/pglite'
 import type { PoolClient } from 'pg'
-import { JournalError, type JournalPostInput } from '../journal'
-import { createRuntimeJournalStore } from './journalStore'
-import { importLegacySnapshot, loadLegacySnapshot } from './legacyImport'
-import { localJournalStore } from './localAdapters'
-import { PostgresLegacyImportSink, runMigrations } from './postgres'
-import { PostgresJournalStore } from './postgresJournalStore'
+import { JournalError, type JournalPostInput } from '../journal.js'
+import { createRuntimeJournalStore } from './journalStore.js'
+import { importLegacySnapshot, loadLegacySnapshot } from './legacyImport.js'
+import { localJournalStore } from './localAdapters.js'
+import { PostgresLegacyImportSink, runMigrations } from './postgres.js'
+import { PostgresJournalStore } from './postgresJournalStore.js'
 
 const root = path.resolve(fileURLToPath(new URL('../..', import.meta.url)))
 

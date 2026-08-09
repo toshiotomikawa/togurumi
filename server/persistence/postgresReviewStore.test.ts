@@ -4,12 +4,12 @@ import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { PGlite } from '@electric-sql/pglite'
 import type { PoolClient } from 'pg'
-import { ReviewError } from '../reviews'
-import { importLegacySnapshot, type LegacySnapshot } from './legacyImport'
-import { localReviewStore } from './localAdapters'
-import { PostgresLegacyImportSink, runMigrations } from './postgres'
-import { PostgresReviewStore } from './postgresReviewStore'
-import { createRuntimeReviewStore } from './reviewStore'
+import { ReviewError } from '../reviews.js'
+import { importLegacySnapshot, type LegacySnapshot } from './legacyImport.js'
+import { localReviewStore } from './localAdapters.js'
+import { PostgresLegacyImportSink, runMigrations } from './postgres.js'
+import { PostgresReviewStore } from './postgresReviewStore.js'
+import { createRuntimeReviewStore } from './reviewStore.js'
 
 const root = path.resolve(fileURLToPath(new URL('../..', import.meta.url)))
 

@@ -5,11 +5,11 @@ import { fileURLToPath } from 'node:url'
 import bcrypt from 'bcrypt'
 import { PGlite } from '@electric-sql/pglite'
 import type { PoolClient } from 'pg'
-import { localUserStore } from './localAdapters'
-import { runMigrations } from './postgres'
-import { PostgresUserStore } from './postgresUserStore'
-import { bootstrapUsers } from './userBootstrap'
-import { createRuntimeUserStore } from './userStore'
+import { localUserStore } from './localAdapters.js'
+import { runMigrations } from './postgres.js'
+import { PostgresUserStore } from './postgresUserStore.js'
+import { bootstrapUsers } from './userBootstrap.js'
+import { createRuntimeUserStore } from './userStore.js'
 
 const root = path.resolve(fileURLToPath(new URL('../..', import.meta.url)))
 

@@ -5,7 +5,7 @@ import {
   RedisRateLimitStore,
   createRuntimeRateLimitStore,
   type RedisRateLimitClient,
-} from './rateLimitStore'
+} from './rateLimitStore.js'
 
 type Backend = {
   strings: Map<string, { value: string; expiresAt?: number }>

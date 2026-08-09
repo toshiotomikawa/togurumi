@@ -11,29 +11,29 @@ import {
   createOAuthState,
   establishAuthSession,
   originAllowed,
-} from './authSession'
-import { SESSION_COOKIE, clearCookieOptions, sessionCookieOptions } from './cookies'
-import { fetchGoogleProfile, googleAuthUrl, googleEnabled } from './google'
-import { deleteImageKitFile, ImageKitError, imageKitEnabled, uploadProductImage } from './imageKit'
+} from './authSession.js'
+import { SESSION_COOKIE, clearCookieOptions, sessionCookieOptions } from './cookies.js'
+import { fetchGoogleProfile, googleAuthUrl, googleEnabled } from './google.js'
+import { deleteImageKitFile, ImageKitError, imageKitEnabled, uploadProductImage } from './imageKit.js'
 import {
   JournalError,
   isJournalLocale,
   type JournalLocale,
   type JournalPostInput,
-} from './journal'
-import { FaqError } from './faq'
-import { ReviewError } from './reviews'
-import { SiteContentError } from './siteContent'
-import { createRuntimeSessionStore } from './persistence/sessionStore'
-import { createRuntimeRateLimitStore } from './persistence/rateLimitStore'
-import { createRuntimeReviewStore } from './persistence/reviewStore'
-import { createRuntimeContentStores } from './persistence/contentStores'
-import { createRuntimeJournalStore } from './persistence/journalStore'
-import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sheets'
-import { getProductImageTargets, getShopProducts, setProductImage } from './shop'
-import { createRuntimeUserStore } from './persistence/userStore'
-import type { UserRecord } from './store'
-import { validateRuntimeEnvironment } from './runtimeConfig'
+} from './journal.js'
+import { FaqError } from './faq.js'
+import { ReviewError } from './reviews.js'
+import { SiteContentError } from './siteContent.js'
+import { createRuntimeSessionStore } from './persistence/sessionStore.js'
+import { createRuntimeRateLimitStore } from './persistence/rateLimitStore.js'
+import { createRuntimeReviewStore } from './persistence/reviewStore.js'
+import { createRuntimeContentStores } from './persistence/contentStores.js'
+import { createRuntimeJournalStore } from './persistence/journalStore.js'
+import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sheets.js'
+import { getProductImageTargets, getShopProducts, setProductImage } from './shop.js'
+import { createRuntimeUserStore } from './persistence/userStore.js'
+import type { UserRecord } from './store.js'
+import { validateRuntimeEnvironment } from './runtimeConfig.js'
 
 validateRuntimeEnvironment(process.env)
 
@@ -347,7 +347,7 @@ app.get('/api/journal', requireAuth, async (_req, res) => {
   res.json({ posts })
 })
 
-app.get('/api/journal/:id', requireAuth, async (req, res) => {
+app.get<{ id: string }>('/api/journal/:id', requireAuth, async (req, res) => {
   const post = await journalStore.get(req.params.id)
   if (!post) {
     res.status(404).json({ error: 'not_found' })
@@ -369,7 +369,7 @@ app.post('/api/journal', requireAuth, async (req, res) => {
   }
 })
 
-app.put('/api/journal/:id', requireAuth, async (req, res) => {
+app.put<{ id: string }>('/api/journal/:id', requireAuth, async (req, res) => {
   try {
     const post = await journalStore.update(req.params.id, parseJournalInput(req.body))
     res.json({ post })
@@ -383,7 +383,7 @@ app.put('/api/journal/:id', requireAuth, async (req, res) => {
   }
 })
 
-app.delete('/api/journal/:id', requireAuth, async (req, res) => {
+app.delete<{ id: string }>('/api/journal/:id', requireAuth, async (req, res) => {
   const ok = await journalStore.delete(req.params.id)
   if (!ok) {
     res.status(404).json({ error: 'not_found' })
@@ -392,7 +392,7 @@ app.delete('/api/journal/:id', requireAuth, async (req, res) => {
   res.json({ ok: true })
 })
 
-app.patch('/api/journal/:id/archive', requireAuth, async (req, res) => {
+app.patch<{ id: string }>('/api/journal/:id/archive', requireAuth, async (req, res) => {
   try {
     const archived = Boolean((req.body as Record<string, unknown> | null)?.archived)
     const post = await journalStore.setArchived(req.params.id, archived)
@@ -521,7 +521,7 @@ app.post('/api/reviews', async (req, res) => {
   }
 })
 
-app.delete('/api/reviews/:id', requireAuth, async (req, res) => {
+app.delete<{ id: string }>('/api/reviews/:id', requireAuth, async (req, res) => {
   const ok = await reviewStore.delete(req.params.id)
   if (!ok) {
     res.status(404).json({ error: 'not_found' })
@@ -543,7 +543,7 @@ app.get('/api/faq/:locale', async (req, res) => {
   }
 })
 
-app.put('/api/faq/:locale', requireAuth, async (req, res) => {
+app.put<{ locale: string }>('/api/faq/:locale', requireAuth, async (req, res) => {
   try {
     const faq = await faqStore.update(req.params.locale, req.body)
     res.json({ faq })
@@ -569,7 +569,7 @@ app.get('/api/content/:locale/:section', async (req, res) => {
   }
 })
 
-app.put('/api/content/:locale/:section', requireAuth, async (req, res) => {
+app.put<{ locale: string; section: string }>('/api/content/:locale/:section', requireAuth, async (req, res) => {
   try {
     const content = await siteContentStore.update(req.params.locale, req.params.section, req.body)
     res.json({ content })
@@ -596,7 +596,7 @@ app.get('/api/sheets/:tab', async (req, res) => {
   }
 })
 
-app.put('/api/sheets/:tab/:range', requireAuth, async (req, res) => {
+app.put<{ tab: string; range: string }>('/api/sheets/:tab/:range', requireAuth, async (req, res) => {
   const values = req.body?.values
   if (!Array.isArray(values) || !values.every((row) => Array.isArray(row))) {
     res.status(400).json({ error: 'invalid_values' })
@@ -616,7 +616,7 @@ app.put('/api/sheets/:tab/:range', requireAuth, async (req, res) => {
   }
 })
 
-app.post('/api/sheets/:tab/append', requireAuth, async (req, res) => {
+app.post<{ tab: string }>('/api/sheets/:tab/append', requireAuth, async (req, res) => {
   const row = req.body?.row
   if (!Array.isArray(row)) {
     res.status(400).json({ error: 'invalid_row' })

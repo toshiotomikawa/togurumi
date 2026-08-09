@@ -1,8 +1,8 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import pg from 'pg'
-import { countSnapshot, importLegacySnapshot, loadLegacySnapshot } from './legacyImport'
-import { PostgresLegacyImportSink, runMigrations } from './postgres'
+import { countSnapshot, importLegacySnapshot, loadLegacySnapshot } from './legacyImport.js'
+import { PostgresLegacyImportSink, runMigrations } from './postgres.js'
 
 const root = path.resolve(fileURLToPath(new URL('../..', import.meta.url)))
 const snapshot = await loadLegacySnapshot(root)
