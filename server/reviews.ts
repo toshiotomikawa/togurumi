@@ -22,6 +22,18 @@ export class ReviewError extends Error {
   }
 }
 
+export function normalizeReviewInput(input: { name: string; rating: number; comment: string }) {
+  const name = input.name.trim().slice(0, 60)
+  const comment = input.comment.trim().slice(0, 600)
+  const rating = Math.round(input.rating)
+
+  if (!name) throw new ReviewError('invalid_name')
+  if (!comment) throw new ReviewError('invalid_comment')
+  if (!Number.isFinite(rating) || rating < 1 || rating > 5) throw new ReviewError('invalid_rating')
+
+  return { name, rating, comment }
+}
+
 async function loadDb(): Promise<ReviewDatabase> {
   try {
     const raw = await readFile(reviewsPath, 'utf8')
@@ -50,13 +62,7 @@ export async function listReviews(): Promise<ReviewRecord[]> {
 }
 
 export async function addReview(input: { name: string; rating: number; comment: string }): Promise<ReviewRecord> {
-  const name = input.name.trim().slice(0, 60)
-  const comment = input.comment.trim().slice(0, 600)
-  const rating = Math.round(input.rating)
-
-  if (!name) throw new ReviewError('invalid_name')
-  if (!comment) throw new ReviewError('invalid_comment')
-  if (!Number.isFinite(rating) || rating < 1 || rating > 5) throw new ReviewError('invalid_rating')
+  const { name, rating, comment } = normalizeReviewInput(input)
 
   const review: ReviewRecord = {
     id: randomUUID(),
