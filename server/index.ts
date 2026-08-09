@@ -1,4 +1,6 @@
 import 'dotenv/config'
+import path from 'node:path'
+import { pathToFileURL } from 'node:url'
 import cookieParser from 'cookie-parser'
 import express from 'express'
 import session from 'express-session'
@@ -31,6 +33,9 @@ import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sh
 import { getProductImageTargets, getShopProducts, setProductImage } from './shop'
 import { createRuntimeUserStore } from './persistence/userStore'
 import type { UserRecord } from './store'
+import { validateRuntimeEnvironment } from './runtimeConfig'
+
+validateRuntimeEnvironment(process.env)
 
 const PORT = Number(process.env.API_PORT ?? 8788)
 const APP_URL = process.env.APP_URL ?? 'http://localhost:5174'
@@ -631,6 +636,15 @@ app.post('/api/sheets/:tab/append', requireAuth, async (req, res) => {
   }
 })
 
-app.listen(PORT, () => {
-  console.log(`Auth API http://localhost:${PORT}`)
-})
+export function startLocalServer(port = PORT) {
+  return app.listen(port, () => {
+    console.log(`Auth API http://localhost:${port}`)
+  })
+}
+
+const entrypoint = process.argv[1]
+if (entrypoint && import.meta.url === pathToFileURL(path.resolve(entrypoint)).href) {
+  startLocalServer()
+}
+
+export default app
