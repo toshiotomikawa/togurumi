@@ -1,7 +1,8 @@
 import ReactMarkdown from 'react-markdown'
 import { Link, useParams } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+import { useJournalPost } from '../hooks/useJournal'
 import { useLocale } from '../hooks/useLocale'
-import { getJournalPost } from '../lib/journal'
 import NotFoundPage from './NotFoundPage'
 
 function fillAuthor(template: string, author: string) {
@@ -11,7 +12,17 @@ function fillAuthor(template: string, author: string) {
 function JournalPostPage() {
   const { slug } = useParams<{ slug: string }>()
   const { messages, locale } = useLocale()
-  const post = slug ? getJournalPost(slug, locale) : undefined
+  const { user } = useAuth()
+  const canManage = user?.role === 'admin' || user?.role === 'moderator'
+  const { post, loaded } = useJournalPost(slug, locale, canManage, user?.id)
+
+  if (!loaded) {
+    return (
+      <div className="page auth-route-loading" aria-live="polite">
+        <span className="spinner" aria-hidden="true" />
+      </div>
+    )
+  }
 
   if (!post) return <NotFoundPage />
 
@@ -43,7 +54,7 @@ function JournalPostPage() {
         </header>
 
         <div className="journal-article__body journal-post__body">
-          <ReactMarkdown>{post.body}</ReactMarkdown>
+          <ReactMarkdown>{post.body ?? ''}</ReactMarkdown>
         </div>
       </article>
     </div>
