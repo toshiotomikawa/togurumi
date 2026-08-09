@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import http from 'node:http'
 import path from 'node:path'
 import { test } from 'node:test'
+import { buildAllowedOrigins, originAllowed } from './authSession'
 import app from './index'
 import { validateRuntimeEnvironment } from './runtimeConfig'
 
@@ -42,6 +43,33 @@ test('production and Vercel runtimes require durable stores and a session secret
 test('local development keeps the existing configuration fallbacks', () => {
   assert.doesNotThrow(() => validateRuntimeEnvironment({ NODE_ENV: 'development' }))
   assert.doesNotThrow(() => validateRuntimeEnvironment({}))
+})
+
+test('Vercel deployments allow only their configured system origins', () => {
+  const origins = buildAllowedOrigins('https://canonical.example', {
+    VERCEL: '1',
+    VERCEL_ENV: 'preview',
+    VERCEL_URL: 'togurumi-git-feature.example.vercel.app',
+    VERCEL_BRANCH_URL: 'togurumi-git-feature.vercel.app',
+    VERCEL_PROJECT_PRODUCTION_URL: 'togurumi.example',
+  })
+
+  const requestFrom = (origin: string) => ({ headers: { origin } }) as Parameters<typeof originAllowed>[0]
+  assert.equal(originAllowed(requestFrom('https://togurumi-git-feature.example.vercel.app'), origins), true)
+  assert.equal(originAllowed(requestFrom('https://togurumi-git-feature.vercel.app'), origins), true)
+  assert.equal(originAllowed(requestFrom('https://canonical.example'), origins), true)
+  assert.equal(originAllowed(requestFrom('https://togurumi.example'), origins), false)
+  assert.equal(originAllowed(requestFrom('https://external.example'), origins), false)
+
+  const productionOrigins = buildAllowedOrigins('https://canonical.example', {
+    VERCEL: '1',
+    VERCEL_ENV: 'production',
+    VERCEL_PROJECT_PRODUCTION_URL: 'togurumi.example',
+  })
+  assert.equal(originAllowed(requestFrom('https://togurumi.example'), productionOrigins), true)
+
+  const localOrigins = buildAllowedOrigins('http://localhost:5174', {})
+  assert.equal(originAllowed(requestFrom('http://localhost:5174'), localOrigins), true)
 })
 
 test('importing the Express app does not start a listener', () => {
