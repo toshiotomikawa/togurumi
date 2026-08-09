@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { fetchJournalPost, fetchJournalPosts } from '../../src/lib/journal'
+import { fetchJournalPost, fetchJournalPosts } from '../../src/lib/journal.js'
 
 function withFetch(response: Response, run: () => Promise<void>) {
   const original = globalThis.fetch

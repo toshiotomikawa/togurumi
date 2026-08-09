@@ -1,10 +1,10 @@
 import 'dotenv/config'
 import path from 'node:path'
 import pg from 'pg'
-import { bootstrapUsers, type BootstrapAccount } from './userBootstrap'
-import { localUserStore } from './localAdapters'
-import { runMigrations } from './postgres'
-import { PostgresUserStore } from './postgresUserStore'
+import { bootstrapUsers, type BootstrapAccount } from './userBootstrap.js'
+import { localUserStore } from './localAdapters.js'
+import { runMigrations } from './postgres.js'
+import { PostgresUserStore } from './postgresUserStore.js'
 
 function required(name: string) {
   const value = process.env[name]?.trim()

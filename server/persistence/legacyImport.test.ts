@@ -14,9 +14,9 @@ import {
   type LegacyJournalPost,
   type LegacyReview,
   type LegacySiteContent,
-} from './legacyImport'
-import type { UserRecord } from '../store'
-import { PostgresLegacyImportSink, runMigrations } from './postgres'
+} from './legacyImport.js'
+import type { UserRecord } from '../store.js'
+import { PostgresLegacyImportSink, runMigrations } from './postgres.js'
 
 const root = path.resolve(fileURLToPath(new URL('../..', import.meta.url)))
 

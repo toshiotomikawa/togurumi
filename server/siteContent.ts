@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
-import { getMessages } from '../src/i18n/messages'
-import { SITE_CONTENT_FIELDS, type SiteContentSection } from '../src/lib/siteContent'
+import { getMessages } from '../src/i18n/messages.js'
+import { SITE_CONTENT_FIELDS, type SiteContentSection } from '../src/lib/siteContent.js'
 
 export type SiteContentLocale = 'en-US' | 'pt-BR' | 'es-ES'
 

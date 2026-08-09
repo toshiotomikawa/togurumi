@@ -1,7 +1,7 @@
 import { Redis } from '@upstash/redis'
 import type session from 'express-session'
-import { FileSessionStore } from '../sessionStore'
-import { RedisSessionStore, type RedisSessionClient } from './redisSessionStore'
+import { FileSessionStore } from '../sessionStore.js'
+import { RedisSessionStore, type RedisSessionClient } from './redisSessionStore.js'
 
 type SessionEnvironment = {
   UPSTASH_REDIS_REST_URL?: string

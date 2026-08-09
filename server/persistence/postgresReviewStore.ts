@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import type { Pool, PoolClient, QueryResultRow } from 'pg'
-import { normalizeReviewInput, type ReviewRecord } from '../reviews'
-import type { ReviewStore } from './contracts'
+import { normalizeReviewInput, type ReviewRecord } from '../reviews.js'
+import type { ReviewStore } from './contracts.js'
 
 type DatabaseClient = Pool | PoolClient
 

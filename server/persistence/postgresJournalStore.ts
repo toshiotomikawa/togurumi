@@ -8,8 +8,8 @@ import {
   type JournalPostRecord,
   type PublicJournalPost,
   type PublicJournalPostWithBody,
-} from '../journal'
-import type { JournalStore } from './contracts'
+} from '../journal.js'
+import type { JournalStore } from './contracts.js'
 
 type DatabaseClient = Pool | PoolClient
 

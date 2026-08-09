@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import session from 'express-session'
-import { FileSessionStore } from '../sessionStore'
-import { RedisSessionStore, type RedisSessionClient } from './redisSessionStore'
-import { createRuntimeSessionStore } from './sessionStore'
+import { FileSessionStore } from '../sessionStore.js'
+import { RedisSessionStore, type RedisSessionClient } from './redisSessionStore.js'
+import { createRuntimeSessionStore } from './sessionStore.js'
 
 type Entry = { value: unknown; expiresAt?: number }
 type Backend = { values: Map<string, Entry>; sets: Map<string, Set<string>>; expires: Map<string, number> }
