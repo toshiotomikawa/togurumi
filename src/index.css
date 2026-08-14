@@ -78,7 +78,7 @@
 
 :root {
   --sans: 'Karla', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --heading: 'Lora', Georgia, 'Times New Roman', serif;
+  --heading: 'Fredoka', 'Trebuchet MS', system-ui, 'Segoe UI', sans-serif;
   --mono: ui-monospace, Consolas, monospace;
   --radius: 14px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -144,7 +144,7 @@ h3,
 h4 {
   font-family: var(--heading);
   color: var(--text-h);
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: -0.01em;
   line-height: 1.18;
 }
@@ -280,6 +280,7 @@ a:active {
   text-decoration: none;
   font-family: var(--heading);
   font-size: var(--font-heading);
+  font-weight: 500;
   letter-spacing: 0.01em;
 }
 
@@ -668,7 +669,7 @@ a:active {
 
 .hero h1 {
   font-size: clamp(2.2rem, 5vw, 3.6rem);
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.012em;
   margin: 0 0 16px;
@@ -820,6 +821,7 @@ a:active {
 .hero__media-name {
   font-family: var(--heading);
   font-size: 1.1rem;
+  font-weight: 500;
   color: var(--text-h);
   text-wrap: pretty;
   overflow-wrap: anywhere;
@@ -1026,7 +1028,7 @@ a.product-card:hover {
 .youtube-feature__content h2 {
   margin: 0 0 8px;
   font-family: var(--heading);
-  font-weight: 400;
+  font-weight: 500;
   font-size: clamp(1.35rem, 2.6vw, 1.75rem);
   color: var(--text-h);
   text-wrap: pretty;
@@ -1138,7 +1140,7 @@ a.product-card:hover {
 .home-journal-card__title {
   margin: 0;
   font-family: var(--heading);
-  font-weight: 400;
+  font-weight: 500;
   font-size: clamp(1.45rem, 3.2vw, 2rem);
   line-height: 1.2;
   color: var(--text-h);
@@ -1224,7 +1226,7 @@ html[data-theme='night'] .home-journal-card {
   margin: 0 0 14px;
   font-family: var(--heading);
   font-size: clamp(1.9rem, 4.6vw, 2.85rem);
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: -0.012em;
   line-height: 1.12;
   color: var(--text-h);
@@ -1357,7 +1359,7 @@ html[data-theme='night'] .home-journal-card {
   margin: 0 0 10px;
   font-family: var(--heading);
   font-size: clamp(1.25rem, 2.4vw, 1.55rem);
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.28;
   color: var(--text-h);
   text-wrap: pretty;
@@ -1442,7 +1444,7 @@ html[data-theme='night'] .home-journal-card {
   margin: 0;
   font-family: var(--heading);
   font-size: clamp(1.35rem, 3vw, 1.7rem);
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-h);
   text-wrap: pretty;
 }
@@ -1499,7 +1501,7 @@ html[data-theme='night'] .home-journal-card {
   margin: 0 0 14px;
   font-family: var(--heading);
   font-size: clamp(1.95rem, 4.8vw, 2.85rem);
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: -0.012em;
   line-height: 1.14;
   color: var(--text-h);
@@ -1731,7 +1733,7 @@ html[data-theme='night'] .home-journal-card {
 .journal-post__body h6 {
   margin: 1.7em 0 0.55em;
   font-family: var(--heading);
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.25;
   color: var(--text-h);
   text-wrap: pretty;
@@ -2069,7 +2071,7 @@ html[data-theme='night'] .home-journal-card {
   margin: 0;
   font-family: var(--heading);
   font-size: clamp(1.85rem, 4.2vw, 2.75rem);
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1.12;
   color: var(--text-h);
   text-wrap: pretty;
@@ -2084,9 +2086,9 @@ html[data-theme='night'] .home-journal-card {
 }
 
 .product-detail__price {
-  font-family: var(--heading);
+  font-family: var(--sans);
   font-size: clamp(1.5rem, 2.6vw, 1.9rem);
-  font-weight: 400;
+  font-weight: 600;
   color: var(--text-h);
 }
 
@@ -2392,7 +2394,7 @@ html[data-theme='night'] .home-journal-card {
 .shop-hero__title {
   margin: 0 0 14px;
   font-size: clamp(2rem, 4.5vw, 2.8rem);
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: -0.012em;
   line-height: 1.12;
 }
@@ -2436,7 +2438,7 @@ html[data-theme='night'] .home-journal-card {
   margin: 0 0 8px;
   font-family: var(--heading);
   font-size: 1.35rem;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-h);
 }
 
@@ -2559,7 +2561,7 @@ html[data-theme='night'] .home-journal-card {
   margin: 0 0 14px;
   font-family: var(--heading);
   font-size: clamp(1.85rem, 4.4vw, 2.75rem);
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: -0.012em;
   line-height: 1.12;
   color: var(--text-h);
@@ -2725,7 +2727,7 @@ html[data-theme='night'] .home-journal-card {
   margin: 0 0 10px;
   font-family: var(--heading);
   font-size: clamp(1.25rem, 2.8vw, 1.55rem);
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-h);
   text-wrap: pretty;
   overflow-wrap: anywhere;
@@ -2939,14 +2941,14 @@ html[data-theme='night'] .home-journal-card {
   margin: 2px 0 0;
   font-family: var(--heading);
   font-size: 1.18rem;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.25;
   color: var(--text-h);
 }
 
 .product-card__title a {
   color: inherit;
-  font-weight: 400;
+  font-weight: 500;
   text-decoration: none;
 }
 
@@ -2984,9 +2986,9 @@ html[data-theme='night'] .home-journal-card {
 }
 
 .product-card__price {
-  font-family: var(--heading);
+  font-family: var(--sans);
   font-size: 1.2rem;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--text-h);
 }
 
@@ -3080,7 +3082,7 @@ html[data-theme='night'] .home-journal-card {
 .product-card--coming-soon h3 {
   margin: 0;
   font-family: var(--heading);
-  font-weight: 400;
+  font-weight: 500;
 }
 
 @media (max-width: 735px) {
@@ -3129,7 +3131,7 @@ html[data-theme='night'] .home-journal-card {
   margin: 0;
   font-family: var(--heading);
   font-size: 1.15rem;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .pattern-card p {
@@ -3187,7 +3189,7 @@ a.product-card:hover {
   color: var(--ink-soft);
   font-family: var(--heading);
   font-size: 1.25rem;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: -0.01em;
 }
 
@@ -3298,7 +3300,7 @@ a.product-card:hover {
   margin: 0 0 10px;
   font-family: var(--heading);
   font-size: clamp(1.9rem, 4.2vw, 2.8rem);
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1.14;
   letter-spacing: -0.012em;
 }
@@ -3389,7 +3391,7 @@ a.product-card:hover {
   margin: 0 0 14px;
   font-family: var(--heading);
   font-size: 1.32rem;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.3;
 }
 
@@ -3478,7 +3480,7 @@ a.product-card:hover {
 .faq-hero__title {
   margin: 0 0 14px;
   font-family: var(--heading);
-  font-weight: 400;
+  font-weight: 600;
   font-size: clamp(1.95rem, 4.6vw, 2.85rem);
   line-height: 1.12;
   letter-spacing: -0.012em;
@@ -3523,7 +3525,7 @@ a.product-card:hover {
   padding: 18px 22px;
   color: var(--text-h);
   font-family: var(--heading);
-  font-weight: 400;
+  font-weight: 500;
   font-size: 1.05rem;
   line-height: 1.35;
   text-wrap: pretty;
@@ -3606,7 +3608,7 @@ a.product-card:hover {
   margin: 0 0 8px;
   font-family: var(--heading);
   font-size: 1.35rem;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-h);
 }
 
@@ -3781,7 +3783,7 @@ a.product-card:hover {
 .contact-hero__title {
   margin: 0 0 14px;
   font-family: var(--heading);
-  font-weight: 400;
+  font-weight: 600;
   font-size: clamp(1.95rem, 4.6vw, 2.85rem);
   line-height: 1.12;
   letter-spacing: -0.012em;
@@ -3836,7 +3838,7 @@ a.product-card:hover {
 .contact-story-card__title {
   margin: 0 0 12px;
   font-family: var(--heading);
-  font-weight: 400;
+  font-weight: 500;
   font-size: clamp(1.25rem, 2.4vw, 1.55rem);
   line-height: 1.25;
   color: var(--text-h);
@@ -3870,7 +3872,7 @@ a.product-card:hover {
 .contact-channels__title {
   margin: 0 0 10px;
   font-family: var(--heading);
-  font-weight: 400;
+  font-weight: 500;
   font-size: clamp(1.45rem, 3vw, 1.9rem);
   color: var(--text-h);
   text-wrap: pretty;
@@ -3998,7 +4000,7 @@ a.product-card:hover {
 .contact-commission__title {
   font-family: var(--heading);
   font-size: 1.15rem;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-h);
   text-wrap: pretty;
 }
@@ -4234,7 +4236,7 @@ a.product-card:hover {
   margin: 0;
   font-family: var(--heading);
   font-size: clamp(1.85rem, 4.4vw, 2.75rem);
-  font-weight: 400;
+  font-weight: 600;
   letter-spacing: -0.012em;
   line-height: 1.12;
   color: var(--text-h);
@@ -4306,7 +4308,7 @@ a.product-card:hover {
   margin: 0;
   font-family: var(--heading);
   font-size: clamp(1.35rem, 3vw, 1.7rem);
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-h);
   text-wrap: pretty;
 }
@@ -4361,7 +4363,7 @@ a.product-card:hover {
   color: var(--text-h);
   font-family: var(--heading);
   font-size: 1.15rem;
-  font-weight: 400;
+  font-weight: 500;
   text-decoration: none;
   text-wrap: pretty;
   overflow-wrap: anywhere;
@@ -4458,9 +4460,9 @@ a.product-card:hover {
   margin: 0;
   min-width: 5.5rem;
   text-align: right;
-  font-family: var(--heading);
+  font-family: var(--sans);
   font-size: 1.15rem;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--text-h);
   font-variant-numeric: tabular-nums;
 }
@@ -4518,7 +4520,7 @@ a.product-card:hover {
   margin: 0;
   font-family: var(--heading);
   font-size: 1.4rem;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-h);
 }
 
@@ -4555,9 +4557,9 @@ a.product-card:hover {
 }
 
 .cart-summary__row--total strong {
-  font-family: var(--heading);
+  font-family: var(--sans);
   font-size: 1.55rem;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--text-h);
 }
 
@@ -4697,7 +4699,7 @@ a.product-card:hover {
   margin: 0 0 8px;
   font-family: var(--heading);
   font-size: clamp(1.7rem, 4vw, 2.2rem);
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.16;
   letter-spacing: -0.012em;
 }
@@ -4822,7 +4824,7 @@ a.product-card:hover {
   margin: 0 0 14px;
   font-family: var(--heading);
   font-size: clamp(1.9rem, 5vw, 2.9rem);
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.12;
   letter-spacing: -0.012em;
 }
