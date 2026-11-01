@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../hooks/useCart'
+import { useShopProducts } from '../hooks/useShopProducts'
 import { useLocale } from '../hooks/useLocale'
 import { formatPrice, getColorSwatch } from '../lib/shop'
+import { slugify } from '../lib/slug'
 import type { CartItem } from '../context/cart'
 
 function fillTemplate(template: string, values: Record<string, string | number>) {
@@ -19,6 +21,7 @@ function itemKey(item: Pick<CartItem, 'slug' | 'color'>) {
 function CartPage() {
   const { messages, locale } = useLocale()
   const { items, itemCount, removeItem, updateQuantity } = useCart()
+  const { products } = useShopProducts()
   const [statusMessage, setStatusMessage] = useState('')
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
@@ -109,6 +112,8 @@ function CartPage() {
           <section className="cart-main" aria-label={messages.cart.ariaLabel}>
             <ul className="cart-list">
               {items.map((item) => {
+                const product = products.find((entry) => slugify(entry.name) === item.slug)
+                const image = (item.color && product?.imagesByColor[item.color]) || product?.image
                 const lineTotal = item.price * item.quantity
                 const decreaseLabel = fillTemplate(messages.cart.decreaseQuantity, {
                   name: item.name,
@@ -126,6 +131,7 @@ function CartPage() {
 
                 return (
                   <li className="cart-item" key={itemKey(item)}>
+                    {image && <img className="cart-item__photo" src={image} alt="" loading="lazy" />}
                     <div className="cart-item__details">
                       <Link to={`/shop/${item.slug}`} className="cart-item__name">
                         {item.name}
