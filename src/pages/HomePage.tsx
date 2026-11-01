@@ -20,7 +20,7 @@ function PiecePhoto({ product, className = '', eager = false }: { product: ShopP
   const [failed, setFailed] = useState<string | null>(null)
   const { messages } = useLocale()
   return product.image && failed !== product.image ? (
-    <img className={className} src={product.image} alt={product.name} loading={eager ? 'eager' : 'lazy'} onError={() => setFailed(product.image)} />
+    <img className={className} src={product.image} alt={product.name} loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'high' : undefined} onError={() => setFailed(product.image)} />
   ) : <div className={`v5-photo-fallback ${className}`} role="img" aria-label={messages.shop.photoComingSoon}>{messages.shop.photoComingSoon}</div>
 }
 
@@ -141,7 +141,7 @@ function HomePage() {
           </div>
           <div className="v5-portrait-row" aria-busy={!loaded}>
             {selected.slice(0, 3).map((product, index) => <figure className={`v5-portrait v5-portrait--${index}`} key={product.name}>
-              <Link to={`/shop/${slugify(product.name)}`}><PiecePhoto product={product} eager /><figcaption>{product.name}</figcaption></Link>
+              <Link to={`/shop/${slugify(product.name)}`}><PiecePhoto product={product} eager={index === 0} /><figcaption>{product.name}</figcaption></Link>
             </figure>)}
             {!loaded && [0, 1, 2].map(i => <div className="v5-portrait v5-loading" key={i} aria-hidden="true" />)}
           </div>
