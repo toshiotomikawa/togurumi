@@ -40,13 +40,13 @@ test('password users preserve profile, password hash and role fields', async () 
     assert.equal(await bcrypt.compare('initial-password', created.passwordHash ?? ''), true)
 
     created.displayName = 'Bella'
-    created.email = 'bella@example.com'
+    created.email = 'moderator@example.com'
     created.passwordHash = await bcrypt.hash('updated-password', 4)
     await store.save(created)
 
     const loaded = await store.findByUsername('bella')
     assert.equal(loaded?.displayName, 'Bella')
-    assert.equal(loaded?.email, 'bella@example.com')
+    assert.equal(loaded?.email, 'moderator@example.com')
     assert.equal(loaded?.role, 'admin')
     assert.equal(await bcrypt.compare('updated-password', loaded?.passwordHash ?? ''), true)
   } finally {
@@ -58,8 +58,8 @@ test('concurrent Google creation enforces googleId and username uniqueness', asy
   const { db, store } = await createTestStore()
   try {
     const sameIdentity = await Promise.all([
-      store.createWithGoogle('google-1', 'bella@example.com', 'moderator'),
-      store.createWithGoogle('google-1', 'bella@example.com', 'moderator'),
+      store.createWithGoogle('google-1', 'moderator@example.com', 'moderator'),
+      store.createWithGoogle('google-1', 'moderator@example.com', 'moderator'),
     ])
     assert.equal(sameIdentity[0]?.id, sameIdentity[1]?.id)
 

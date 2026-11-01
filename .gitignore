@@ -26,3 +26,7 @@ mcps/
 .claude/
 terminals/
 .vercel/
+.tmp/
+.agents/
+CLAUDE.md
+.codex/
