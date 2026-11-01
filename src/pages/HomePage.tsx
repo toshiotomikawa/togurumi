@@ -9,7 +9,6 @@ import { useShopProducts } from '../hooks/useShopProducts'
 import { formatPrice, type ShopProduct } from '../lib/shop'
 import { slugify } from '../lib/slug'
 import { TOGURUMI_INSTAGRAM_DM, TOGURUMI_LATEST_VIDEO, TOGURUMI_YOUTUBE } from '../lib/togurumi'
-import './home-v5.css'
 
 const copy = {
   'pt-BR': { commission: 'Encomendas', collection: 'Encontre seu novo amiguinho', collectionIntro: 'Uma pequena seleção do ateliê. Cada peça, um encontro.', categories: 'Qual é o seu tipo de encanto?', about: 'Um fio, uma agulha. E a Bella.', handmade: 'Feitos à mão', maker: 'Da agulha da Bella', order: 'Encomendas pelo Instagram', explore: 'Conhecer a coleção', browse: 'Explorar', sign: 'Com carinho, Bella', studio: 'Por dentro do ateliê' },

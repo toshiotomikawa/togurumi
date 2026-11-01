@@ -14,6 +14,8 @@ function ShopPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const editor = useEditableContent('shop', locale, messages.shop, messages.contentEditor.draftRestored)
 
+  const cover = products.find((product) => product.image && product.stock > 0)
+
   const categories = Array.from(new Set(products.map((product) => product.category).filter(Boolean)))
   const visibleProducts = activeCategory
     ? products.filter((product) => product.category === activeCategory)
@@ -43,10 +45,13 @@ function ShopPage() {
           </div>
         </section>
       ) : (
-        <section className="shop-hero">
-          <span className="shop-hero__eyebrow">{editor.content.eyebrow}</span>
-          <h1 className="shop-hero__title">{editor.content.title}</h1>
-          <p className="shop-hero__intro">{editor.content.intro}</p>
+        <section className="shop-hero shop-hero--photographic">
+          <div className="shop-hero__copy">
+            <span className="shop-hero__eyebrow">{editor.content.eyebrow}</span>
+            <h1 className="shop-hero__title">{editor.content.title}</h1>
+            <p className="shop-hero__intro">{editor.content.intro}</p>
+          </div>
+          {cover && <img className="shop-hero__photo" src={cover.image} alt={cover.name} />}
         </section>
       )}
 
