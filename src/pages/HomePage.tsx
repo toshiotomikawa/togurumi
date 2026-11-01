@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import './home-pilot.css'
 import { Link } from 'react-router-dom'
 import { EditActions, EditFeedback, EditField } from '../components/EditableContent'
 import ProductCard, { ProductCardSkeleton, ProductComingSoonCard } from '../components/ProductCard'
@@ -156,12 +157,13 @@ function HomePage() {
       ) : (
         <section className={`hero${showHeroMediaSlot ? ' hero--split' : ''}`}>
           <div className="hero__copy">
-            <span className="hero__eyebrow hero__eyebrow--katakana">{editor.content.eyebrow}</span>
+            <span className="hero__eyebrow hero__eyebrow--katakana" lang="ja">{editor.content.eyebrow}</span>
             <h1>{editor.content.title}</h1>
             <p>{editor.content.intro}</p>
             <div className="hero__actions">
               <Link to="/shop" className="button button--primary">
                 {editor.content.shopCta}
+                <span aria-hidden="true">↗</span>
               </Link>
               <Link to="/journal" className="button">
                 {editor.content.journalCta}
@@ -197,6 +199,12 @@ function HomePage() {
       )}
 
       <EditFeedback feedback={editor.feedback} />
+
+      <nav className="home-index" aria-label={messages.footer.navLabel}>
+        <Link to="/shop"><span aria-hidden="true">01</span>{messages.nav.shop}<span aria-hidden="true">↗</span></Link>
+        <Link to="/journal"><span aria-hidden="true">02</span>{messages.nav.journal}<span aria-hidden="true">↗</span></Link>
+        <Link to="/contact"><span aria-hidden="true">03</span>{messages.nav.contact}<span aria-hidden="true">↗</span></Link>
+      </nav>
 
       {loaded && highlights.length > 0 ? (
         <section className="section home-highlights">
