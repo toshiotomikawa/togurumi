@@ -15,9 +15,9 @@
   --v5-gap: 32px;
   --v5-radius: 24px;
 }
-#root:has(.v5-home) {
+:root, :root[data-theme] {
   --bg: var(--v5-paper);
-  --surface: var(--v5-white);
+  --surface: var(--v5-paper);
   --surface-2: var(--v5-pink);
   --text: var(--v5-body);
   --text-h: var(--v5-ink);
@@ -29,30 +29,35 @@
   --border: var(--v5-border);
   --border-strong: var(--v5-border-strong);
   --header-bg: var(--v5-paper);
+  --secondary: var(--v5-green);
+  --secondary-soft: var(--v5-sage);
+  --code-bg: var(--v5-pink);
+  --yarn-ball: var(--v5-berry);
+  --radius: var(--v5-radius);
   --shadow: none;
   background: var(--bg);
   color: var(--text);
   color-scheme: light;
 }
-html:has(.v5-home), body:has(.v5-home) { overflow-x: clip; }
-#root:has(.v5-home)::before { display: none; }
-#root:has(.v5-home) .site-header { position: relative; border: none; background: var(--bg); backdrop-filter: none; }
-#root:has(.v5-home) .site-header__inner { max-width: 1240px; padding: 20px 32px 16px; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; position: relative; }
-#root:has(.v5-home) .site-brand { width: 100%; justify-content: center; }
-#root:has(.v5-home) .site-brand__logo { height: 62px; }
-#root:has(.v5-home) .site-nav { justify-content: center; gap: var(--v5-gap); }
-#root:has(.v5-home) .site-nav a { color: var(--v5-ink); font-size: 15px; letter-spacing: 0; padding-bottom: 2px; }
-#root:has(.v5-home) .site-header__actions { position: absolute; right: 32px; top: 32px; }
-#root:has(.v5-home) .settings-toggle__button { background: transparent; border-color: transparent; width: 44px; height: 44px; }
-#root:has(.v5-home) .site-footer { margin-top: 0; background: var(--v5-berry); color: var(--v5-paper); }
-#root:has(.v5-home) .site-footer__inner { max-width: 1240px; padding: 64px 32px; align-items: start; }
-#root:has(.v5-home) .site-footer__name,
-#root:has(.v5-home) .site-footer__kana,
-#root:has(.v5-home) .site-footer__note,
-#root:has(.v5-home) .site-footer__meta,
-#root:has(.v5-home) .site-footer__nav a,
-#root:has(.v5-home) .site-footer__social a { color: var(--v5-paper); }
-#root:has(.v5-home) .site-footer__name { font-size: 40px; }
+html, body { overflow-x: clip; }
+#root::before { display: none; }
+#root .site-header { position: relative; border: none; background: var(--bg); backdrop-filter: none; }
+#root .site-header__inner { max-width: 1240px; padding: 20px 32px 16px; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; position: relative; }
+#root .site-brand { width: 100%; justify-content: center; }
+#root .site-brand__logo { height: 62px; }
+#root .site-nav { justify-content: center; gap: var(--v5-gap); }
+#root .site-nav a { color: var(--v5-ink); font-size: 15px; letter-spacing: 0; padding-bottom: 2px; }
+#root .site-header__actions { position: absolute; right: 32px; top: 32px; }
+#root .settings-toggle__button { background: transparent; border-color: transparent; width: 44px; height: 44px; }
+#root .site-footer { margin-top: 0; background: var(--v5-berry); color: var(--v5-paper); }
+#root .site-footer__inner { max-width: 1240px; padding: 64px 32px; align-items: start; }
+#root .site-footer__name,
+#root .site-footer__kana,
+#root .site-footer__note,
+#root .site-footer__meta,
+#root .site-footer__nav a,
+#root .site-footer__social a { color: var(--v5-paper); }
+#root .site-footer__name { font-size: 40px; }
 .v5-home { font-family: var(--sans); }
 .v5-home h1, .v5-home h2, .v5-home h3 { font-family: var(--heading); font-weight: 500; color: var(--v5-ink); overflow-wrap: break-word; min-width: 0; }
 .v5-home h2 { font-size: clamp(30px, 3.2vw, 44px); line-height: 1.12; margin: 0; letter-spacing: -.025em; }
@@ -127,11 +132,11 @@ html:has(.v5-home), body:has(.v5-home) { overflow-x: clip; }
 .v5-empty { padding: 48px; background: var(--v5-pink); border-radius: var(--v5-radius); }
 .v5-editor { padding-block: 32px; }
 @media (max-width: 900px) {
-  #root:has(.v5-home) .site-header__inner { padding: 16px 24px; }
-  #root:has(.v5-home) .site-brand { width: auto; }
-  #root:has(.v5-home) .site-brand__logo { height: 46px; }
-  #root:has(.v5-home) .site-nav--desktop { display: none; }
-  #root:has(.v5-home) .site-nav-toggle { position: absolute; right: 24px; top: 20px; }
+  #root .site-header__inner { padding: 16px 24px; }
+  #root .site-brand { width: auto; }
+  #root .site-brand__logo { height: 46px; }
+  #root .site-nav--desktop { display: none; }
+  #root .site-nav-toggle { position: absolute; right: 24px; top: 20px; }
   .v5-portrait-row { gap: 20px; }
   .v5-portrait img { height: 220px; }
   .v5-portrait--1 img { height: 270px; }
@@ -174,5 +179,5 @@ html:has(.v5-home), body:has(.v5-home) { overflow-x: clip; }
   .v5-journal { padding-block: 48px; grid-template-columns: 1fr; gap: 28px; }
   .v5-journal__entry { padding-left: 24px; }
   .v5-reviews { padding-bottom: 48px; }
-  #root:has(.v5-home) .site-footer__inner { padding: 40px 20px; }
+  #root .site-footer__inner { padding: 40px 20px; }
 }
