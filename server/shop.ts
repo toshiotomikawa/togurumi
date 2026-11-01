@@ -20,6 +20,8 @@ type ProductImages = {
   colors: Record<string, string>
 }
 
+let lastKnownProducts: ShopProduct[] = []
+
 function parseProductImages(value: string): ProductImages {
   const trimmed = value.trim()
   if (!trimmed.startsWith('{')) return { default: trimmed, colors: {} }
@@ -126,25 +128,40 @@ export async function setProductImage(
 }
 
 export async function getShopProducts(): Promise<ShopProduct[]> {
-  const rows = await getSheetTab('CATALOGO')
+  try {
+    const rows = await getSheetTab('CATALOGO')
 
-  return rows
-    .filter((row) => row['MANTER?']?.trim().toLowerCase() === 'sim' && row['PREÇO FINAL']?.trim())
-    .map((row) => {
-      const images = parseProductImages(row['IMAGEM'] ?? '')
-      return {
-        name: row['MODELO'],
-        category: row['TIPO'],
-        price: parsePrice(row['PREÇO FINAL']),
-        yarn: row['FIO'],
-        cores: row['CORES'] ?? row['Cores'] ?? '',
-        stock: Number(row['ESTOQUE']) || 0,
-        description: row['DESCRIÇÃO'] ?? '',
-        image: images.default || Object.values(images.colors)[0] || '',
-        imagesByColor: images.colors,
-        releaseDate: row['DATA'] ?? '',
-        highlight: row['DESTAQUE']?.trim().toLowerCase() === 'sim',
-        designer: row['DESIGNER'] ?? '',
-      }
-    })
+    const products = rows
+      .filter((row) => row['MANTER?']?.trim().toLowerCase() === 'sim' && (row['PREÇO FINAL'] ?? row['PREAO FINAL'] ?? row['PRECO FINAL'])?.trim())
+      .map((row) => {
+        const images = parseProductImages(row['IMAGEM'] ?? '')
+        const priceField = row['PREÇO FINAL'] ?? row['PREAO FINAL'] ?? row['PRECO FINAL'] ?? ''
+        const descField = row['DESCRIÇÃO'] ?? row['DESCRIAAO'] ?? row['DESCRICAO'] ?? ''
+        return {
+          name: row['MODELO'],
+          category: row['TIPO'],
+          price: parsePrice(priceField),
+          yarn: row['FIO'],
+          cores: row['CORES'] ?? row['Cores'] ?? '',
+          stock: Number(row['ESTOQUE']) || 0,
+          description: descField,
+          image: images.default || Object.values(images.colors)[0] || '',
+          imagesByColor: images.colors,
+          releaseDate: row['DATA'] ?? '',
+          highlight: row['DESTAQUE']?.trim().toLowerCase() === 'sim',
+          designer: row['DESIGNER'] ?? '',
+        }
+      })
+
+    if (products.length > 0) {
+      lastKnownProducts = products
+    }
+    return products
+  } catch (err) {
+    if (lastKnownProducts.length > 0) {
+      console.warn('[shop] Google Sheets unavailable, returning last known products cache')
+      return lastKnownProducts
+    }
+    throw err
+  }
 }

@@ -1,10 +1,4 @@
-import { OAuth2Client } from 'google-auth-library'
-
-const SPREADSHEET_ID = process.env.GOOGLE_SHEETS_SPREADSHEET_ID ?? ''
-const OAUTH_CLIENT_ID = process.env.GOOGLE_SHEETS_OAUTH_CLIENT_ID ?? ''
-const OAUTH_CLIENT_SECRET = process.env.GOOGLE_SHEETS_OAUTH_CLIENT_SECRET ?? ''
-const REFRESH_TOKEN = process.env.GOOGLE_SHEETS_REFRESH_TOKEN ?? ''
-const CACHE_TTL_MS = Number(process.env.GOOGLE_SHEETS_CACHE_TTL_MS ?? 60_000)
+import { JWT, OAuth2Client } from 'google-auth-library'
 
 const TAB_NAME_PATTERN = /^[\w -]+$/
 const A1_RANGE_PATTERN = /^[A-Z]+\d+(:[A-Z]+\d*)?$/
@@ -14,18 +8,69 @@ type SheetTabData = {
   rows: Record<string, string>[]
 }
 
-let authClient: OAuth2Client | null = null
+let authClient: OAuth2Client | JWT | null = null
 const cache = new Map<string, { expiresAt: number; data: SheetTabData }>()
 
-export function sheetsEnabled() {
-  return Boolean(SPREADSHEET_ID && OAUTH_CLIENT_ID && OAUTH_CLIENT_SECRET && REFRESH_TOKEN)
+function getSpreadsheetId() {
+  return process.env.GOOGLE_SHEETS_SPREADSHEET_ID ?? ''
 }
 
-function getAuthClient() {
+function getServiceAccountEmail() {
+  return process.env.GOOGLE_SHEETS_SERVICE_ACCOUNT_EMAIL ?? ''
+}
+
+function getServiceAccountPrivateKey() {
+  return (process.env.GOOGLE_SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY ?? '').replace(/\\n/g, '\n')
+}
+
+function getOAuthClientId() {
+  return process.env.GOOGLE_SHEETS_OAUTH_CLIENT_ID ?? ''
+}
+
+function getOAuthClientSecret() {
+  return process.env.GOOGLE_SHEETS_OAUTH_CLIENT_SECRET ?? ''
+}
+
+function getRefreshToken() {
+  return process.env.GOOGLE_SHEETS_REFRESH_TOKEN ?? ''
+}
+
+function getCacheTtlMs() {
+  return Number(process.env.GOOGLE_SHEETS_CACHE_TTL_MS ?? 60_000)
+}
+
+export function sheetsEnabled() {
+  const hasServiceAccount = Boolean(getServiceAccountEmail() && getServiceAccountPrivateKey())
+  const hasOAuth = Boolean(getOAuthClientId() && getOAuthClientSecret() && getRefreshToken())
+  return Boolean(getSpreadsheetId() && (hasServiceAccount || hasOAuth))
+}
+
+export function resetAuthClientForTest() {
+  authClient = null
+  cache.clear()
+}
+
+function getAuthClient(): OAuth2Client | JWT {
   if (!authClient) {
-    authClient = new OAuth2Client(OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET)
-    authClient.setCredentials({ refresh_token: REFRESH_TOKEN })
+    const serviceEmail = getServiceAccountEmail()
+    const serviceKey = getServiceAccountPrivateKey()
+    const clientId = getOAuthClientId()
+    const clientSecret = getOAuthClientSecret()
+    const refreshToken = getRefreshToken()
+
+    if (serviceEmail && serviceKey) {
+      authClient = new JWT({
+        email: serviceEmail,
+        key: serviceKey,
+        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+      })
+    } else if (clientId && clientSecret && refreshToken) {
+      const client = new OAuth2Client(clientId, clientSecret)
+      client.setCredentials({ refresh_token: refreshToken })
+      authClient = client
+    }
   }
+  if (!authClient) throw new SheetsError('disabled')
   return authClient
 }
 
@@ -53,19 +98,24 @@ async function getSheetTabData(tab: string, forceRefresh = false): Promise<Sheet
   if (!forceRefresh && cached && cached.expiresAt > Date.now()) return cached.data
 
   const client = getAuthClient()
+  const spreadsheetId = getSpreadsheetId()
   const range = `${tab}!A1:Z1000`
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}`
 
   let values: string[][] | undefined
   try {
     const res = await client.request<{ values?: string[][] }>({ url })
     values = res.data.values
-  } catch {
+  } catch (err) {
+    if (cached?.data) {
+      console.warn(`[sheets] fetch failed for tab ${tab}, serving stale cache:`, err)
+      return cached.data
+    }
     throw new SheetsError('fetch_failed')
   }
 
   const data = rowsToObjects(values ?? [])
-  cache.set(tab, { expiresAt: Date.now() + CACHE_TTL_MS, data })
+  cache.set(tab, { expiresAt: Date.now() + getCacheTtlMs(), data })
   return data
 }
 
@@ -118,8 +168,9 @@ export async function updateSheetRange(tab: string, a1Range: string, values: str
   if (!A1_RANGE_PATTERN.test(a1Range)) throw new SheetsError('invalid_tab')
 
   const client = getAuthClient()
+  const spreadsheetId = getSpreadsheetId()
   const range = `${tab}!${a1Range}`
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`
 
   try {
     await client.request({ url, method: 'PUT', data: { values } })
@@ -135,8 +186,9 @@ export async function appendSheetRow(tab: string, row: string[]): Promise<void> 
   if (!TAB_NAME_PATTERN.test(tab)) throw new SheetsError('invalid_tab')
 
   const client = getAuthClient()
+  const spreadsheetId = getSpreadsheetId()
   const range = `${tab}!A1:Z1000`
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED`
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED`
 
   try {
     await client.request({ url, method: 'POST', data: { values: [row] } })
