@@ -19,6 +19,7 @@ h1, h2, h3, h4 { min-width: 0; overflow-wrap: break-word; }
 a, button, input, textarea, select, summary { -webkit-tap-highlight-color: transparent; }
 :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible { outline: 3px solid var(--v5-focus); outline-offset: 4px; }
 .site-main { min-width: 0; }
+.product-card__category, .product-card__stock, .product-detail__category, .contact-card__external, .auth-divider { opacity: 1; }
 #root .site-footer { background: var(--v5-footer); }
 #root .site-footer :is(a, p, .site-footer__name, .site-footer__kana) { color: var(--v5-footer-text); }
 #root .site-footer a:focus-visible { outline-color: var(--v5-footer-text); }
