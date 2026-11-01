@@ -46,7 +46,7 @@ function toPost(row: JournalRow): JournalPostRecord & { body: string } {
 }
 
 function toPublicPost(row: JournalRow): PublicJournalPost {
-  return { ...toRecord(row), author: row.author ?? 'Bella' }
+  return { ...toRecord(row), author: row.author ?? 'Togurumi' }
 }
 
 function isUniqueViolation(error: unknown) {

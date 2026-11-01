@@ -93,13 +93,13 @@ function parsePost(id: string, raw: string): PublicJournalPostWithBody {
     date: fields.date ?? '',
     order: fields.order ? Number(fields.order) : 0,
     summary: fields.summary ?? '',
-    author: fields.author ?? 'Bella',
+    author: fields.author ?? 'Togurumi',
     archived: fields.archived === 'true',
     body,
   }
 }
 
-function serializePost(data: JournalPostInput, author = 'Bella'): string {
+function serializePost(data: JournalPostInput, author = 'Togurumi'): string {
   const frontmatter = [
     `title: ${quoteIfNeeded(data.title)}`,
     `slug: ${data.slug}`,

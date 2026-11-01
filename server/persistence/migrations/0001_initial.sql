@@ -42,7 +42,7 @@ CREATE TABLE journal_posts (
   sort_order integer NOT NULL DEFAULT 0,
   summary text NOT NULL,
   body text NOT NULL,
-  author text NOT NULL DEFAULT 'Bella',
+  author text NOT NULL DEFAULT 'Togurumi',
   archived boolean NOT NULL DEFAULT false,
   updated_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (locale, slug)

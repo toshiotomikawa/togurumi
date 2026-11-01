@@ -97,7 +97,7 @@ function parseJournal(filename: string, raw: string): LegacyJournalPost {
     order: Number(fields.order ?? 0),
     summary: fields.summary ?? '',
     body: (match?.[2] ?? source).trim(),
-    author: fields.author ?? 'Bella',
+    author: fields.author ?? 'Togurumi',
     archived: fields.archived === 'true',
   }
 }
