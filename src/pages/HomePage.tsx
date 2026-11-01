@@ -12,9 +12,9 @@ import { TOGURUMI_INSTAGRAM_DM, TOGURUMI_LATEST_VIDEO, TOGURUMI_YOUTUBE } from '
 import './home-v5.css'
 
 const copy = {
-  'pt-BR': { collection: 'Encontre seu novo amiguinho', collectionIntro: 'Uma pequena seleção do ateliê. Cada peça, um encontro.', categories: 'Qual é o seu tipo de encanto?', about: 'Um fio, uma agulha. E a Bella.', handmade: 'Feitos à mão', maker: 'Da agulha da Bella', order: 'Encomendas pelo Instagram', explore: 'Conhecer a coleção', browse: 'Explorar', sign: 'Com carinho, Bella', studio: 'Por dentro do ateliê' },
-  'en-US': { collection: 'Meet your new little friend', collectionIntro: 'A little selection from the studio. Every piece, a connection.', categories: 'What kind of charm is yours?', about: 'Some yarn, a hook. And Bella.', handmade: 'Made by hand', maker: "From Bella’s hook", order: 'Custom orders on Instagram', explore: 'Meet the collection', browse: 'Explore', sign: 'With love, Bella', studio: 'Inside the studio' },
-  'es-ES': { collection: 'Encuentra a tu nuevo amiguito', collectionIntro: 'Una pequeña selección del taller. Cada pieza, un encuentro.', categories: '¿Cuál es tu tipo de encanto?', about: 'Un hilo, una aguja. Y Bella.', handmade: 'Hechos a mano', maker: 'De la aguja de Bella', order: 'Encargos por Instagram', explore: 'Conocer la colección', browse: 'Explorar', sign: 'Con cariño, Bella', studio: 'Dentro del taller' },
+  'pt-BR': { commission: 'Encomendas', collection: 'Encontre seu novo amiguinho', collectionIntro: 'Uma pequena seleção do ateliê. Cada peça, um encontro.', categories: 'Qual é o seu tipo de encanto?', about: 'Um fio, uma agulha. E a Bella.', handmade: 'Feitos à mão', maker: 'Da agulha da Bella', order: 'Encomendas pelo Instagram', explore: 'Conhecer a coleção', browse: 'Explorar', sign: 'Com carinho, Bella', studio: 'Por dentro do ateliê' },
+  'en-US': { commission: 'Custom pieces', collection: 'Meet your new little friend', collectionIntro: 'A little selection from the studio. Every piece, a connection.', categories: 'What kind of charm is yours?', about: 'Some yarn, a hook. And Bella.', handmade: 'Made by hand', maker: "From Bella’s hook", order: 'Custom orders on Instagram', explore: 'Meet the collection', browse: 'Explore', sign: 'With love, Bella', studio: 'Inside the studio' },
+  'es-ES': { commission: 'Encargos', collection: 'Encuentra a tu nuevo amiguito', collectionIntro: 'Una pequeña selección del taller. Cada pieza, un encuentro.', categories: '¿Cuál es tu tipo de encanto?', about: 'Un hilo, una aguja. Y Bella.', handmade: 'Hechos a mano', maker: 'De la aguja de Bella', order: 'Encargos por Instagram', explore: 'Conocer la colección', browse: 'Explorar', sign: 'Con cariño, Bella', studio: 'Dentro del taller' },
 }
 
 function PiecePhoto({ product, className = '', eager = false }: { product: ShopProduct; className?: string; eager?: boolean }) {
@@ -53,7 +53,7 @@ function HomePage() {
   const browseLinks = [
     { label: messages.shop.availableHeading, to: '/shop', product: selected[2] },
     { label: photographed[0]?.category, to: `/search?category=${encodeURIComponent(photographed[0]?.category ?? '')}`, product: selected[4] },
-    { label: messages.shop.commissionCta, to: '/contact', product: selected[1] },
+    { label: t.commission, to: '/contact', product: selected[1] },
   ].filter(item => item.product && item.label)
 
   return (
