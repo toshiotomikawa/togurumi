@@ -15,10 +15,10 @@ function ProductImagePlaceholder({ label }: { label: string }) {
 
 function ProductCard({ product }: { product: ShopProduct }) {
   const { messages, locale } = useLocale()
-  const [imageFailed, setImageFailed] = useState(false)
+  const [failedImage, setFailedImage] = useState<string | null>(null)
   const slug = slugify(product.name)
   const productHref = `/shop/${slug}`
-  const showImage = Boolean(product.image) && !imageFailed
+  const showImage = Boolean(product.image) && failedImage !== product.image
   const soldOut = product.stock <= 0
   const isNew = isRecentlyReleased(product.releaseDate)
 
@@ -31,7 +31,7 @@ function ProductCard({ product }: { product: ShopProduct }) {
             src={product.image}
             alt=""
             loading="lazy"
-            onError={() => setImageFailed(true)}
+            onError={() => setFailedImage(product.image)}
           />
         ) : (
           <ProductImagePlaceholder label={messages.shop.photoComingSoon} />
@@ -57,13 +57,11 @@ function ProductCard({ product }: { product: ShopProduct }) {
           <Link to={productHref}>{product.name}</Link>
         </h3>
 
-        {product.cores ? <p className="product-card__cores">{product.cores}</p> : null}
         {product.designer ? (
           <p className="product-card__designer">
             {messages.shop.designerLabel}: {product.designer}
           </p>
         ) : null}
-        {product.description ? <p className="product-card__description">{product.description}</p> : null}
 
         <div className="product-card__footer">
           <span className="product-card__price">{formatPrice(product.price, locale)}</span>
