@@ -1,3 +1,5 @@
+import { slugifyProductName } from './checkout.js'
+import type { StockIssue } from './orders.js'
 import { getSheetTab, SheetsError, updateSheetCellByHeader } from './sheets.js'
 
 export type ShopProduct = {
@@ -164,4 +166,66 @@ export async function getShopProducts(): Promise<ShopProduct[]> {
     }
     throw err
   }
+}
+
+type StockSheetAccess = {
+  getRows: () => Promise<Record<string, string>[]>
+  updateCell: (
+    rowNumber: number,
+    header: string,
+    value: string,
+    expected: { header: string; value: string }[],
+  ) => Promise<void>
+}
+
+const sheetStockAccess: StockSheetAccess = {
+  getRows: () => getSheetTab('CATALOGO', { forceRefresh: true }),
+  updateCell: (rowNumber, header, value, expected) =>
+    updateSheetCellByHeader('CATALOGO', rowNumber, header, value, expected),
+}
+
+const STOCK_UPDATE_ATTEMPTS = 3
+
+/**
+ * Subtracts sold quantities from the ESTOQUE column. Each write is guarded by
+ * the value just read, so a concurrent edit makes the update retry instead of
+ * overwriting it. Stock never goes below zero; shortfalls are returned so the
+ * order can be reviewed by hand.
+ */
+export async function decrementShopStock(
+  items: { slug: string; quantity: number }[],
+  access: StockSheetAccess = sheetStockAccess,
+): Promise<StockIssue[]> {
+  const totals = new Map<string, number>()
+  for (const item of items) totals.set(item.slug, (totals.get(item.slug) ?? 0) + item.quantity)
+
+  const issues: StockIssue[] = []
+  for (const [slug, requested] of totals) {
+    for (let attempt = 1; ; attempt += 1) {
+      const rows = await access.getRows()
+      const index = rows.findIndex((row) => row['MODELO'] && slugifyProductName(row['MODELO']) === slug)
+      if (index < 0) {
+        issues.push({ slug, requested, available: 0 })
+        break
+      }
+
+      const row = rows[index]
+      const currentValue = row['ESTOQUE'] ?? ''
+      const available = Math.max(0, Math.floor(Number(currentValue) || 0))
+      if (available < requested) issues.push({ slug, requested, available })
+
+      try {
+        await access.updateCell(index + 2, 'ESTOQUE', String(Math.max(0, available - requested)), [
+          { header: 'MODELO', value: row['MODELO'] },
+          { header: 'ESTOQUE', value: currentValue },
+        ])
+        break
+      } catch (err) {
+        if (available < requested) issues.pop()
+        if (!(err instanceof SheetsError) || err.code !== 'row_changed' || attempt >= STOCK_UPDATE_ATTEMPTS) throw err
+      }
+    }
+  }
+
+  return issues
 }

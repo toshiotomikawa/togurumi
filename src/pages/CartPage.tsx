@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useCart } from '../hooks/useCart'
 import { useShopProducts } from '../hooks/useShopProducts'
 import { useLocale } from '../hooks/useLocale'
+import { CheckoutRequestError, startCheckout } from '../lib/checkout'
 import { formatPrice, getColorSwatch } from '../lib/shop'
 import { slugify } from '../lib/slug'
 import type { CartItem } from '../context/cart'
@@ -23,11 +24,18 @@ function CartPage() {
   const { items, itemCount, removeItem, updateQuantity } = useCart()
   const { products } = useShopProducts()
   const [statusMessage, setStatusMessage] = useState('')
+  const [checkoutPending, setCheckoutPending] = useState(false)
+  const [checkoutError, setCheckoutError] = useState('')
 
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  // Show the current catalog price when it is loaded; the server recalculates it at checkout anyway.
+  const priceOf = (item: CartItem) =>
+    products.find((entry) => slugify(entry.name) === item.slug)?.price ?? item.price
+  const total = items.reduce((sum, item) => sum + priceOf(item) * item.quantity, 0)
   const lineCount = items.length
 
   function announce(message: string) {
+    // A cart change makes the previous checkout error stale.
+    setCheckoutError('')
     // Retrigger polite live region when the same text is set again.
     setStatusMessage('')
     requestAnimationFrame(() => setStatusMessage(message))
@@ -57,6 +65,40 @@ function CartPage() {
         quantity: next,
       }),
     )
+  }
+
+  function checkoutErrorMessage(error: unknown) {
+    const failure = error instanceof CheckoutRequestError ? error.failure : { error: 'checkout_failed' }
+    const name = items.find((item) => item.slug === failure.slug)?.name ?? ''
+    switch (failure.error) {
+      case 'product_unavailable':
+        return fillTemplate(messages.checkout.errorUnavailable, { name })
+      case 'insufficient_stock':
+        return fillTemplate(messages.checkout.errorInsufficientStock, { name, available: failure.available ?? 0 })
+      case 'invalid_color':
+        return fillTemplate(messages.checkout.errorInvalidColor, { name })
+      case 'invalid_cart':
+        return messages.checkout.errorInvalidCart
+      case 'checkout_unavailable':
+        return messages.checkout.errorNotConfigured
+      case 'too_many_attempts':
+        return messages.checkout.errorTooMany
+      default:
+        return messages.checkout.errorGeneric
+    }
+  }
+
+  async function handleCheckout() {
+    if (checkoutPending || items.length === 0) return
+    setCheckoutPending(true)
+    setCheckoutError('')
+    try {
+      const url = await startCheckout(items, locale)
+      window.location.assign(url)
+    } catch (error) {
+      setCheckoutError(checkoutErrorMessage(error))
+      setCheckoutPending(false)
+    }
   }
 
   function handleRemove(item: CartItem) {
@@ -114,7 +156,8 @@ function CartPage() {
               {items.map((item) => {
                 const product = products.find((entry) => slugify(entry.name) === item.slug)
                 const image = (item.color && product?.imagesByColor[item.color]) || product?.image
-                const lineTotal = item.price * item.quantity
+                const unitPrice = priceOf(item)
+                const lineTotal = unitPrice * item.quantity
                 const decreaseLabel = fillTemplate(messages.cart.decreaseQuantity, {
                   name: item.name,
                 })
@@ -150,7 +193,7 @@ function CartPage() {
                       ) : null}
                       <p className="cart-item__unit">
                         {fillTemplate(messages.cart.unitPrice, {
-                          price: formatPrice(item.price, locale),
+                          price: formatPrice(unitPrice, locale),
                         })}
                       </p>
                     </div>
@@ -236,9 +279,24 @@ function CartPage() {
                 </div>
               </dl>
 
+              <button
+                type="button"
+                className="button button--primary cart-summary__checkout"
+                onClick={handleCheckout}
+                disabled={checkoutPending}
+                aria-busy={checkoutPending}
+              >
+                {checkoutPending ? messages.checkout.redirecting : messages.checkout.button}
+              </button>
+              {checkoutError ? (
+                <p className="cart-summary__error" role="alert">
+                  {checkoutError}
+                </p>
+              ) : null}
+
               <p className="cart-summary__note">{messages.shop.deliveryNotice}</p>
               <p className="cart-summary__note cart-summary__note--checkout">
-                {messages.cart.checkoutNote}
+                {messages.checkout.secureNote}
               </p>
 
               <Link to="/shop" className="button cart-summary__continue">

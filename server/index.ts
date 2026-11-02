@@ -30,7 +30,17 @@ import { createRuntimeReviewStore } from './persistence/reviewStore.js'
 import { createRuntimeContentStores } from './persistence/contentStores.js'
 import { createRuntimeJournalStore } from './persistence/journalStore.js'
 import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sheets.js'
-import { getProductImageTargets, getShopProducts, setProductImage } from './shop.js'
+import { decrementShopStock, getProductImageTargets, getShopProducts, setProductImage } from './shop.js'
+import {
+  CHECKOUT_SOURCE,
+  CheckoutError,
+  buildCheckoutLines,
+  buildCheckoutSessionParams,
+  parseCartRequest,
+} from './checkout.js'
+import { createRuntimeOrderStore } from './persistence/orderStore.js'
+import { getStripe, listCheckoutOrderItems, publicSiteUrl, stripeEnabled, stripeWebhookSecret } from './stripe.js'
+import { handleStripeWebhook } from './stripeWebhook.js'
 import { createRuntimeUserStore } from './persistence/userStore.js'
 import type { UserRecord } from './store.js'
 import { validateRuntimeEnvironment } from './runtimeConfig.js'
@@ -48,6 +58,7 @@ const reviewStore = createRuntimeReviewStore()
 const { siteContentStore, faqStore } = createRuntimeContentStores()
 const journalStore = createRuntimeJournalStore()
 const userStore = createRuntimeUserStore()
+const orderStore = createRuntimeOrderStore()
 
 if (process.env.NODE_ENV === 'production' && SESSION_SECRET === 'dev-only-change-me') {
   throw new Error('Set SESSION_SECRET in production')
@@ -63,6 +74,30 @@ declare module 'express-session' {
 
 const app = express()
 app.set('trust proxy', 1)
+
+// Registered before the JSON parser, sessions and the Origin check: Stripe
+// signs the exact raw body and its requests carry no browser Origin header.
+app.post('/api/stripe/webhook', express.raw({ type: () => true, limit: '1mb' }), async (req, res) => {
+  const webhookSecret = stripeWebhookSecret()
+  if (!stripeEnabled() || !webhookSecret) {
+    res.status(503).json({ error: 'stripe_disabled' })
+    return
+  }
+
+  const result = await handleStripeWebhook(
+    {
+      webhookSecret,
+      constructEvent: (payload, signature, secret) => getStripe().webhooks.constructEvent(payload, signature, secret),
+      listLineItems: listCheckoutOrderItems,
+      orderStore,
+      applyStock: decrementShopStock,
+      logger: console,
+    },
+    req.body,
+    req.headers['stripe-signature'],
+  )
+  res.status(result.status).json(result.body)
+})
 
 app.use(cookieParser())
 app.use(express.json())
@@ -418,6 +453,71 @@ app.get('/api/shop/products', async (_req, res) => {
       return
     }
     throw err
+  }
+})
+
+app.post('/api/checkout', async (req, res) => {
+  if (!stripeEnabled()) {
+    res.status(503).json({ error: 'checkout_unavailable' })
+    return
+  }
+
+  if (!await rateLimitStore.consume(`checkout:${req.ip ?? 'unknown'}`, 10, 10 * 60 * 1000)) {
+    res.status(429).json({ error: 'too_many_attempts' })
+    return
+  }
+
+  try {
+    const items = parseCartRequest(req.body)
+    const lines = buildCheckoutLines(items, await getShopProducts())
+    const session = await getStripe().checkout.sessions.create(
+      buildCheckoutSessionParams(lines, { siteUrl: publicSiteUrl(), locale: req.body?.locale }),
+    )
+    if (!session.url) throw new Error('Stripe returned a Checkout Session without a URL')
+    res.json({ url: session.url })
+  } catch (err) {
+    if (err instanceof CheckoutError) {
+      res.status(err.code === 'invalid_cart' ? 400 : 409).json({ error: err.code, ...err.details })
+      return
+    }
+    if (err instanceof SheetsError) {
+      res.status(503).json({ error: 'checkout_unavailable' })
+      return
+    }
+    console.error('[checkout] failed to create Checkout Session', err)
+    res.status(502).json({ error: 'checkout_failed' })
+  }
+})
+
+app.get('/api/checkout/status', async (req, res) => {
+  const sessionId = String(req.query.session_id ?? '')
+  if (!stripeEnabled() || !/^cs_(test|live)_[A-Za-z0-9]{1,200}$/.test(sessionId)) {
+    res.status(400).json({ error: 'invalid_session' })
+    return
+  }
+
+  res.setHeader('Cache-Control', 'no-store')
+  try {
+    const session = await getStripe().checkout.sessions.retrieve(sessionId)
+    if (session.metadata?.source !== CHECKOUT_SOURCE) {
+      res.status(404).json({ error: 'not_found' })
+      return
+    }
+    // Only the payment state is exposed; customer details stay server-side.
+    // A failed Pix keeps payment_status "unpaid", so the webhook record decides.
+    const order = await orderStore.getOrder(session.id).catch(() => null)
+    const status = session.payment_status === 'paid' || session.payment_status === 'no_payment_required'
+      ? 'paid'
+      : order?.status === 'failed'
+        ? 'failed'
+        : session.status === 'expired'
+          ? 'expired'
+          : session.status === 'complete'
+            ? 'pending'
+            : 'open'
+    res.json({ status })
+  } catch {
+    res.status(404).json({ error: 'not_found' })
   }
 })
 

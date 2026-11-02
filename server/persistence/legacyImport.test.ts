@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { readFile } from 'node:fs/promises'
+import { readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
@@ -115,7 +115,8 @@ test('migration and two real PostgreSQL-compatible imports do not duplicate rows
       assert.equal(Number(result.rows[0]?.count), count)
     }
     const migrations = await db.query<{ count: string }>('SELECT count(*)::text AS count FROM schema_migrations')
-    assert.equal(migrations.rows[0]?.count, '1')
+    const migrationFiles = (await readdir(migrationsDir)).filter((file) => file.endsWith('.sql'))
+    assert.equal(migrations.rows[0]?.count, String(migrationFiles.length))
   } finally {
     await db.close()
   }
