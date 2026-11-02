@@ -64,6 +64,7 @@ function CartProvider({ children }: { children: ReactNode }) {
       addItem,
       removeItem,
       updateQuantity,
+      clearCart: () => setItems([]),
     }
   }, [items])
 
