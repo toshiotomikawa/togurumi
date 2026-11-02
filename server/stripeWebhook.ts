@@ -1,11 +1,12 @@
 import type Stripe from 'stripe'
 import { CHECKOUT_SOURCE } from './checkout.js'
-import type { OrderItem, OrderStatus, OrderStore, ShippingAddress, StockIssue } from './orders.js'
+import type { OrderItem, OrderRecord, OrderStatus, OrderStore, ShippingAddress, StockIssue } from './orders.js'
 
 export const HANDLED_EVENT_TYPES = new Set([
   'checkout.session.completed',
   'checkout.session.async_payment_succeeded',
   'checkout.session.async_payment_failed',
+  'checkout.session.expired',
 ])
 
 export type StripeWebhookDependencies = {
@@ -14,7 +15,8 @@ export type StripeWebhookDependencies = {
   constructEvent: (payload: Buffer, signature: string, secret: string) => Stripe.Event
   listLineItems: (sessionId: string) => Promise<OrderItem[]>
   orderStore: OrderStore
-  applyStock: (items: OrderItem[]) => Promise<StockIssue[]>
+  /** Deducts one product's sold quantity from the sheet; returns a shortfall, if any. */
+  applyStock: (slug: string, quantity: number) => Promise<StockIssue | null>
   logger?: Pick<Console, 'warn' | 'error'>
 }
 
@@ -53,6 +55,41 @@ function paymentIntentId(session: Stripe.Checkout.Session) {
   return typeof value === 'string' ? value : value.id
 }
 
+/** Checkouts created by this site carry a reservation id; older ones fall back to the session id. */
+export function reservationIdOf(session: Stripe.Checkout.Session) {
+  return session.metadata?.reservation_id || session.id
+}
+
+/**
+ * Deducts each product of a paid order at most once. Every product is claimed
+ * separately, so a webhook redelivered after a partial failure only deducts
+ * what is still missing.
+ */
+async function applyOrderStock(deps: StripeWebhookDependencies, reservationId: string, order: OrderRecord) {
+  const totals = new Map<string, number>()
+  for (const item of order.items) {
+    if (item.slug) totals.set(item.slug, (totals.get(item.slug) ?? 0) + item.quantity)
+  }
+
+  for (const [slug, quantity] of totals) {
+    if (!await deps.orderStore.claimStockItem(reservationId, order.sessionId, slug, quantity)) continue
+    let issue: StockIssue | null
+    try {
+      issue = await deps.applyStock(slug, quantity)
+    } catch (err) {
+      await deps.orderStore.releaseStockItem(reservationId, slug)
+      throw err
+    }
+    if (issue) {
+      await deps.orderStore.recordStockIssues(order.sessionId, [issue])
+      deps.logger?.warn(`[stripe] order ${order.sessionId} exceeded available stock`, issue)
+    }
+  }
+
+  await deps.orderStore.markStockApplied(order.sessionId)
+  await deps.orderStore.releaseReservation(reservationId)
+}
+
 async function processSessionEvent(
   deps: StripeWebhookDependencies,
   eventType: string,
@@ -72,18 +109,10 @@ async function processSessionEvent(
     items,
   })
 
-  if (order.status === 'paid' && await deps.orderStore.claimStock(order.sessionId)) {
-    let issues: StockIssue[]
-    try {
-      issues = await deps.applyStock(order.items)
-    } catch (err) {
-      await deps.orderStore.releaseStock(order.sessionId)
-      throw err
-    }
-    if (issues.length > 0) {
-      await deps.orderStore.recordStockIssues(order.sessionId, issues)
-      deps.logger?.warn(`[stripe] order ${order.sessionId} exceeded available stock`, issues)
-    }
+  if (order.status === 'paid' && !order.stockApplied) {
+    await applyOrderStock(deps, reservationIdOf(session), order)
+  } else if (order.status === 'failed') {
+    await deps.orderStore.releaseReservation(reservationIdOf(session))
   }
 
   return order
@@ -119,6 +148,11 @@ export async function handleStripeWebhook(
   }
 
   try {
+    if (event.type === 'checkout.session.expired') {
+      // The customer never paid: give the held units back to the shop.
+      await deps.orderStore.releaseReservation(reservationIdOf(session))
+      return { status: 200, body: { received: true, status: 'expired' } }
+    }
     const order = await processSessionEvent(deps, event.type, session)
     return { status: 200, body: { received: true, status: order.status } }
   } catch (err) {

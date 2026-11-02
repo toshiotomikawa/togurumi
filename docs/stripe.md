@@ -18,9 +18,16 @@ pagamento pelo webhook `POST /api/stripe/webhook`.
    - valida a cor contra a coluna `CORES` (produtos de cor única não aceitam
      cor);
    - valida o `ESTOQUE`, somando as cores do mesmo produto;
+   - **reserva** as unidades (tabela `stock_reservations`): o estoque
+     disponível para um novo checkout é o `ESTOQUE` da planilha menos as
+     reservas ativas de outros clientes. A reserva é feita sob um lock no
+     Postgres, então dois clientes não conseguem reservar a última peça ao
+     mesmo tempo;
    - cria uma Checkout Session com `mode: payment`, `currency: brl`,
      cartão e Pix, coleta de endereço de entrega (somente Brasil) e telefone,
-     e devolve a URL do Stripe.
+     validade de 35 minutos e o id da reserva em `metadata.reservation_id`,
+     e devolve a URL do Stripe. Se o Stripe recusar a criação, a reserva é
+     liberada na hora.
 3. **Pagamento**: cartão é confirmado na hora. Pix é **assíncrono**: o cliente
    recebe um QR Code válido por 30 minutos e a confirmação chega depois.
 4. **Webhook** (`server/stripeWebhook.ts`):
@@ -30,10 +37,16 @@ pagamento pelo webhook `POST /api/stripe/webhook`.
    - `checkout.session.completed`: grava o pedido como `paid` (cartão) ou
      `pending` (Pix aguardando);
    - `checkout.session.async_payment_succeeded`: marca `paid`;
-   - `checkout.session.async_payment_failed`: marca `failed`;
-   - quando o pedido fica `paid`, baixa o estoque na planilha uma única vez.
-     Se o estoque não cobrir a venda (duas compras simultâneas da última
-     peça), ele fica em zero e o problema é gravado em `orders.stock_issues`
+   - `checkout.session.async_payment_failed`: marca `failed` e **libera a
+     reserva**;
+   - `checkout.session.expired`: o cliente não pagou; **libera a reserva**;
+   - quando o pedido fica `paid`, baixa o estoque na planilha **produto por
+     produto, uma única vez cada** (tabela `order_stock_items`). Se a
+     planilha falhar no meio de um pedido com vários produtos, o reenvio do
+     Stripe baixa só os produtos que faltaram. Depois da baixa, a reserva
+     deixa de contar, porque a própria planilha já reflete a venda.
+   - Se mesmo assim faltar estoque (por exemplo, alguém editou a planilha à
+     mão), ele fica em zero e o problema é gravado em `orders.stock_issues`
      para revisão manual.
    - se algo falhar (banco ou planilha fora do ar), responde 500 e o Stripe
      reenvia o evento automaticamente.
@@ -61,7 +74,8 @@ variáveis de ambiente da Vercel no deploy.
 
 ### 1. Banco de dados
 
-Crie as tabelas novas (`stripe_events` e `orders`) no Postgres de produção.
+Crie as tabelas novas (`stripe_events`, `orders`, `stock_reservations` e
+`order_stock_items`) no Postgres de produção.
 Com a `DATABASE_URL` de produção no ambiente local:
 
 ```bash
@@ -86,6 +100,7 @@ O comando aplica só as migrações que ainda não rodaram (o mesmo acontece em
      - `checkout.session.completed`
      - `checkout.session.async_payment_succeeded`
      - `checkout.session.async_payment_failed`
+     - `checkout.session.expired`
    - Salve e copie o **segredo de assinatura** (`whsec_…`).
 4. Repita o passo 3 em modo de teste se quiser testar em um deploy de Preview
    (cada endpoint tem um segredo diferente).
@@ -115,7 +130,7 @@ variáveis passem a valer.
 3. Encaminhe os webhooks para a API local (porta `API_PORT`, padrão 8788):
 
    ```bash
-   stripe listen --events checkout.session.completed,checkout.session.async_payment_succeeded,checkout.session.async_payment_failed --forward-to localhost:8788/api/stripe/webhook
+   stripe listen --events checkout.session.completed,checkout.session.async_payment_succeeded,checkout.session.async_payment_failed,checkout.session.expired --forward-to localhost:8788/api/stripe/webhook
    ```
 
    O comando mostra um segredo `whsec_…`: coloque-o em `STRIPE_WEBHOOK_SECRET`
@@ -138,6 +153,15 @@ variáveis passem a valer.
    ```
 
    A resposta deve trazer `"duplicate": true` e o estoque não muda.
+8. Para testar a liberação da reserva, abra um checkout sem pagar e expire a
+   sessão:
+
+   ```bash
+   stripe checkout sessions expire <id_da_sessao>
+   ```
+
+   O evento `checkout.session.expired` deve receber `200` e as unidades
+   voltam a ficar disponíveis para outro checkout.
 
 Testes automatizados (sem rede e sem chaves reais):
 
@@ -151,9 +175,8 @@ npm run test:checkout
   todo o Brasil e não cobra frete. Para cobrar frete, adicione
   `shipping_options` em `buildCheckoutSessionParams`.
 - O estoque é por produto (coluna `ESTOQUE`), não por cor.
-- O estoque não é reservado durante o pagamento. Por isso o Pix expira em
-  30 minutos e eventuais vendas acima do estoque ficam registradas em
-  `orders.stock_issues`.
-- Se a planilha falhar no meio da baixa de um pedido com vários produtos, o
-  reenvio do Stripe repete a baixa de todo o pedido; confira o estoque desses
-  produtos manualmente nesse caso.
+- A reserva dura 70 minutos (35 da sessão, mais 30 do Pix, mais 5 de folga).
+  Na prática ela é liberada antes pelos eventos de expiração, de falha do
+  Pix ou pela baixa do pagamento; o prazo só vale se um evento não chegar.
+- A página do produto mostra o `ESTOQUE` da planilha; unidades reservadas
+  por outros clientes só são descontadas na hora de finalizar a compra.

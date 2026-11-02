@@ -187,45 +187,66 @@ const sheetStockAccess: StockSheetAccess = {
 const STOCK_UPDATE_ATTEMPTS = 3
 
 /**
- * Subtracts sold quantities from the ESTOQUE column. Each write is guarded by
+ * Subtracts a sold quantity from one product's ESTOQUE. The write is guarded by
  * the value just read, so a concurrent edit makes the update retry instead of
- * overwriting it. Stock never goes below zero; shortfalls are returned so the
+ * overwriting it. Stock never goes below zero; a shortfall is returned so the
  * order can be reviewed by hand.
  */
+export async function decrementProductStock(
+  slug: string,
+  requested: number,
+  access: StockSheetAccess = sheetStockAccess,
+): Promise<StockIssue | null> {
+  for (let attempt = 1; ; attempt += 1) {
+    const rows = await access.getRows()
+    const index = rows.findIndex((row) => row['MODELO'] && slugifyProductName(row['MODELO']) === slug)
+    if (index < 0) return { slug, requested, available: 0 }
+
+    const row = rows[index]
+    const currentValue = row['ESTOQUE'] ?? ''
+    const available = Math.max(0, Math.floor(Number(currentValue) || 0))
+
+    try {
+      await access.updateCell(index + 2, 'ESTOQUE', String(Math.max(0, available - requested)), [
+        { header: 'MODELO', value: row['MODELO'] },
+        { header: 'ESTOQUE', value: currentValue },
+      ])
+      return available < requested ? { slug, requested, available } : null
+    } catch (err) {
+      if (!(err instanceof SheetsError) || err.code !== 'row_changed' || attempt >= STOCK_UPDATE_ATTEMPTS) throw err
+    }
+  }
+}
+
+/** Current ESTOQUE per product slug, read fresh from the sheet. */
+export async function readShopStock(
+  access: Pick<StockSheetAccess, 'getRows'> = sheetStockAccess,
+): Promise<Record<string, number>> {
+  const stock: Record<string, number> = {}
+  for (const row of await access.getRows()) {
+    if (!row['MODELO']) continue
+    stock[slugifyProductName(row['MODELO'])] = Math.max(0, Math.floor(Number(row['ESTOQUE']) || 0))
+  }
+  return stock
+}
+
+/** Groups order items by product, since stock is tracked per product. */
+export function stockQuantitiesBySlug(items: { slug: string; quantity: number }[]) {
+  const totals = new Map<string, number>()
+  for (const item of items) {
+    if (item.slug) totals.set(item.slug, (totals.get(item.slug) ?? 0) + item.quantity)
+  }
+  return totals
+}
+
 export async function decrementShopStock(
   items: { slug: string; quantity: number }[],
   access: StockSheetAccess = sheetStockAccess,
 ): Promise<StockIssue[]> {
-  const totals = new Map<string, number>()
-  for (const item of items) totals.set(item.slug, (totals.get(item.slug) ?? 0) + item.quantity)
-
   const issues: StockIssue[] = []
-  for (const [slug, requested] of totals) {
-    for (let attempt = 1; ; attempt += 1) {
-      const rows = await access.getRows()
-      const index = rows.findIndex((row) => row['MODELO'] && slugifyProductName(row['MODELO']) === slug)
-      if (index < 0) {
-        issues.push({ slug, requested, available: 0 })
-        break
-      }
-
-      const row = rows[index]
-      const currentValue = row['ESTOQUE'] ?? ''
-      const available = Math.max(0, Math.floor(Number(currentValue) || 0))
-      if (available < requested) issues.push({ slug, requested, available })
-
-      try {
-        await access.updateCell(index + 2, 'ESTOQUE', String(Math.max(0, available - requested)), [
-          { header: 'MODELO', value: row['MODELO'] },
-          { header: 'ESTOQUE', value: currentValue },
-        ])
-        break
-      } catch (err) {
-        if (available < requested) issues.pop()
-        if (!(err instanceof SheetsError) || err.code !== 'row_changed' || attempt >= STOCK_UPDATE_ATTEMPTS) throw err
-      }
-    }
+  for (const [slug, requested] of stockQuantitiesBySlug(items)) {
+    const issue = await decrementProductStock(slug, requested, access)
+    if (issue) issues.push(issue)
   }
-
   return issues
 }

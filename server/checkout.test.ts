@@ -154,7 +154,12 @@ test('unknown, unpriced and wrongly coloured products are refused', () => {
 
 test('Checkout Session params use BRL, card and Pix, Brazilian shipping and phone', () => {
   const lines = buildCheckoutLines([{ slug: 'urso-mochi', color: 'Rosa', quantity: 2 }], catalog)
-  const params = buildCheckoutSessionParams(lines, { siteUrl: 'https://shop.example/', locale: 'es-ES' })
+  const params = buildCheckoutSessionParams(lines, {
+    siteUrl: 'https://shop.example/',
+    locale: 'es-ES',
+    reservationId: 'res_1',
+    expiresAt: 1_700_002_100,
+  })
 
   assert.equal(params.mode, 'payment')
   assert.equal(params.currency, 'brl')
@@ -162,7 +167,8 @@ test('Checkout Session params use BRL, card and Pix, Brazilian shipping and phon
   assert.deepEqual(params.shipping_address_collection, { allowed_countries: ['BR'] })
   assert.deepEqual(params.phone_number_collection, { enabled: true })
   assert.equal(params.locale, 'es')
-  assert.equal(params.metadata?.source, 'togurumi-shop')
+  assert.deepEqual(params.metadata, { source: 'togurumi-shop', reservation_id: 'res_1' })
+  assert.equal(params.expires_at, 1_700_002_100)
   assert.equal(params.success_url, 'https://shop.example/checkout/success?session_id={CHECKOUT_SESSION_ID}')
   assert.equal(params.cancel_url, 'https://shop.example/checkout/cancel')
   assert.deepEqual(params.line_items, [{
@@ -173,5 +179,5 @@ test('Checkout Session params use BRL, card and Pix, Brazilian shipping and phon
       product_data: { name: 'Urso Mochi (Rosa)', metadata: { slug: 'urso-mochi', color: 'Rosa' } },
     },
   }])
-  assert.equal(buildCheckoutSessionParams(lines, { siteUrl: 'https://shop.example' }).locale, 'pt-BR')
+  assert.equal(buildCheckoutSessionParams(lines, { siteUrl: 'https://shop.example', reservationId: 'r', expiresAt: 0 }).locale, 'pt-BR')
 })

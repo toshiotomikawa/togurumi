@@ -36,7 +36,7 @@ function sessionEvent(
         amount_total: 17980,
         currency: 'brl',
         payment_intent: 'pi_test_1',
-        metadata: { source: 'togurumi-shop' },
+        metadata: { source: 'togurumi-shop', reservation_id: 'res_order1' },
         customer_details: { email: 'buyer@example.com', name: 'Test Buyer', phone: '+5500000000000' },
         collected_information: {
           shipping_details: {
@@ -54,22 +54,23 @@ function sign(payload: string, secret = WEBHOOK_SECRET) {
   return Stripe.webhooks.generateTestHeaderString({ payload, secret })
 }
 
-function harness(options: { failStock?: number } = {}) {
+function harness(options: { failStock?: number; failOn?: string; items?: OrderItem[] } = {}) {
   const orderStore = new LocalOrderStore()
-  const stockCalls: OrderItem[][] = []
+  const stockCalls: { slug: string; quantity: number }[] = []
   let failures = options.failStock ?? 0
+  const items = options.items ?? ITEMS
   const deps: StripeWebhookDependencies = {
     webhookSecret: WEBHOOK_SECRET,
     constructEvent: (payload, signature, secret) => Stripe.webhooks.constructEvent(payload, signature, secret),
-    listLineItems: async () => ITEMS.map((item) => ({ ...item })),
+    listLineItems: async () => items.map((item) => ({ ...item })),
     orderStore,
-    applyStock: async (items): Promise<StockIssue[]> => {
-      if (failures > 0) {
+    applyStock: async (slug, quantity): Promise<StockIssue | null> => {
+      if (failures > 0 && (!options.failOn || options.failOn === slug)) {
         failures -= 1
         throw new Error('sheet unavailable')
       }
-      stockCalls.push(items)
-      return []
+      stockCalls.push({ slug, quantity })
+      return null
     },
     logger: { warn: () => undefined, error: () => undefined },
   }
@@ -233,4 +234,71 @@ test('the Express route verifies the signature against the raw request body', as
     delete process.env.STRIPE_SECRET_KEY
     delete process.env.STRIPE_WEBHOOK_SECRET
   }
+})
+
+test('a webhook redelivered after a partial failure deducts only the missing products', async () => {
+  const items: OrderItem[] = [
+    ...ITEMS,
+    { slug: 'polvo-ollie', name: 'Polvo Ollie', color: '', quantity: 1, unitAmount: 12000 },
+    { slug: 'urso-mochi', name: 'Urso Mochi (Azul)', color: 'Azul', quantity: 1, unitAmount: 8990 },
+  ]
+  const { orderStore, stockCalls, deliver } = harness({ failStock: 1, failOn: 'polvo-ollie', items })
+  const event = sessionEvent('checkout.session.completed', {}, 'evt_partial')
+
+  assert.equal((await deliver(event)).status, 500)
+  assert.deepEqual(stockCalls, [{ slug: 'urso-mochi', quantity: 3 }], 'colours of one product are deducted together')
+  assert.equal((await orderStore.getOrder('cs_test_order1'))?.stockApplied, false)
+
+  assert.equal((await deliver(event)).status, 200)
+  assert.deepEqual(stockCalls, [
+    { slug: 'urso-mochi', quantity: 3 },
+    { slug: 'polvo-ollie', quantity: 1 },
+  ])
+  assert.equal((await orderStore.getOrder('cs_test_order1'))?.stockApplied, true)
+
+  // A new event for the same session (e.g. a manual resend) does not deduct again.
+  await deliver(sessionEvent('checkout.session.async_payment_succeeded', {}, 'evt_partial_again'))
+  assert.equal(stockCalls.length, 2)
+})
+
+test('stock reservations hold units until paid, expired or failed', async () => {
+  const { orderStore, deliver } = harness()
+  const stock = { 'urso-mochi': 3 }
+  const later = Date.now() + 60_000
+
+  assert.deepEqual(await orderStore.reserveStock('res_order1', [{ slug: 'urso-mochi', quantity: 2 }], stock, later), { ok: true })
+  assert.deepEqual(
+    await orderStore.reserveStock('res_other', [{ slug: 'urso-mochi', quantity: 2 }], stock, later),
+    { ok: false, slug: 'urso-mochi', available: 1 },
+  )
+
+  // Session expired without payment: the units become available again.
+  const expired = await deliver(sessionEvent('checkout.session.expired', { status: 'expired', payment_status: 'unpaid' }))
+  assert.deepEqual(expired.body, { received: true, status: 'expired' })
+  assert.equal(await orderStore.getOrder('cs_test_order1'), null)
+  assert.deepEqual(await orderStore.reserveStock('res_b', [{ slug: 'urso-mochi', quantity: 3 }], stock, later), { ok: true })
+
+  // A failed Pix releases its hold too.
+  const pix = { id: 'cs_test_pix', metadata: { source: 'togurumi-shop', reservation_id: 'res_b' }, payment_status: 'unpaid' }
+  await deliver(sessionEvent('checkout.session.completed', pix))
+  assert.equal((await orderStore.reserveStock('res_c', [{ slug: 'urso-mochi', quantity: 1 }], stock, later)).ok, false)
+  await deliver(sessionEvent('checkout.session.async_payment_failed', pix))
+  assert.equal((await orderStore.getOrder('cs_test_pix'))?.status, 'failed')
+  assert.deepEqual(await orderStore.reserveStock('res_c', [{ slug: 'urso-mochi', quantity: 3 }], stock, later), { ok: true })
+})
+
+test('expired holds and deducted items stop counting as reserved', async () => {
+  let now = 1_000_000
+  const store = new LocalOrderStore(null, () => now)
+  const stock = { 'urso-mochi': 2 }
+
+  assert.equal((await store.reserveStock('res_1', [{ slug: 'urso-mochi', quantity: 2 }], stock, now + 1_000)).ok, true)
+  assert.equal((await store.reserveStock('res_2', [{ slug: 'urso-mochi', quantity: 1 }], stock, now + 1_000)).ok, false)
+  now += 1_000
+  assert.equal((await store.reserveStock('res_2', [{ slug: 'urso-mochi', quantity: 2 }], stock, now + 1_000)).ok, true)
+
+  // Once a product is deducted from the sheet, the sheet itself reflects the sale.
+  assert.equal(await store.claimStockItem('res_2', 'cs_2', 'urso-mochi', 2), true)
+  assert.equal(await store.claimStockItem('res_2', 'cs_2', 'urso-mochi', 2), false)
+  assert.equal((await store.reserveStock('res_3', [{ slug: 'urso-mochi', quantity: 2 }], stock, now + 1_000)).ok, true)
 })

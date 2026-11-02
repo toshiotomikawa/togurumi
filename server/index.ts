@@ -1,10 +1,12 @@
 import 'dotenv/config'
+import { randomUUID } from 'node:crypto'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import cookieParser from 'cookie-parser'
 import express from 'express'
 import session from 'express-session'
 import bcrypt from 'bcrypt'
+import type Stripe from 'stripe'
 import {
   buildAllowedOrigins,
   clientFingerprint,
@@ -30,10 +32,12 @@ import { createRuntimeReviewStore } from './persistence/reviewStore.js'
 import { createRuntimeContentStores } from './persistence/contentStores.js'
 import { createRuntimeJournalStore } from './persistence/journalStore.js'
 import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sheets.js'
-import { decrementShopStock, getProductImageTargets, getShopProducts, setProductImage } from './shop.js'
+import { decrementProductStock, getProductImageTargets, getShopProducts, readShopStock, setProductImage } from './shop.js'
 import {
+  CHECKOUT_SESSION_TTL_SECONDS,
   CHECKOUT_SOURCE,
   CheckoutError,
+  RESERVATION_TTL_SECONDS,
   buildCheckoutLines,
   buildCheckoutSessionParams,
   parseCartRequest,
@@ -90,7 +94,7 @@ app.post('/api/stripe/webhook', express.raw({ type: () => true, limit: '1mb' }),
       constructEvent: (payload, signature, secret) => getStripe().webhooks.constructEvent(payload, signature, secret),
       listLineItems: listCheckoutOrderItems,
       orderStore,
-      applyStock: decrementShopStock,
+      applyStock: (slug, quantity) => decrementProductStock(slug, quantity),
       logger: console,
     },
     req.body,
@@ -470,10 +474,40 @@ app.post('/api/checkout', async (req, res) => {
   try {
     const items = parseCartRequest(req.body)
     const lines = buildCheckoutLines(items, await getShopProducts())
-    const session = await getStripe().checkout.sessions.create(
-      buildCheckoutSessionParams(lines, { siteUrl: publicSiteUrl(), locale: req.body?.locale }),
+
+    // Hold the units before sending the customer to Stripe; other checkouts
+    // see only what is left. The webhook releases the hold on expiry or failure.
+    const reservationId = randomUUID()
+    const now = Date.now()
+    const reservation = await orderStore.reserveStock(
+      reservationId,
+      lines,
+      await readShopStock(),
+      now + RESERVATION_TTL_SECONDS * 1000,
     )
-    if (!session.url) throw new Error('Stripe returned a Checkout Session without a URL')
+    if (!reservation.ok) {
+      throw new CheckoutError(reservation.available === 0 ? 'product_unavailable' : 'insufficient_stock', {
+        slug: reservation.slug,
+        available: reservation.available,
+      })
+    }
+
+    let session: Stripe.Checkout.Session
+    try {
+      session = await getStripe().checkout.sessions.create(
+        buildCheckoutSessionParams(lines, {
+          siteUrl: publicSiteUrl(),
+          locale: req.body?.locale,
+          reservationId,
+          expiresAt: Math.floor(now / 1000) + CHECKOUT_SESSION_TTL_SECONDS,
+        }),
+        { idempotencyKey: reservationId },
+      )
+      if (!session.url) throw new Error('Stripe returned a Checkout Session without a URL')
+    } catch (err) {
+      await orderStore.releaseReservation(reservationId).catch(() => undefined)
+      throw err
+    }
     res.json({ url: session.url })
   } catch (err) {
     if (err instanceof CheckoutError) {

@@ -6,7 +6,15 @@ export const MAX_LINE_QUANTITY = 20
 export const CHECKOUT_SOURCE = 'togurumi-shop'
 
 /** Pix codes expire after 30 minutes, which keeps stock reservations short. */
-const PIX_EXPIRES_AFTER_SECONDS = 30 * 60
+export const PIX_EXPIRES_AFTER_SECONDS = 30 * 60
+/** Checkout Session lifetime. Stripe requires at least 30 minutes. */
+export const CHECKOUT_SESSION_TTL_SECONDS = 35 * 60
+/**
+ * How long units stay reserved: a customer may open Pix just before the
+ * session expires and then has the full Pix window to pay. Expiry or a failed
+ * Pix releases the hold earlier through the webhook.
+ */
+export const RESERVATION_TTL_SECONDS = CHECKOUT_SESSION_TTL_SECONDS + PIX_EXPIRES_AFTER_SECONDS + 5 * 60
 
 const COMBINING_MARKS = new RegExp('[\\u0300-\\u036f]', 'g')
 const SINGLE_COLOR_LABELS = new Set(['cor unica', 'single color', 'color unico'])
@@ -162,7 +170,7 @@ export function stripeCheckoutLocale(locale: unknown): Stripe.Checkout.SessionCr
 
 export function buildCheckoutSessionParams(
   lines: CheckoutLine[],
-  options: { siteUrl: string; locale?: unknown },
+  options: { siteUrl: string; locale?: unknown; reservationId: string; expiresAt: number },
 ): Stripe.Checkout.SessionCreateParams {
   const siteUrl = options.siteUrl.replace(/\/+$/, '')
 
@@ -187,7 +195,8 @@ export function buildCheckoutSessionParams(
     shipping_address_collection: { allowed_countries: ['BR'] },
     phone_number_collection: { enabled: true },
     locale: stripeCheckoutLocale(options.locale),
-    metadata: { source: CHECKOUT_SOURCE },
+    metadata: { source: CHECKOUT_SOURCE, reservation_id: options.reservationId },
+    expires_at: options.expiresAt,
     success_url: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${siteUrl}/checkout/cancel`,
   }
