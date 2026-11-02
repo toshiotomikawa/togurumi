@@ -1,7 +1,16 @@
 import type { Pool, PoolClient, QueryResultRow } from 'pg'
-import type { OrderInput, OrderRecord, OrderStatus, OrderStore, StockIssue } from '../orders.js'
+import type {
+  OrderInput,
+  OrderRecord,
+  OrderStatus,
+  OrderStore,
+  ReservationResult,
+  StockIssue,
+} from '../orders.js'
 
 type DatabaseClient = Pool | PoolClient
+
+const RESERVATION_LOCK_KEY = 727_001
 
 type OrderRow = QueryResultRow & {
   session_id: string
@@ -97,28 +106,93 @@ export class PostgresOrderStore implements OrderStore {
     return toOrder(result.rows[0] as OrderRow)
   }
 
-  async claimStock(sessionId: string): Promise<boolean> {
+  async reserveStock(
+    reservationId: string,
+    items: { slug: string; quantity: number }[],
+    stock: Record<string, number>,
+    expiresAt: number,
+  ): Promise<ReservationResult> {
+    const requested = new Map<string, number>()
+    for (const item of items) requested.set(item.slug, (requested.get(item.slug) ?? 0) + item.quantity)
+
+    // A pool hands out a dedicated connection so the lock and the transaction share it.
+    const pooled = 'totalCount' in this.db
+    const client = pooled ? await (this.db as Pool).connect() : this.db
+    try {
+      await client.query('BEGIN')
+      try {
+        // Serialises reservations so two checkouts cannot both take the last unit.
+        await client.query('SELECT pg_advisory_xact_lock($1)', [RESERVATION_LOCK_KEY])
+        const held = await client.query<{ slug: string; quantity: string }>(
+          `SELECT r.slug, SUM(r.quantity)::text AS quantity
+           FROM stock_reservations r
+           WHERE r.released_at IS NULL AND r.expires_at > now() AND r.slug = ANY($1::text[])
+             AND NOT EXISTS (
+               SELECT 1 FROM order_stock_items a
+               WHERE a.reservation_id = r.reservation_id AND a.slug = r.slug
+             )
+           GROUP BY r.slug`,
+          [[...requested.keys()]],
+        )
+        const heldBySlug = new Map(held.rows.map((row) => [row.slug, Number(row.quantity)]))
+
+        for (const [slug, quantity] of requested) {
+          const available = Math.max(0, (stock[slug] ?? 0) - (heldBySlug.get(slug) ?? 0))
+          if (quantity > available) {
+            await client.query('ROLLBACK')
+            return { ok: false, slug, available }
+          }
+        }
+
+        for (const [slug, quantity] of requested) {
+          await client.query(
+            `INSERT INTO stock_reservations (reservation_id, slug, quantity, expires_at)
+             VALUES ($1, $2, $3, to_timestamp($4 / 1000.0))`,
+            [reservationId, slug, quantity, expiresAt],
+          )
+        }
+        await client.query('COMMIT')
+        return { ok: true }
+      } catch (error) {
+        await client.query('ROLLBACK')
+        throw error
+      }
+    } finally {
+      if (pooled) (client as PoolClient).release()
+    }
+  }
+
+  async releaseReservation(reservationId: string): Promise<void> {
+    await this.db.query(
+      'UPDATE stock_reservations SET released_at = now() WHERE reservation_id = $1 AND released_at IS NULL',
+      [reservationId],
+    )
+  }
+
+  async claimStockItem(reservationId: string, sessionId: string, slug: string, quantity: number): Promise<boolean> {
     const result = await this.db.query(
-      `UPDATE orders SET stock_applied = true, updated_at = now()
-       WHERE session_id = $1 AND status = 'paid' AND stock_applied = false
-       RETURNING session_id`,
-      [sessionId],
+      `INSERT INTO order_stock_items (reservation_id, slug, session_id, quantity)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (reservation_id, slug) DO NOTHING
+       RETURNING slug`,
+      [reservationId, slug, sessionId, quantity],
     )
     return result.rows.length > 0
   }
 
-  async releaseStock(sessionId: string): Promise<void> {
-    await this.db.query(
-      'UPDATE orders SET stock_applied = false, updated_at = now() WHERE session_id = $1',
-      [sessionId],
-    )
+  async releaseStockItem(reservationId: string, slug: string): Promise<void> {
+    await this.db.query('DELETE FROM order_stock_items WHERE reservation_id = $1 AND slug = $2', [reservationId, slug])
   }
 
   async recordStockIssues(sessionId: string, issues: StockIssue[]): Promise<void> {
     await this.db.query(
-      'UPDATE orders SET stock_issues = $2::jsonb, updated_at = now() WHERE session_id = $1',
+      'UPDATE orders SET stock_issues = stock_issues || $2::jsonb, updated_at = now() WHERE session_id = $1',
       [sessionId, JSON.stringify(issues)],
     )
+  }
+
+  async markStockApplied(sessionId: string): Promise<void> {
+    await this.db.query('UPDATE orders SET stock_applied = true, updated_at = now() WHERE session_id = $1', [sessionId])
   }
 
   async getOrder(sessionId: string): Promise<OrderRecord | null> {
