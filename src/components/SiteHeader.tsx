@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import cartIcon from '../assets/shopping-cart.png'
 import logo from '../assets/togurumi-logo.png'
+import yarnBall from '../assets/togurumi-yarn-ball.png'
 import { useCart } from '../hooks/useCart'
 import { useLocale } from '../hooks/useLocale'
 import { useTheme } from '../hooks/useTheme'
 import { localePreferences, type LocalePreference } from '../lib/i18n'
 import { themeModes, type ThemeMode } from '../lib/theme'
 import AccountMenu, { LocaleIcon, ThemeIcon } from './AccountMenu'
+import { CartIcon } from './AtelierIcons'
 
 function SearchIcon() {
   return (
@@ -71,13 +72,9 @@ function CartLink({ onNavigate }: { onNavigate?: () => void }) {
   const { itemCount } = useCart()
 
   return (
-    <Link to="/cart" className="settings-toggle__button cart-link" aria-label={messages.cart.ariaLabel} onClick={onNavigate}>
-      <span
-        aria-hidden="true"
-        className="cart-link__icon"
-        style={{ maskImage: `url(${cartIcon})`, WebkitMaskImage: `url(${cartIcon})` }}
-      />
-      {itemCount > 0 && <span className="cart-link__badge">{itemCount}</span>}
+    <Link to="/cart" className="settings-toggle__button cart-link" aria-label={`${messages.cart.ariaLabel} (${itemCount})`} onClick={onNavigate}>
+      <CartIcon className="cart-link__svg" />
+      <span className={`cart-link__badge${itemCount > 0 ? '' : ' cart-link__badge--empty'}`} aria-hidden="true">{itemCount}</span>
     </Link>
   )
 }
@@ -195,8 +192,10 @@ function SiteHeader() {
     <header className="site-header" ref={rootRef}>
       <div className="site-header__inner">
         <Link to="/" className="site-brand" onClick={closeNav}>
+          <span className="site-brand__mark" aria-hidden="true" style={{ maskImage: `url(${yarnBall})`, WebkitMaskImage: `url(${yarnBall})` }} />
           <img src={logo} alt="Togurumi" className="site-brand__logo" />
         </Link>
+        <span className="site-header__divider" aria-hidden="true" />
 
         <nav className="site-nav site-nav--desktop" aria-label={messages.nav.menuLabel}>
           {links.map(({ to, label }) => {
@@ -211,8 +210,8 @@ function SiteHeader() {
 
         <div className="site-header__actions site-header__actions--desktop">
           <SearchBox />
-          <CartLink />
           <AccountMenu />
+          <CartLink />
         </div>
 
         <button

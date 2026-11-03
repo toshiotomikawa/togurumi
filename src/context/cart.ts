@@ -11,7 +11,7 @@ export type CartItem = {
 export type CartContextValue = {
   items: CartItem[]
   itemCount: number
-  addItem: (item: Omit<CartItem, 'quantity'>) => void
+  addItem: (item: Omit<CartItem, 'quantity'>, quantity?: number) => void
   removeItem: (slug: string, color?: string) => void
   updateQuantity: (slug: string, quantity: number, color?: string) => void
   clearCart: () => void
