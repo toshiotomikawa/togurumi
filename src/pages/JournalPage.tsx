@@ -64,7 +64,7 @@ function JournalPage() {
   const hasAuthorFilter = Boolean(author)
 
   return (
-    <div className="page page--journal">
+    <div className={`page page--journal${editor.pendingClass}`}>
       {editor.editing && editor.draft ? (
         <section className="journal-hero journal-hero--editing">
           <div className="content-editor__fields">
@@ -88,9 +88,9 @@ function JournalPage() {
         </section>
       ) : (
         <section className="journal-hero">
-          <span className="journal-hero__eyebrow">{editor.content.eyebrow}</span>
-          <h1 className="journal-hero__title">{editor.content.title}</h1>
-          <div className="journal-hero__intro">
+          <span className="journal-hero__eyebrow editable-text">{editor.content.eyebrow}</span>
+          <h1 className="journal-hero__title editable-text">{editor.content.title}</h1>
+          <div className="journal-hero__intro editable-text">
             <Paragraphs text={editor.content.intro} />
           </div>
         </section>

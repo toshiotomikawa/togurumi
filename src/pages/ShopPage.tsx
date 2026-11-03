@@ -22,7 +22,7 @@ function ShopPage() {
     : products
 
   return (
-    <div className="page page--shop">
+    <div className={`page page--shop${editor.pendingClass}`}>
       {editor.editing && editor.draft ? (
         <section className="shop-hero">
           <div className="content-editor__fields">
@@ -47,9 +47,9 @@ function ShopPage() {
       ) : (
         <section className="shop-hero shop-hero--photographic">
           <div className="shop-hero__copy">
-            <span className="shop-hero__eyebrow">{editor.content.eyebrow}</span>
-            <h1 className="shop-hero__title">{editor.content.title}</h1>
-            <p className="shop-hero__intro">{editor.content.intro}</p>
+            <span className="shop-hero__eyebrow editable-text">{editor.content.eyebrow}</span>
+            <h1 className="shop-hero__title editable-text">{editor.content.title}</h1>
+            <p className="shop-hero__intro editable-text">{editor.content.intro}</p>
           </div>
           {cover && <img className="shop-hero__photo" src={cover.image} alt={cover.name} />}
         </section>

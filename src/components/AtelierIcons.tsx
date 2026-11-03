@@ -23,8 +23,15 @@ export const LeafIcon = ({ className }: IconProps) => <Line className={className
 export const HandIcon = ({ className }: IconProps) => <Line className={className}><path d="M8 12V5.5a1.3 1.3 0 0 1 2.6 0V11M10.6 10V4.3a1.3 1.3 0 0 1 2.6 0V11M13.2 10V5.3a1.3 1.3 0 0 1 2.6 0V12M15.8 11V7.8a1.3 1.3 0 0 1 2.6 0V14c0 4-2.6 6.5-6.2 6.5-2.6 0-4-1.2-5.6-3.4L4.4 13.5a1.4 1.4 0 0 1 2.2-1.6L8 13.6" /></Line>
 export const BoxIcon = ({ className }: IconProps) => <Line className={className}><path d="M4 7.5 12 4l8 3.5v9L12 20l-8-3.5Z" /><path d="M4 7.5 12 11l8-3.5M12 11v9" /></Line>
 export const InstagramIcon = ({ className }: IconProps) => <Line className={className}><rect x="4" y="4" width="16" height="16" rx="4.5" /><circle cx="12" cy="12" r="3.6" /><circle cx="16.8" cy="7.2" r=".6" fill="currentColor" /></Line>
-export const YouTubeIcon = ({ className }: IconProps) => <svg className={className} viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8ZM10 15V9l5.2 3Z" /></svg>
-export const MailIcon = ({ className }: IconProps) => <Line className={className}><rect x="3.5" y="5.5" width="17" height="13" rx="2" /><path d="m4 7 8 6 8-6" /></Line>
+/** Outline like Instagram and Mail, so the social icons share one drawing style and stroke. */
+export const YouTubeIcon = ({ className }: IconProps) => <Line className={className}><rect x="3" y="5.5" width="18" height="13" rx="4" /><path d="m10.2 9.4 4.4 2.6-4.4 2.6Z" /></Line>
+/** Rating star (Flaticon 616407, 084-star; source in src/assets/icons/star.svg). Filled or empty is set by color. */
+export const StarIcon = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+    <path fill="currentColor" d="M256 24 310 188 488 188 344 290 400 460 256 356 112 460 168 290 24 188 202 188Z" />
+  </svg>
+)
+export const MailIcon =({ className }: IconProps) => <Line className={className}><rect x="3.5" y="5.5" width="17" height="13" rx="2" /><path d="m4 7 8 6 8-6" /></Line>
 
 /** Small hand-drawn sprig used beside headings and the Japanese wordmark. */
 export const SprigIcon = ({ className }: IconProps) => (

@@ -13,11 +13,20 @@ function InstagramIcon() {
   )
 }
 
+// Outline, same 2px stroke and color as the Instagram and e-mail icons beside it.
 function YouTubeIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="2" y="5" width="20" height="14" rx="4" fill="currentColor" />
-      <path d="m10 8.5 6 3.5-6 3.5z" className="contact-card__youtube-play" />
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="2.5" y="5" width="19" height="14" rx="4.5" />
+      <path d="m10 9 5 3-5 3Z" />
     </svg>
   )
 }
@@ -50,9 +59,11 @@ function CommissionIcon() {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <path d="M12 3 13.4 7.6 18 9l-4.6 1.4L12 15l-1.4-4.6L6 9l4.6-1.4L12 3Z" />
-      <path d="m18.5 14 .8 2.7 2.7.8-2.7.8-.8 2.7-.8-2.7-2.7-.8 2.7-.8.8-2.7Z" />
-      <path d="m5 13 .7 2.3L8 16l-2.3.7L5 19l-.7-2.3L2 16l2.3-.7L5 13Z" />
+      {/* One open four-point star plus two small crosses: the old small stars were tiny closed
+          shapes whose 2px outlines filled in and read as bold. */}
+      <path d="M11 3.5c.7 4.2 2.8 6.3 7 7-4.2.7-6.3 2.8-7 7-.7-4.2-2.8-6.3-7-7 4.2-.7 6.3-2.8 7-7Z" />
+      <path d="M19 15.5v4M17 17.5h4" />
+      <path d="M18.5 3v3M17 4.5h3" />
     </svg>
   )
 }
@@ -112,7 +123,7 @@ function ContactPage() {
   }
 
   return (
-    <div className="page page--contact">
+    <div className={`page page--contact${about.ready && contact.ready ? '' : ' content-pending'}`}>
       {editing && about.draft ? (
         <section className="contact-hero contact-hero--editing">
           <div className="content-editor__fields">
@@ -136,9 +147,9 @@ function ContactPage() {
         </section>
       ) : (
         <section className="contact-hero">
-          <span className="contact-hero__eyebrow">{about.content.eyebrow}</span>
-          <h1 className="contact-hero__title">{about.content.title}</h1>
-          <div className="contact-hero__intro">
+          <span className="contact-hero__eyebrow editable-text">{about.content.eyebrow}</span>
+          <h1 className="contact-hero__title editable-text">{about.content.title}</h1>
+          <div className="contact-hero__intro editable-text">
             <Paragraphs text={about.content.intro} />
           </div>
         </section>
@@ -178,8 +189,8 @@ function ContactPage() {
           </section>
         ) : (
           <section className="contact-story-card">
-            <h2 className="contact-story-card__title">{about.content.storyHeading}</h2>
-            <div className="contact-story-card__body">
+            <h2 className="contact-story-card__title editable-text">{about.content.storyHeading}</h2>
+            <div className="contact-story-card__body editable-text">
               <Paragraphs text={about.content.storyBody} />
             </div>
           </section>
@@ -203,8 +214,8 @@ function ContactPage() {
           </section>
         ) : (
           <section className="contact-story-card">
-            <h2 className="contact-story-card__title">{about.content.whyHeading}</h2>
-            <div className="contact-story-card__body">
+            <h2 className="contact-story-card__title editable-text">{about.content.whyHeading}</h2>
+            <div className="contact-story-card__body editable-text">
               <Paragraphs text={about.content.whyBody} />
             </div>
           </section>
@@ -228,8 +239,8 @@ function ContactPage() {
           </section>
         ) : (
           <section className="contact-story-card contact-story-card--wide">
-            <h2 className="contact-story-card__title">{about.content.nameHeading}</h2>
-            <div className="contact-story-card__body">
+            <h2 className="contact-story-card__title editable-text">{about.content.nameHeading}</h2>
+            <div className="contact-story-card__body editable-text">
               <Paragraphs text={about.content.nameBody} />
             </div>
           </section>
@@ -283,10 +294,10 @@ function ContactPage() {
         ) : (
           <>
             <div className="contact-channels__intro">
-              <h2 id="contact-channels-heading" className="contact-channels__title">
+              <h2 id="contact-channels-heading" className="contact-channels__title editable-text">
                 {contact.content.title}
               </h2>
-              <div className="contact-channels__body">
+              <div className="contact-channels__body editable-text">
                 <Paragraphs text={contact.content.intro} />
               </div>
             </div>
@@ -304,7 +315,7 @@ function ContactPage() {
                       {method.icon}
                     </span>
                     <span className="contact-card__content">
-                      <span className="contact-card__label">{method.label}</span>
+                      <span className="contact-card__label editable-text">{method.label}</span>
                       <span className="contact-card__value">{method.value}</span>
                       {method.external ? (
                         <span className="contact-card__external">{messages.faq.opensExternally}</span>
@@ -325,8 +336,8 @@ function ContactPage() {
                 <CommissionIcon />
               </span>
               <span className="contact-card__content">
-                <span className="contact-commission__title">{contact.content.commissions}</span>
-                <span className="contact-commission__body contact-commission__body--text">
+                <span className="contact-commission__title editable-text">{contact.content.commissions}</span>
+                <span className="contact-commission__body contact-commission__body--text editable-text">
                   {contact.content.commissionsBody}
                 </span>
                 <span className="contact-card__external">{messages.faq.opensExternally}</span>
