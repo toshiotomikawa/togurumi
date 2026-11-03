@@ -1,34 +1,38 @@
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { BoxIcon, CartIcon, HandIcon, HeartIcon, LeafIcon, MinusIcon, OrnamentRule, PlusIcon, SealIcon, SprigIcon } from '../components/AtelierIcons'
+import { Link, useParams } from 'react-router-dom'
+import { ArrowIcon, BoxIcon, CartIcon, HandIcon, HeartIcon, LeafIcon, MinusIcon, OrnamentRule, PlusIcon, SealIcon, SprigIcon } from '../components/AtelierIcons'
 import { useCart } from '../hooks/useCart'
 import { useFavorites } from '../hooks/useFavorites'
 import { useLocale } from '../hooks/useLocale'
 import { useShopProducts } from '../hooks/useShopProducts'
 import { formatPrice, getColorSwatch, isRecentlyReleased, parseProductColors } from '../lib/shop'
 import { slugify } from '../lib/slug'
+import { TOGURUMI_INSTAGRAM_DM } from '../lib/togurumi'
 import NotFoundPage from './NotFoundPage'
 
+// The only Japanese on the site is the brand name in katakana (トグルミ). The quote only
+// claims what is true for every piece (made by hand, stitch by stitch), never "one of a kind".
+// When a piece has no description in the catalog, nothing is invented: the description is left out.
 const copy = {
   'pt-BR': {
-    seal: ['Feito', 'à mão', 'com amor'], handmade: 'Feito à mão', handmadeNote: 'Peça artesanal', yarnNote: 'Macio e fofinho',
-    available: 'Disponível', availableNote: (n: number) => (n === 1 ? 'Última unidade' : `${n} unidades`), soldOutNote: 'Sob encomenda',
+    seal: ['Feito', 'à mão', 'com amor'], handmade: 'Feito à mão', maker: 'Pela Bella', yarnNote: 'Material da peça',
+    available: 'Disponível', availableNote: (n: number) => (n === 1 ? 'Última unidade' : `${n} unidades`), soldOutNote: 'Sem estoque agora',
     quantity: 'Quantidade', decrease: 'Diminuir quantidade', increase: 'Aumentar quantidade',
-    quote: '一点もののやさしさ。', quoteNote: 'A delicadeza de uma peça única.', fallback: (yarn: string) => `Feito à mão em fio ${yarn.toLowerCase()}, ponto a ponto, para ser abraçado.`,
+    quote: 'Ponto a ponto, feito à mão.',
     favorite: 'Adicionar aos favoritos', favorited: 'Nos seus favoritos', photos: 'Fotos da peça', photo: (color: string) => `Ver foto: ${color}`, details: 'Detalhes da peça',
   },
   'en-US': {
-    seal: ['Made', 'by hand', 'with love'], handmade: 'Made by hand', handmadeNote: 'Handcrafted piece', yarnNote: 'Soft and fluffy',
-    available: 'Available', availableNote: (n: number) => (n === 1 ? 'Last one' : `${n} in stock`), soldOutNote: 'Custom order',
+    seal: ['Made', 'by hand', 'with love'], handmade: 'Made by hand', maker: 'By Bella', yarnNote: 'What it is made of',
+    available: 'Available', availableNote: (n: number) => (n === 1 ? 'Last one' : `${n} in stock`), soldOutNote: 'Out of stock for now',
     quantity: 'Quantity', decrease: 'Decrease quantity', increase: 'Increase quantity',
-    quote: '一点もののやさしさ。', quoteNote: 'The gentleness of a one-of-a-kind piece.', fallback: (yarn: string) => `Made by hand in ${yarn.toLowerCase()} yarn, stitch by stitch, to be hugged.`,
+    quote: 'Stitch by stitch, made by hand.',
     favorite: 'Add to favorites', favorited: 'In your favorites', photos: 'Product photos', photo: (color: string) => `View photo: ${color}`, details: 'Piece details',
   },
   'es-ES': {
-    seal: ['Hecho', 'a mano', 'con amor'], handmade: 'Hecho a mano', handmadeNote: 'Pieza artesanal', yarnNote: 'Suave y esponjoso',
-    available: 'Disponible', availableNote: (n: number) => (n === 1 ? 'Última unidad' : `${n} unidades`), soldOutNote: 'Por encargo',
+    seal: ['Hecho', 'a mano', 'con amor'], handmade: 'Hecho a mano', maker: 'Por Bella', yarnNote: 'Material de la pieza',
+    available: 'Disponible', availableNote: (n: number) => (n === 1 ? 'Última unidad' : `${n} unidades`), soldOutNote: 'Sin stock por ahora',
     quantity: 'Cantidad', decrease: 'Reducir cantidad', increase: 'Aumentar cantidad',
-    quote: '一点もののやさしさ。', quoteNote: 'La delicadeza de una pieza única.', fallback: (yarn: string) => `Hecho a mano en hilo ${yarn.toLowerCase()}, punto a punto, para abrazar.`,
+    quote: 'Punto a punto, hecho a mano.',
     favorite: 'Añadir a favoritos', favorited: 'En tus favoritos', photos: 'Fotos de la pieza', photo: (color: string) => `Ver foto: ${color}`, details: 'Detalles de la pieza',
   },
 }
@@ -147,7 +151,6 @@ function ProductPage() {
             )}
             <span className="product-detail__seal" aria-hidden="true">
               <svg viewBox="0 0 120 120">
-                <defs><path id="seal-arc" d="M60 60m-43 0a43 43 0 1 1 86 0a43 43 0 1 1-86 0" /></defs>
                 <circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" strokeWidth="1.4" strokeDasharray="2 4" />
                 <circle cx="60" cy="60" r="34" fill="none" stroke="currentColor" strokeWidth="1" />
               </svg>
@@ -176,9 +179,16 @@ function ProductPage() {
         </div>
 
         <div className="product-detail__info">
+          <nav className="atelier-crumbs" aria-label={messages.shop.backLink}>
+            <Link to="/shop" className="atelier-crumbs__back"><ArrowIcon />{messages.shop.backLink}</Link>
+            {product.category ? <>
+              <span aria-hidden="true">·</span>
+              <Link to={`/search?category=${encodeURIComponent(product.category)}`}>{product.category}</Link>
+            </> : null}
+          </nav>
           <p className="product-detail__kana" lang="ja">
             <SprigIcon className="product-detail__sprig" />
-            <span>手づくりのぬいぐるみ</span>
+            <span>トグルミ</span>
             <SprigIcon className="product-detail__sprig product-detail__sprig--flip" />
           </p>
 
@@ -187,11 +197,11 @@ function ProductPage() {
           <OrnamentRule kind="star" className="product-detail__rule" />
 
           <p className="product-detail__price">{formatPrice(product.price, locale)}</p>
-          <p className="product-detail__description">{product.description || t.fallback(product.yarn || 'chenille')}</p>
+          {product.description ? <p className="product-detail__description">{product.description}</p> : null}
 
           <ul className="product-detail__attrs">
-            <li><LeafIcon /><span><strong>{product.yarn ? `${messages.shop.yarnLabel} ${product.yarn.toLowerCase()}` : t.handmadeNote}</strong><small>{t.yarnNote}</small></span></li>
-            <li><HandIcon /><span><strong>{t.handmade}</strong><small>{t.handmadeNote}</small></span></li>
+            {product.yarn ? <li><LeafIcon /><span><strong>{`${messages.shop.yarnLabel} ${product.yarn.toLowerCase()}`}</strong><small>{t.yarnNote}</small></span></li> : null}
+            <li><HandIcon /><span><strong>{t.handmade}</strong><small>{t.maker}</small></span></li>
             <li><BoxIcon /><span><strong>{soldOut ? messages.shop.outOfStock : t.available}</strong><small>{soldOut ? t.soldOutNote : t.availableNote(product.stock)}</small></span></li>
           </ul>
 
@@ -242,21 +252,25 @@ function ProductPage() {
           <p className="product-detail__cart-status" role="status" aria-live="polite">
             {added && !soldOut ? messages.shop.addedToCart : null}
           </p>
+          {soldOut ? (
+            <p className="sold-out-invite product-detail__invite">
+              <a href={TOGURUMI_INSTAGRAM_DM} target="_blank" rel="noopener noreferrer">{messages.shop.orderInvite}</a>
+            </p>
+          ) : null}
           <button type="button" className={`product-detail__fav${isFavorite(productSlug) ? ' is-on' : ''}`} aria-pressed={isFavorite(productSlug)} onClick={() => toggle(productSlug)}>
             <HeartIcon />{isFavorite(productSlug) ? t.favorited : t.favorite}
           </button>
 
           <figure className="product-detail__quote">
             <span className="product-detail__quote-icon"><SealIcon /></span>
-            <blockquote lang="ja">{t.quote}</blockquote>
-            <figcaption>{t.quoteNote}</figcaption>
+            <blockquote>{t.quote}</blockquote>
           </figure>
 
           <dl className="product-detail__specs" aria-label={t.details}>
             {product.yarn ? <div className="product-detail__spec"><dt>{messages.shop.yarnLabel}</dt><dd>{product.yarn}</dd></div> : null}
             {product.cores && availableColors.length === 0 ? <div className="product-detail__spec"><dt>{messages.shop.coresLabel}</dt><dd>{product.cores}</dd></div> : null}
             {product.designer ? <div className="product-detail__spec"><dt>{messages.shop.designerLabel}</dt><dd>{product.designer}</dd></div> : null}
-            {product.category ? <div className="product-detail__spec"><dt>{messages.shop.eyebrow}</dt><dd>{product.category}</dd></div> : null}
+            {product.category ? <div className="product-detail__spec"><dt>{messages.shop.eyebrow}</dt><dd><Link to={`/search?category=${encodeURIComponent(product.category)}`}>{product.category}</Link></dd></div> : null}
           </dl>
 
           {messages.shop.deliveryNotice ? (

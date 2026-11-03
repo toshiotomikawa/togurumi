@@ -18,18 +18,6 @@ function SiteFooter() {
   const year = new Date().getFullYear()
   const thin = /^\/shop\/[^/]+/.test(pathname)
 
-  if (thin) {
-    return (
-      <footer className="site-footer site-footer--thin">
-        <OrnamentRule kind="knot" />
-        <div className="site-footer__thin-row">
-          <span>{t.thin}</span>
-          <span>Togurumi © {year}</span>
-        </div>
-      </footer>
-    )
-  }
-
   const navLinks = [
     { to: '/', label: messages.nav.home },
     { to: '/shop', label: messages.nav.shop },
@@ -40,6 +28,23 @@ function SiteFooter() {
     { to: '/contact', label: messages.nav.contact },
     { to: '/privacy', label: messages.nav.privacy },
   ]
+
+  if (thin) {
+    return (
+      <footer className="site-footer site-footer--thin">
+        <OrnamentRule kind="knot" />
+        <div className="site-footer__thin-row">
+          <span>{t.thin}</span>
+          <nav className="site-footer__thin-links" aria-label={t.institutional}>
+            {infoLinks.map(({ to, label }) => <Link key={to} to={to}>{label}</Link>)}
+            <a href={TOGURUMI_INSTAGRAM} target="_blank" rel="noopener noreferrer" aria-label="Instagram"><InstagramIcon /></a>
+            <a href={TOGURUMI_YOUTUBE} target="_blank" rel="noopener noreferrer" aria-label="YouTube"><YouTubeIcon /></a>
+          </nav>
+          <span>Togurumi © {year}</span>
+        </div>
+      </footer>
+    )
+  }
 
   return (
     <footer className="site-footer site-footer--atelier">
