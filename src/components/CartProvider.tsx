@@ -30,17 +30,18 @@ function CartProvider({ children }: { children: ReactNode }) {
   }, [items])
 
   const value = useMemo<CartContextValue>(() => {
-    const addItem: CartContextValue['addItem'] = (item) => {
+    const addItem: CartContextValue['addItem'] = (item, quantity = 1) => {
+      const amount = Math.max(1, Math.floor(quantity))
       setItems((current) => {
         const existing = current.find((entry) => isSameVariant(entry, item.slug, item.color))
         if (existing) {
           return current.map((entry) =>
             isSameVariant(entry, item.slug, item.color)
-              ? { ...entry, quantity: entry.quantity + 1 }
+              ? { ...entry, quantity: entry.quantity + amount }
               : entry,
           )
         }
-        return [...current, { ...item, quantity: 1 }]
+        return [...current, { ...item, quantity: amount }]
       })
     }
 
