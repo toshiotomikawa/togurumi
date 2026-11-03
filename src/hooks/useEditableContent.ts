@@ -40,6 +40,52 @@ function clearDraftBackup(section: string, locale: string) {
   }
 }
 
+// Last published content, kept per browser so a returning visitor sees the real text on the
+// first paint. Separate from the editor's draft key above, which may hold unpublished text.
+const PUBLIC_CACHE_PREFIX = 'togurumi-content-public'
+// How long a first-time visitor waits for /api/content before the built-in text is shown.
+export const CONTENT_WAIT_MS = 2500
+
+function publicCacheKey(section: string, locale: string) {
+  return `${PUBLIC_CACHE_PREFIX}:${section}:${locale}`
+}
+
+function readPublicCache(section: string, locale: string): Record<string, string> | null {
+  try {
+    const raw = localStorage.getItem(publicCacheKey(section, locale))
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as unknown
+    return parsed && typeof parsed === 'object' ? (parsed as Record<string, string>) : null
+  } catch {
+    return null
+  }
+}
+
+function writePublicCache(section: string, locale: string, content: Record<string, string>) {
+  try {
+    localStorage.setItem(publicCacheKey(section, locale), JSON.stringify(content))
+  } catch {
+    // Ignore quota or privacy-mode errors.
+  }
+}
+
+type ContentState<Content> = {
+  key: string
+  content: Content
+  // True once the text on screen is final: cached, loaded, or the fallback after the wait.
+  ready: boolean
+  // True when the wait ran out (or the API failed) and the built-in text is on screen.
+  // A visitor then keeps that text instead of seeing it swapped a moment later.
+  settledOnFallback: boolean
+}
+
+function initialContentState<Content>(key: string, section: string, locale: string, fallback: Content): ContentState<Content> {
+  const cached = readPublicCache(section, locale)
+  return cached
+    ? { key, content: { ...fallback, ...cached } as Content, ready: true, settledOnFallback: false }
+    : { key, content: fallback, ready: false, settledOnFallback: false }
+}
+
 export type EditableFeedback = {
   kind: 'success' | 'error'
   text: string
@@ -107,7 +153,18 @@ export function useEditableContent<Section extends SiteContentSection>(
   const { user, logout } = useAuth()
   const canEdit = user?.role === 'admin' || user?.role === 'moderator'
 
-  const [content, setContent] = useState<Content>(fallback)
+  // The page never paints the built-in text and then replaces it with the published one.
+  // Until the text is known, `ready` is false and pages hide the editable text (keeping its
+  // space); it turns true with the cached copy, the loaded copy, or the fallback after
+  // CONTENT_WAIT_MS or an API error, so a failing API never leaves a blank block.
+  const contentKey = `${section}:${locale}`
+  const [state, setState] = useState<ContentState<Content>>(() => initialContentState(contentKey, section, locale, fallback))
+  if (state.key !== contentKey) {
+    setState(initialContentState(contentKey, section, locale, fallback))
+  }
+  const content = state.content
+  const ready = state.ready
+  const setContent = (next: Content) => setState((current) => ({ ...current, content: next, ready: true }))
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState<Content | null>(null)
   const [saving, setSaving] = useState(false)
@@ -131,6 +188,11 @@ export function useEditableContent<Section extends SiteContentSection>(
       setEditing(false)
     }
 
+    const waitTimer = window.setTimeout(() => {
+      if (cancelled) return
+      setState((current) => (current.ready ? current : { ...current, ready: true, settledOnFallback: true }))
+    }, CONTENT_WAIT_MS)
+
     async function load() {
       if (cancelled) return
       setFeedback(null)
@@ -142,12 +204,20 @@ export function useEditableContent<Section extends SiteContentSection>(
           logout,
         )
         if (cancelled) return
+        window.clearTimeout(waitTimer)
+        writePublicCache(section, locale, loaded ?? {})
         const merged = { ...fallback, ...loaded } as Content
-        setContent(merged)
+        setState((current) => {
+          // A visitor already reading the fallback keeps it (the next visit uses the cache).
+          // Editors always get the published text, so they never edit or save the fallback.
+          if (current.settledOnFallback && !canEdit) return current
+          return { ...current, content: merged, ready: true }
+        })
         restoreDraftBackup()
       } catch {
         if (cancelled) return
-        setContent(fallback)
+        window.clearTimeout(waitTimer)
+        setState((current) => (current.ready ? current : { ...current, ready: true, settledOnFallback: true }))
         restoreDraftBackup()
       }
     }
@@ -156,6 +226,7 @@ export function useEditableContent<Section extends SiteContentSection>(
 
     return () => {
       cancelled = true
+      window.clearTimeout(waitTimer)
     }
   }, [locale, section, fallback, logout, canEdit, draftRestoredMessage])
 
@@ -212,6 +283,7 @@ export function useEditableContent<Section extends SiteContentSection>(
         logout,
       )
       setContent({ ...fallback, ...saved } as Content)
+      writePublicCache(section, locale, saved ?? {})
       clearDraftBackup(section, locale)
       setDraft(null)
       setEditing(false)
@@ -225,5 +297,8 @@ export function useEditableContent<Section extends SiteContentSection>(
     }
   }
 
-  return { canEdit, content, editing, draft, startEditing, cancelEditing, updateField, save, saving, feedback }
+  // Class for the element that holds editable text: hides it (keeping its space) until ready.
+  const pendingClass = ready ? '' : ' content-pending'
+
+  return { canEdit, content, ready, pendingClass, editing, draft, startEditing, cancelEditing, updateField, save, saving, feedback }
 }

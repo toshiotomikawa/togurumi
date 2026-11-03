@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useEditableContent } from '../hooks/useEditableContent'
 import { useLocale } from '../hooks/useLocale'
 import { formatReviewDate, type ReviewRecord } from '../lib/reviews'
+import { StarIcon } from './AtelierIcons'
 import { EditActions, EditFeedback, EditField } from './EditableContent'
 
 function Stars({ rating }: { rating: number }) {
@@ -10,26 +11,26 @@ function Stars({ rating }: { rating: number }) {
     <span className="review-stars" aria-hidden="true">
       {Array.from({ length: 5 }, (_, index) => (
         <span key={index} className={index < rating ? 'is-filled' : undefined}>
-          ★
+          <StarIcon />
         </span>
       ))}
     </span>
   )
 }
 
-function StarPicker({ value, onChange }: { value: number; onChange: (rating: number) => void }) {
+function StarPicker({ value, label, onChange }: { value: number; label: string; onChange: (rating: number) => void }) {
   return (
-    <div className="review-star-picker">
+    <div className="review-star-picker" role="group" aria-label={label}>
       {[1, 2, 3, 4, 5].map((star) => (
         <button
           key={star}
           type="button"
           className={star <= value ? 'is-filled' : undefined}
-          aria-label={String(star)}
+          aria-label={`${label}: ${star}/5`}
           aria-pressed={star === value}
           onClick={() => onChange(star)}
         >
-          ★
+          <StarIcon />
         </button>
       ))}
     </div>
@@ -102,7 +103,7 @@ function ReviewsSection() {
   const canModerate = user?.role === 'admin' || user?.role === 'moderator'
 
   return (
-    <section className="section home-reviews" id="reviews">
+    <section className={`section home-reviews${editor.pendingClass}`} id="reviews">
       {editor.editing && editor.draft ? (
         <div className="content-editor__fields">
           <EditField
@@ -123,7 +124,7 @@ function ReviewsSection() {
           />
         </div>
       ) : (
-        <div className="home-reviews__intro">
+        <div className="home-reviews__intro editable-text">
           <span className="hero__eyebrow">{editor.content.eyebrow}</span>
           <h2>{editor.content.title}</h2>
           <p>{editor.content.intro}</p>
@@ -149,8 +150,10 @@ function ReviewsSection() {
         <div className="home-reviews__form">
           <h3>{messages.reviews.formHeading}</h3>
           <form className="auth-form" onSubmit={onSubmit}>
+            {/* The labels stay for screen readers only; the text people see is the placeholder
+                inside each box. */}
             <label className="form-field">
-              <span>{messages.reviews.nameLabel}</span>
+              <span className="visually-hidden">{messages.reviews.nameLabel}</span>
               <input
                 type="text"
                 value={name}
@@ -161,13 +164,12 @@ function ReviewsSection() {
               />
             </label>
 
-            <label className="form-field">
-              <span>{messages.reviews.ratingLabel}</span>
-              <StarPicker value={rating} onChange={setRating} />
-            </label>
+            <div className="form-field review-form__rating">
+              <StarPicker value={rating} label={messages.reviews.ratingLabel} onChange={setRating} />
+            </div>
 
             <label className="form-field">
-              <span>{messages.reviews.commentLabel}</span>
+              <span className="visually-hidden">{messages.reviews.commentLabel}</span>
               <textarea
                 value={comment}
                 onChange={(event) => setComment(event.target.value)}
