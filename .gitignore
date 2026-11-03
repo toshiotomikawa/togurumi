@@ -30,3 +30,11 @@ terminals/
 .agents/
 CLAUDE.md
 .codex/
+
+# Licensed Flaticon artwork is supplied privately for deployment.
+/src/assets/icons/star.svg
+/src/assets/flaticon/
+*.pdf
+*.zip
+AGENTS.md
+MEMORY.md

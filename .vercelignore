@@ -1,0 +1,40 @@
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Env
+.env
+
+# Local data (users, sessions)
+data/
+
+# Local MCP tool config
+mcps/
+
+# Agent session artifacts
+.claude/
+terminals/
+.vercel/
+.tmp/
+.agents/
+CLAUDE.md
+.codex/
+
+# Keep credentials, licenses and agent files out of uploads.
+.env.*
+*.pdf
+*.zip
+AGENTS.md
+MEMORY.md
+/src/assets/flaticon/
