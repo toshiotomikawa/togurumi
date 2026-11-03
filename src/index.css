@@ -153,11 +153,16 @@ a {
   color: var(--link);
 }
 
+/* Links keep their own weight on hover and focus. Setting the weight on a:hover outranked
+   classes such as .atelier-button (700), so a pill button lost its bold and shrank when hovered. */
+a {
+  font-weight: 500;
+}
+
 a,
 a:hover,
 a:focus,
 a:active {
-  font-weight: 500;
   text-decoration: none;
 }
 
@@ -3975,10 +3980,6 @@ a.product-card:hover {
 
 .contact-card__icon--youtube {
   background: #ff0033;
-}
-
-.contact-card__youtube-play {
-  fill: #ff0033;
 }
 
 .contact-card__icon--email {
