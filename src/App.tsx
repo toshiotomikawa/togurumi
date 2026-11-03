@@ -6,6 +6,8 @@ import { useLocale } from './hooks/useLocale'
 import AccountPage from './pages/AccountPage'
 import AdminPage from './pages/AdminPage'
 import CartPage from './pages/CartPage'
+import CheckoutCancelPage from './pages/CheckoutCancelPage'
+import CheckoutSuccessPage from './pages/CheckoutSuccessPage'
 import ContactPage from './pages/ContactPage'
 import FaqPage from './pages/FaqPage'
 import HomePage from './pages/HomePage'
@@ -36,6 +38,8 @@ function App() {
           <Route path="/shop/:slug" element={<ProductPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
+          <Route path="/checkout/cancel" element={<CheckoutCancelPage />} />
           <Route path="/journal" element={<JournalPage />} />
           <Route path="/journal/:slug" element={<JournalPostPage />} />
           <Route path="/reviews" element={<Navigate to="/#reviews" replace />} />

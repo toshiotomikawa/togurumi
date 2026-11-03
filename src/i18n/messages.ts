@@ -257,7 +257,6 @@ export type Messages = {
     removeItem: string
     total: string
     continueShopping: string
-    checkoutNote: string
     itemCountOne: string
     itemCountMany: string
     linesOne: string
@@ -273,6 +272,33 @@ export type Messages = {
     quantityIncreasedFeedback: string
     quantityDecreasedFeedback: string
     removedFeedback: string
+  }
+  checkout: {
+    button: string
+    redirecting: string
+    secureNote: string
+    errorUnavailable: string
+    errorInsufficientStock: string
+    errorInvalidColor: string
+    errorInvalidCart: string
+    errorNotConfigured: string
+    errorTooMany: string
+    errorGeneric: string
+    successEyebrow: string
+    checkingTitle: string
+    checkingBody: string
+    paidTitle: string
+    paidBody: string
+    pendingTitle: string
+    pendingBody: string
+    failedTitle: string
+    failedBody: string
+    unknownTitle: string
+    unknownBody: string
+    backToCart: string
+    cancelEyebrow: string
+    cancelTitle: string
+    cancelBody: string
   }
   reviews: {
     eyebrow: string
@@ -636,7 +662,7 @@ const enUS: Messages = {
     ariaLabel: 'Cart',
     eyebrow: 'Cart',
     title: 'Your cart',
-    intro: 'Review your handmade pieces here. Quantities stay on this device until you are ready to reach out.',
+    intro: 'Review your handmade pieces here. Quantities stay on this device until you check out.',
     empty: "Your cart is empty. Go find something to love.",
     emptyTitle: 'Your cart is resting',
     emptyBody: 'The shelf is full of soft friends waiting to come home. Browse the shop and add a piece you love.',
@@ -644,7 +670,6 @@ const enUS: Messages = {
     removeItem: 'Remove {name} from cart',
     total: 'Total',
     continueShopping: 'Continue shopping',
-    checkoutNote: "Checkout isn't quite ready yet, we'll let you know as soon as it's open!",
     itemCountOne: '1 piece',
     itemCountMany: '{count} pieces',
     linesOne: '1 line',
@@ -660,6 +685,33 @@ const enUS: Messages = {
     quantityIncreasedFeedback: 'Quantity of {name} is now {quantity}.',
     quantityDecreasedFeedback: 'Quantity of {name} is now {quantity}.',
     removedFeedback: '{name} removed from cart.',
+  },
+  checkout: {
+    button: 'Checkout',
+    redirecting: 'Opening secure payment…',
+    secureNote: 'Payment is handled securely by Stripe. Pay by card or Pix; you will enter the delivery address on the next step.',
+    errorUnavailable: '{name} is no longer available. Remove it from the cart to continue.',
+    errorInsufficientStock: 'Only {available} of {name} left in stock. Lower the quantity to continue.',
+    errorInvalidColor: 'The colour chosen for {name} is no longer offered. Remove it and add it again from the product page.',
+    errorInvalidCart: 'Something in your cart looks off. Remove the items and add them again.',
+    errorNotConfigured: 'Online payment is not available right now. Please try again later.',
+    errorTooMany: 'Too many attempts. Wait a few minutes and try again.',
+    errorGeneric: 'We could not start the payment. Please try again.',
+    successEyebrow: 'Order',
+    checkingTitle: 'Checking your payment…',
+    checkingBody: 'This only takes a moment.',
+    paidTitle: 'Thank you, your order is confirmed!',
+    paidBody: 'Payment received. Stripe sends the receipt to your e-mail, and we will get in touch about delivery.',
+    pendingTitle: 'Order received, waiting for payment',
+    pendingBody: 'If you chose Pix, finish paying with the code shown by Stripe. Your order is confirmed as soon as the payment clears.',
+    failedTitle: 'The payment did not go through',
+    failedBody: 'No charge was made. You can add the pieces to the cart again and try another payment method.',
+    unknownTitle: 'Thank you for your order!',
+    unknownBody: 'We could not check the payment status right now. Stripe will e-mail you the confirmation.',
+    backToCart: 'Back to cart',
+    cancelEyebrow: 'Checkout',
+    cancelTitle: 'Payment cancelled',
+    cancelBody: 'No charge was made and your cart is still saved on this device.',
   },
   reviews: {
     eyebrow: 'Reviews',
@@ -1023,7 +1075,7 @@ const ptBR: Messages = {
     ariaLabel: 'Carrinho',
     eyebrow: 'Carrinho',
     title: 'Seu carrinho',
-    intro: 'Revise aqui as peças feitas à mão. As quantidades ficam neste aparelho até você entrar em contato.',
+    intro: 'Revise aqui as peças feitas à mão. As quantidades ficam neste aparelho até você finalizar a compra.',
     empty: 'Seu carrinho está vazio. Vá encontrar algo para amar.',
     emptyTitle: 'Seu carrinho está descansando',
     emptyBody: 'A prateleira está cheia de amiguinhos macios esperando um lar. Explore a loja e adicione uma peça que você ame.',
@@ -1031,7 +1083,6 @@ const ptBR: Messages = {
     removeItem: 'Remover {name} do carrinho',
     total: 'Total',
     continueShopping: 'Continuar comprando',
-    checkoutNote: 'A finalização de compra ainda não está disponível, em breve avisaremos quando estiver pronta!',
     itemCountOne: '1 peça',
     itemCountMany: '{count} peças',
     linesOne: '1 linha',
@@ -1047,6 +1098,33 @@ const ptBR: Messages = {
     quantityIncreasedFeedback: 'Quantidade de {name} agora é {quantity}.',
     quantityDecreasedFeedback: 'Quantidade de {name} agora é {quantity}.',
     removedFeedback: '{name} removido do carrinho.',
+  },
+  checkout: {
+    button: 'Finalizar compra',
+    redirecting: 'Abrindo o pagamento seguro…',
+    secureNote: 'O pagamento é processado com segurança pelo Stripe. Pague com cartão ou Pix; o endereço de entrega é informado na próxima etapa.',
+    errorUnavailable: '{name} não está mais disponível. Remova do carrinho para continuar.',
+    errorInsufficientStock: 'Restam apenas {available} unidade(s) de {name}. Diminua a quantidade para continuar.',
+    errorInvalidColor: 'A cor escolhida para {name} não está mais disponível. Remova e adicione novamente pela página do produto.',
+    errorInvalidCart: 'Algo no seu carrinho não está certo. Remova os itens e adicione novamente.',
+    errorNotConfigured: 'O pagamento on-line não está disponível agora. Tente novamente mais tarde.',
+    errorTooMany: 'Muitas tentativas. Aguarde alguns minutos e tente de novo.',
+    errorGeneric: 'Não foi possível iniciar o pagamento. Tente novamente.',
+    successEyebrow: 'Pedido',
+    checkingTitle: 'Verificando seu pagamento…',
+    checkingBody: 'Só um instante.',
+    paidTitle: 'Obrigada, seu pedido está confirmado!',
+    paidBody: 'Pagamento recebido. O Stripe envia o recibo para o seu e-mail e entraremos em contato sobre a entrega.',
+    pendingTitle: 'Pedido recebido, aguardando pagamento',
+    pendingBody: 'Se você escolheu Pix, conclua o pagamento com o código exibido pelo Stripe. O pedido é confirmado assim que o pagamento for compensado.',
+    failedTitle: 'O pagamento não foi concluído',
+    failedBody: 'Nenhuma cobrança foi feita. Você pode adicionar as peças ao carrinho de novo e tentar outra forma de pagamento.',
+    unknownTitle: 'Obrigada pelo seu pedido!',
+    unknownBody: 'Não conseguimos verificar o pagamento agora. O Stripe enviará a confirmação para o seu e-mail.',
+    backToCart: 'Voltar ao carrinho',
+    cancelEyebrow: 'Pagamento',
+    cancelTitle: 'Pagamento cancelado',
+    cancelBody: 'Nenhuma cobrança foi feita e seu carrinho continua salvo neste aparelho.',
   },
   reviews: {
     eyebrow: 'Avaliações',
@@ -1410,7 +1488,7 @@ const esES: Messages = {
     ariaLabel: 'Carrito',
     eyebrow: 'Carrito',
     title: 'Tu carrito',
-    intro: 'Revisa aquí las piezas hechas a mano. Las cantidades se guardan en este dispositivo hasta que contactes.',
+    intro: 'Revisa aquí las piezas hechas a mano. Las cantidades se guardan en este dispositivo hasta que finalices la compra.',
     empty: 'Tu carrito está vacío. Ve a encontrar algo para amar.',
     emptyTitle: 'Tu carrito está en pausa',
     emptyBody: 'La estantería está llena de amiguitos suaves esperando un hogar. Explora la tienda y añade una pieza que ames.',
@@ -1418,7 +1496,6 @@ const esES: Messages = {
     removeItem: 'Eliminar {name} del carrito',
     total: 'Total',
     continueShopping: 'Seguir comprando',
-    checkoutNote: 'El pago todavía no está disponible, ¡te avisaremos en cuanto esté listo!',
     itemCountOne: '1 pieza',
     itemCountMany: '{count} piezas',
     linesOne: '1 línea',
@@ -1434,6 +1511,33 @@ const esES: Messages = {
     quantityIncreasedFeedback: 'La cantidad de {name} ahora es {quantity}.',
     quantityDecreasedFeedback: 'La cantidad de {name} ahora es {quantity}.',
     removedFeedback: '{name} eliminado del carrito.',
+  },
+  checkout: {
+    button: 'Finalizar compra',
+    redirecting: 'Abriendo el pago seguro…',
+    secureNote: 'El pago se procesa de forma segura con Stripe. Paga con tarjeta o Pix; la dirección de entrega se indica en el siguiente paso.',
+    errorUnavailable: '{name} ya no está disponible. Elimínalo del carrito para continuar.',
+    errorInsufficientStock: 'Solo quedan {available} unidad(es) de {name}. Reduce la cantidad para continuar.',
+    errorInvalidColor: 'El color elegido para {name} ya no está disponible. Elimínalo y vuelve a añadirlo desde la página del producto.',
+    errorInvalidCart: 'Algo en tu carrito no está bien. Elimina los artículos y vuelve a añadirlos.',
+    errorNotConfigured: 'El pago en línea no está disponible ahora. Inténtalo más tarde.',
+    errorTooMany: 'Demasiados intentos. Espera unos minutos y vuelve a intentarlo.',
+    errorGeneric: 'No pudimos iniciar el pago. Inténtalo de nuevo.',
+    successEyebrow: 'Pedido',
+    checkingTitle: 'Comprobando tu pago…',
+    checkingBody: 'Solo un momento.',
+    paidTitle: '¡Gracias, tu pedido está confirmado!',
+    paidBody: 'Pago recibido. Stripe envía el recibo a tu correo y nos pondremos en contacto sobre la entrega.',
+    pendingTitle: 'Pedido recibido, esperando el pago',
+    pendingBody: 'Si elegiste Pix, completa el pago con el código que muestra Stripe. El pedido se confirma en cuanto se acredite el pago.',
+    failedTitle: 'El pago no se completó',
+    failedBody: 'No se realizó ningún cargo. Puedes volver a añadir las piezas al carrito y probar otro método de pago.',
+    unknownTitle: '¡Gracias por tu pedido!',
+    unknownBody: 'No pudimos comprobar el estado del pago ahora. Stripe te enviará la confirmación por correo.',
+    backToCart: 'Volver al carrito',
+    cancelEyebrow: 'Pago',
+    cancelTitle: 'Pago cancelado',
+    cancelBody: 'No se realizó ningún cargo y tu carrito sigue guardado en este dispositivo.',
   },
   reviews: {
     eyebrow: 'Reseñas',
