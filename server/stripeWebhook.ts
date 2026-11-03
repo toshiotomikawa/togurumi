@@ -72,18 +72,21 @@ async function applyOrderStock(deps: StripeWebhookDependencies, reservationId: s
   }
 
   for (const [slug, quantity] of totals) {
-    if (!await deps.orderStore.claimStockItem(reservationId, order.sessionId, slug, quantity)) continue
-    let issue: StockIssue | null
-    try {
-      issue = await deps.applyStock(slug, quantity)
-    } catch (err) {
-      await deps.orderStore.releaseStockItem(reservationId, slug)
-      throw err
-    }
-    if (issue) {
-      await deps.orderStore.recordStockIssues(order.sessionId, [issue])
-      deps.logger?.warn(`[stripe] order ${order.sessionId} exceeded available stock`, issue)
-    }
+    await deps.orderStore.withStockLock(slug, async (store) => {
+      // A competing event only sees the claim after the sheet update commits.
+      if (!await store.claimStockItem(reservationId, order.sessionId, slug, quantity)) return
+      let issue: StockIssue | null
+      try {
+        issue = await deps.applyStock(slug, quantity)
+      } catch (err) {
+        await store.releaseStockItem(reservationId, slug)
+        throw err
+      }
+      if (issue) {
+        await store.recordStockIssues(order.sessionId, [issue])
+        deps.logger?.warn(`[stripe] order ${order.sessionId} exceeded available stock`, issue)
+      }
+    })
   }
 
   await deps.orderStore.markStockApplied(order.sessionId)

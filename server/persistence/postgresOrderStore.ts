@@ -55,6 +55,25 @@ function toOrder(row: OrderRow): OrderRecord {
 export class PostgresOrderStore implements OrderStore {
   constructor(private readonly db: DatabaseClient) {}
 
+  async withStockLock<T>(slug: string, operation: (store: OrderStore) => Promise<T>): Promise<T> {
+    const pooled = 'totalCount' in this.db
+    const client = pooled ? await (this.db as Pool).connect() : this.db
+    try {
+      await client.query('BEGIN')
+      try {
+        await client.query('SELECT pg_advisory_xact_lock(727002, hashtext($1))', [slug])
+        const result = await operation(new PostgresOrderStore(client))
+        await client.query('COMMIT')
+        return result
+      } catch (error) {
+        await client.query('ROLLBACK')
+        throw error
+      }
+    } finally {
+      if (pooled) (client as PoolClient).release()
+    }
+  }
+
   async claimEvent(eventId: string, type: string): Promise<boolean> {
     const result = await this.db.query(
       'INSERT INTO stripe_events (id, type) VALUES ($1, $2) ON CONFLICT (id) DO NOTHING RETURNING id',

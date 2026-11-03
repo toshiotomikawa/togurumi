@@ -302,3 +302,51 @@ test('expired holds and deducted items stop counting as reserved', async () => {
   assert.equal(await store.claimStockItem('res_2', 'cs_2', 'urso-mochi', 2), false)
   assert.equal((await store.reserveStock('res_3', [{ slug: 'urso-mochi', quantity: 2 }], stock, now + 1_000)).ok, true)
 })
+
+
+test('competing payment events cannot finish stock before a failed writer and its retry', async () => {
+  const { deps, orderStore, deliver } = harness()
+  let started!: () => void
+  let release!: () => void
+  const writing = new Promise<void>(resolve => { started = resolve })
+  const blocked = new Promise<void>(resolve => { release = resolve })
+  let calls = 0
+  deps.applyStock = async () => {
+    calls += 1
+    if (calls === 1) {
+      started()
+      await blocked
+      throw new Error('sheet unavailable')
+    }
+    return null
+  }
+  const first = deliver(sessionEvent('checkout.session.completed', {}, 'evt_race_first'))
+  await writing
+  const second = deliver(sessionEvent('checkout.session.async_payment_succeeded', {}, 'evt_race_second'))
+  await new Promise<void>(resolve => setImmediate(resolve))
+  assert.equal((await orderStore.getOrder('cs_test_order1'))?.stockApplied, false)
+  assert.equal(calls, 1, 'the competing event waits for the active sheet writer')
+  release()
+  assert.equal((await first).status, 500)
+  assert.equal((await second).status, 200)
+  assert.equal(calls, 2)
+  assert.equal((await orderStore.getOrder('cs_test_order1'))?.stockApplied, true)
+  assert.equal((await deliver(sessionEvent('checkout.session.completed', {}, 'evt_race_first'))).status, 200)
+  assert.equal(calls, 2, 'redelivery never deducts again')
+})
+
+
+test('checkout status has an IP rate limit before contacting Stripe', async () => {
+  const { default: app } = await import('./index.js')
+  const server = http.createServer(app)
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve))
+  try {
+    const address = server.address()
+    assert(address && typeof address === 'object')
+    const url = `http://127.0.0.1:${address.port}/api/checkout/status?session_id=invalid`
+    for (let i = 0; i < 60; i += 1) assert.equal((await fetch(url)).status, 400)
+    assert.equal((await fetch(url)).status, 429)
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()))
+  }
+})
