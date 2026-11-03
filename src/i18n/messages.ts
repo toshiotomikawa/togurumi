@@ -143,6 +143,8 @@ export type Messages = {
     loadingLabel: string
     stockLabel: string
     outOfStock: string
+    soldOutNow: string
+    orderInvite: string
     allCategories: string
     newBadge: string
     backLink: string
@@ -518,6 +520,8 @@ const enUS: Messages = {
     loadingLabel: 'Loading shop products',
     stockLabel: 'In stock',
     outOfStock: 'Sold out',
+    soldOutNow: 'Out of stock for now',
+    orderInvite: 'Order yours via Instagram DM (@togurumi)',
     allCategories: 'All',
     newBadge: 'NEW!',
     backLink: 'Back to shop',
@@ -601,7 +605,7 @@ const enUS: Messages = {
       "Turning a ball of yarn into something with its own personality, something people of any age can enjoy, feels like magic to me. Making a piece that can be a teenager's keychain, a child's toy, or a grown-up's favorite little knick-knack is what drives me to explore new shapes and colors and make your everyday a little less monotonous.",
     nameHeading: 'What "Togurumi" means',
     nameBody:
-      'A little portmanteau of my own: "To" from my surname, Tomikawa (富川), and "gurumi" from "amigurumi." This is my corner for it: gallery, journal, and (eventually) patterns to download or commission.',
+      'A little portmanteau of my own: "To" from my surname, Tomikawa, and "gurumi" from "amigurumi." This is my corner for it: gallery, journal, and (eventually) patterns to download or commission.',
   },
   contact: {
     eyebrow: 'Contact',
@@ -931,6 +935,8 @@ const ptBR: Messages = {
     loadingLabel: 'Carregando produtos da loja',
     stockLabel: 'Em estoque',
     outOfStock: 'Esgotado',
+    soldOutNow: 'Sem estoque agora',
+    orderInvite: 'Encomende a sua pelo direct do Instagram (@togurumi)',
     allCategories: 'Todos',
     newBadge: 'NOVO!',
     backLink: 'Voltar para a loja',
@@ -1014,7 +1020,7 @@ const ptBR: Messages = {
       'Essa arte de transformar um novelo em algo com personalidade, que pode ser apreciado por diferentes faixas etárias, é mágica pra mim. Criar uma peça que pode ser usada tanto como chaveiro de um adolescente, brinquedo de uma criança, ou um "cacareco" querido de um adulto é o que me move a explorar diferentes formas e cores, para deixar a sua rotina um pouco menos monótona.',
     nameHeading: 'O que "Togurumi" significa',
     nameBody:
-      'Um pequeno portmanteau meu: "To" do meu sobrenome, Tomikawa (富川), e "gurumi" de "amigurumi". É o meu cantinho para isso: galeria, blog e (eventualmente) moldes para baixar ou encomendar.',
+      'Um pequeno portmanteau meu: "To" do meu sobrenome, Tomikawa, e "gurumi" de "amigurumi". É o meu cantinho para isso: galeria, blog e (eventualmente) moldes para baixar ou encomendar.',
   },
   contact: {
     eyebrow: 'Contato',
@@ -1344,6 +1350,8 @@ const esES: Messages = {
     loadingLabel: 'Cargando productos de la tienda',
     stockLabel: 'En stock',
     outOfStock: 'Agotado',
+    soldOutNow: 'Sin stock por ahora',
+    orderInvite: 'Encarga la tuya por mensaje en Instagram (@togurumi)',
     allCategories: 'Todos',
     newBadge: '¡NUEVO!',
     backLink: 'Volver a la tienda',
@@ -1427,7 +1435,7 @@ const esES: Messages = {
       'El arte de convertir un ovillo de lana en algo con personalidad, que personas de cualquier edad pueden disfrutar, es mágico para mí. Crear una pieza que puede ser el llavero de un adolescente, el juguete de un niño o el querido "cacharrito" de un adulto es lo que me impulsa a explorar nuevas formas y colores, para hacer tu día a día un poco menos monótono.',
     nameHeading: 'Qué significa "Togurumi"',
     nameBody:
-      'Un pequeño acrónimo propio: "To" de mi apellido, Tomikawa (富川), y "gurumi" de "amigurumi". Este es mi rincón para ello: galería, diario y (eventualmente) patrones para descargar o encargar.',
+      'Un pequeño acrónimo propio: "To" de mi apellido, Tomikawa, y "gurumi" de "amigurumi". Este es mi rincón para ello: galería, diario y (eventualmente) patrones para descargar o encargar.',
   },
   contact: {
     eyebrow: 'Contacto',
