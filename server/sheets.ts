@@ -85,7 +85,7 @@ function rowsToObjects(values: string[][]): SheetTabData {
 }
 
 export class SheetsError extends Error {
-  constructor(public code: 'disabled' | 'invalid_tab' | 'fetch_failed' | 'row_changed') {
+  constructor(public code: 'disabled' | 'invalid_tab' | 'fetch_failed' | 'row_changed' | 'invalid_price') {
     super(code)
   }
 }
@@ -107,7 +107,7 @@ async function getSheetTabData(tab: string, forceRefresh = false): Promise<Sheet
     const res = await client.request<{ values?: string[][] }>({ url })
     values = res.data.values
   } catch (err) {
-    if (cached?.data) {
+    if (!forceRefresh && cached?.data) {
       console.warn(`[sheets] fetch failed for tab ${tab}, serving stale cache:`, err)
       return cached.data
     }

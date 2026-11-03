@@ -130,3 +130,32 @@ test('reservations hold stock across checkouts and stock items are claimed once'
     await db.close()
   }
 })
+
+
+test('production never falls back to the local order store', () => {
+  const previous = process.env.NODE_ENV
+  try {
+    process.env.NODE_ENV = 'production'
+    assert.throws(() => createRuntimeOrderStore('  '), /DATABASE_URL is required/)
+  } finally {
+    if (previous === undefined) delete process.env.NODE_ENV
+    else process.env.NODE_ENV = previous
+  }
+})
+
+test('stock claims only become durable after the locked operation succeeds', async () => {
+  const { db, store } = await createTestStore()
+  try {
+    await assert.rejects(store.withStockLock('urso', async (tx) => {
+      assert.equal(await tx.claimStockItem('res_lock', 'cs_lock', 'urso', 1), true)
+      throw new Error('sheet failed')
+    }), /sheet failed/)
+    const result = await store.withStockLock('urso', async (tx) => {
+      return tx.claimStockItem('res_lock', 'cs_lock', 'urso', 1)
+    })
+    assert.equal(result, true, 'the failed transaction did not leave a claim')
+    assert.equal(await store.withStockLock('urso', tx => tx.claimStockItem('res_lock', 'cs_lock', 'urso', 1)), false)
+  } finally {
+    await db.close()
+  }
+})

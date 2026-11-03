@@ -473,7 +473,7 @@ app.post('/api/checkout', async (req, res) => {
 
   try {
     const items = parseCartRequest(req.body)
-    const lines = buildCheckoutLines(items, await getShopProducts())
+    const lines = buildCheckoutLines(items, await getShopProducts({ forceRefresh: true }))
 
     // Hold the units before sending the customer to Stripe; other checkouts
     // see only what is left. The webhook releases the hold on expiry or failure.
@@ -524,6 +524,10 @@ app.post('/api/checkout', async (req, res) => {
 })
 
 app.get('/api/checkout/status', async (req, res) => {
+  if (!await rateLimitStore.consume(`checkout-status:${req.ip ?? 'unknown'}`, 60, 60_000)) {
+    res.status(429).json({ error: 'too_many_attempts' })
+    return
+  }
   const sessionId = String(req.query.session_id ?? '')
   if (!stripeEnabled() || !/^cs_(test|live)_[A-Za-z0-9]{1,200}$/.test(sessionId)) {
     res.status(400).json({ error: 'invalid_session' })
