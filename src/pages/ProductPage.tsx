@@ -5,7 +5,7 @@ import { useCart } from '../hooks/useCart'
 import { useFavorites } from '../hooks/useFavorites'
 import { useLocale } from '../hooks/useLocale'
 import { useShopProducts } from '../hooks/useShopProducts'
-import { formatPrice, getColorSwatch, isRecentlyReleased, parseProductColors } from '../lib/shop'
+import { formatPrice, getColorSwatchBackground, isRecentlyReleased, parseProductColors } from '../lib/shop'
 import { slugify } from '../lib/slug'
 import { TOGURUMI_INSTAGRAM_DM } from '../lib/togurumi'
 import NotFoundPage from './NotFoundPage'
@@ -215,7 +215,7 @@ function ProductPage() {
                     <button
                       type="button"
                       className={`color-swatch${selected ? ' color-swatch--selected' : ''}`}
-                      style={{ backgroundColor: getColorSwatch(color) }}
+                      style={{ background: getColorSwatchBackground(color) }}
                       onClick={() => handleColorSelect(color)}
                       aria-label={`${messages.shop.chooseColorLabel}: ${color}`}
                       aria-pressed={selected}

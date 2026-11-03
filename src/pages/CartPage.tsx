@@ -4,7 +4,7 @@ import { useCart } from '../hooks/useCart'
 import { useShopProducts } from '../hooks/useShopProducts'
 import { useLocale } from '../hooks/useLocale'
 import { CheckoutRequestError, startCheckout } from '../lib/checkout'
-import { formatPrice, getColorSwatch } from '../lib/shop'
+import { formatPrice, getColorSwatchBackground } from '../lib/shop'
 import { slugify } from '../lib/slug'
 import type { CartItem } from '../context/cart'
 
@@ -183,7 +183,7 @@ function CartPage() {
                         <p className="cart-item__color">
                           <span
                             className="cart-item__color-swatch"
-                            style={{ backgroundColor: getColorSwatch(item.color) }}
+                            style={{ background: getColorSwatchBackground(item.color) }}
                             aria-hidden="true"
                           />
                           <span>
