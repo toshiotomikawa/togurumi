@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocale } from '../hooks/useLocale'
+import { TOGURUMI_INSTAGRAM_DM } from '../lib/togurumi'
 import { formatPrice, isRecentlyReleased, type ShopProduct } from '../lib/shop'
 import { slugify } from '../lib/slug'
 
@@ -66,9 +67,14 @@ function ProductCard({ product }: { product: ShopProduct }) {
         <div className="product-card__footer">
           <span className="product-card__price">{formatPrice(product.price, locale)}</span>
           <span className={`product-card__stock${soldOut ? ' product-card__stock--out' : ''}`}>
-            {soldOut ? messages.shop.outOfStock : `${messages.shop.stockLabel}: ${product.stock}`}
+            {soldOut ? messages.shop.soldOutNow : `${messages.shop.stockLabel}: ${product.stock}`}
           </span>
         </div>
+        {soldOut ? (
+          <a className="sold-out-invite product-card__invite" href={TOGURUMI_INSTAGRAM_DM} target="_blank" rel="noopener noreferrer">
+            {messages.shop.orderInvite}
+          </a>
+        ) : null}
       </div>
     </article>
   )
