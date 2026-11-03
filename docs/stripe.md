@@ -180,3 +180,25 @@ npm run test:checkout
   Pix ou pela baixa do pagamento; o prazo só vale se um evento não chegar.
 - A página do produto mostra o `ESTOQUE` da planilha; unidades reservadas
   por outros clientes só são descontadas na hora de finalizar a compra.
+
+
+## Proteções da auditoria de lançamento
+
+- Produção exige `DATABASE_URL`; o adaptador de pedidos nunca usa memória nesse ambiente.
+- `PREÇO FINAL` aceita reais inteiros ou vírgula e duas casas decimais, com `R$` opcional
+  e pontos só para milhares completos. `49.90`, texto inválido, zero e negativos são recusados.
+  Uma célula vazia continua excluindo o produto da loja.
+- Checkout lê preço e estoque com atualização forçada. Falha na planilha responde 503;
+  o catálogo antigo continua permitido apenas para navegação da vitrine.
+- Baixas são serializadas por slug em uma transação Postgres. O claim só fica visível
+  quando a atualização da planilha termina e a transação confirma. Outro webhook espera;
+  `stock_applied` e liberação da reserva só ocorrem depois de todos os itens concluídos.
+- `/api/checkout/status` limita a 60 consultas por minuto por IP antes de consultar Stripe.
+- Antes de cadastrar as chaves, verificar `schema_migrations`: `0002_orders.sql` e
+  `0003_stock_reservations.sql` precisam estar aplicadas em produção.
+
+Limites conhecidos: a escrita no Google Sheets não participa da transação Postgres.
+Se a função morrer depois de gravar na planilha e antes do COMMIT, é preciso reconciliar
+antes de reaplicar a baixa. Claims de evento interrompidos também exigem reconciliação.
+O lock protege baixas do aplicativo, não alterações manuais na planilha. Os casos de
+reconciliação e abuso das reservas ficam rastreados em issues antes da ativação.

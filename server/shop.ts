@@ -58,10 +58,16 @@ function serializeProductImages(images: ProductImages) {
   return JSON.stringify(images)
 }
 
-function parsePrice(value: string): number {
-  const normalized = value.replace(/[^\d,.-]/g, '').replace(/\./g, '').replace(',', '.')
-  const parsed = Number(normalized)
-  return Number.isFinite(parsed) ? parsed : 0
+/** Only positive BRL cells: 49,90, R$ 49,90, 1.234,56 or whole reais. */
+export function parsePrice(value: string): number {
+  const text = value.trim().replace(/^R\$\s*/, '')
+  if (!/^(?:0|[1-9]\d*|[1-9]\d{0,2}(?:\.\d{3})+)(?:,\d{2})?$/.test(text)) {
+    throw new SheetsError('invalid_price')
+  }
+  const [whole, fraction = '00'] = text.replace(/\./g, '').split(',')
+  const cents = Number(whole) * 100 + Number(fraction)
+  if (!Number.isSafeInteger(cents) || cents <= 0) throw new SheetsError('invalid_price')
+  return cents / 100
 }
 
 export type ProductImageTarget = {
@@ -129,9 +135,9 @@ export async function setProductImage(
   return images
 }
 
-export async function getShopProducts(): Promise<ShopProduct[]> {
+export async function getShopProducts(options: { forceRefresh?: boolean } = {}): Promise<ShopProduct[]> {
   try {
-    const rows = await getSheetTab('CATALOGO')
+    const rows = await getSheetTab('CATALOGO', options)
 
     const products = rows
       .filter((row) => row['MANTER?']?.trim().toLowerCase() === 'sim' && (row['PREÇO FINAL'] ?? row['PREAO FINAL'] ?? row['PRECO FINAL'])?.trim())
@@ -160,7 +166,7 @@ export async function getShopProducts(): Promise<ShopProduct[]> {
     }
     return products
   } catch (err) {
-    if (lastKnownProducts.length > 0) {
+    if (!options.forceRefresh && err instanceof SheetsError && err.code === 'fetch_failed' && lastKnownProducts.length > 0) {
       console.warn('[shop] Google Sheets unavailable, returning last known products cache')
       return lastKnownProducts
     }

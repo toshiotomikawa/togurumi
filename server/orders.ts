@@ -52,6 +52,8 @@ export type OrderRecord = OrderInput & {
 }
 
 export interface OrderStore {
+  /** Serializes sheet deductions per product; the Postgres claim commits with the operation. */
+  withStockLock<T>(slug: string, operation: (store: OrderStore) => Promise<T>): Promise<T>
   /** Returns false when the Stripe event id was already processed. */
   claimEvent(eventId: string, type: string): Promise<boolean>
   /** Forgets an event whose processing failed so Stripe's retry runs again. */
@@ -117,6 +119,7 @@ function itemKey(reservationId: string, slug: string) {
 export class LocalOrderStore implements OrderStore {
   private db: OrderDatabase | null = null
   private queue: Promise<unknown> = Promise.resolve()
+  private stockQueue: Promise<unknown> = Promise.resolve()
 
   constructor(
     private readonly filePath: string | null = null,
@@ -155,6 +158,12 @@ export class LocalOrderStore implements OrderStore {
       return operation(db)
     })
     this.queue = run.catch(() => undefined)
+    return run
+  }
+
+  withStockLock<T>(_slug: string, operation: (store: OrderStore) => Promise<T>): Promise<T> {
+    const run = this.stockQueue.then(() => operation(this))
+    this.stockQueue = run.catch(() => undefined)
     return run
   }
 
