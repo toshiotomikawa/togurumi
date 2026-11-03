@@ -148,7 +148,7 @@ function HomePage() {
   const multiline = new Set<string>(['intro', 'youtubeIntro'])
 
   return (
-    <div className="atelier-home">
+    <div className={`atelier-home${editor.pendingClass}`}>
       {editor.editing && editor.draft ? <section className="atelier-editor atelier-wrap">
         <div className="content-editor__fields">
           {fields.map(field => <EditField key={field} label={messages.contentEditor.fields[field]} value={editor.draft![field]} multiline={multiline.has(field)} onChange={(value) => editor.updateField(field, value)} />)}
@@ -161,11 +161,11 @@ function HomePage() {
         <Branch className="atelier-hero__leaf" />
         <div className="atelier-wrap atelier-hero__inner">
           <div className="atelier-hero__words">
-            {editor.content.eyebrow && <p className="atelier-hero__eyebrow">{editor.content.eyebrow}</p>}
-            <h1 id="home-title">{editor.content.title}</h1>
+            {editor.content.eyebrow && <p className="atelier-hero__eyebrow editable-text">{editor.content.eyebrow}</p>}
+            <h1 id="home-title" className="editable-text">{editor.content.title}</h1>
             <OrnamentRule kind="heart" className="atelier-hero__rule" />
-            <p>{editor.content.intro}</p>
-            <div className="atelier-hero__actions">
+            <p className="editable-text">{editor.content.intro}</p>
+            <div className="atelier-hero__actions editable-text">
               <Link className="atelier-button" to="/shop">{editor.content.shopCta}<ArrowIcon /></Link>
               <Link className="atelier-link" to="/journal">{editor.content.journalCta}</Link>
             </div>
@@ -185,8 +185,8 @@ function HomePage() {
 
       <section className="atelier-collection atelier-wrap atelier-wrap--wide" aria-labelledby="collection-title">
         <div className="atelier-heading">
-          <h2 id="collection-title"><SprigIcon className="atelier-heading__sprig" />{editor.content.highlightsHeading}</h2>
-          <Link className="atelier-link" to="/shop">{editor.content.viewAll}</Link>
+          <h2 id="collection-title" className="editable-text"><SprigIcon className="atelier-heading__sprig" />{editor.content.highlightsHeading}</h2>
+          <Link className="atelier-link editable-text" to="/shop">{editor.content.viewAll}</Link>
         </div>
         {!loaded ? <div className="atelier-cards" aria-busy="true" aria-label={messages.shop.loadingLabel}>{Array.from({ length: 8 }, (_, i) => <div className="atelier-card atelier-loading" key={i} />)}</div>
           : selected.length ? <div className="atelier-cards">{selected.map(product => <CollectionCard key={product.name} product={product} />)}</div>
@@ -217,7 +217,7 @@ function HomePage() {
         <div className="atelier-explore__grid">
           {browseLinks.map(item => <Link className="atelier-explore__tile" to={item.to} key={item.to}>
             <PiecePhoto product={item.product} />
-            <span className="atelier-explore__label"><strong>{item.label}</strong><span>{t.browse}<ArrowIcon /></span></span>
+            <span className="atelier-explore__label"><strong className={item.to === '/shop' ? 'editable-text' : undefined}>{item.label}</strong><span>{t.browse}<ArrowIcon /></span></span>
           </Link>)}
         </div>
       </section>}
@@ -231,9 +231,9 @@ function HomePage() {
           <p>{messages.about.storyBody}</p>
           <p className="atelier-story__sign">{t.sign}</p>
           <div className="atelier-story__video">
-            <h3><YouTubeIcon />{editor.content.youtubeHeading}</h3>
-            <p>{editor.content.youtubeIntro}</p>
-            <div className="atelier-story__actions">
+            <h3 className="editable-text"><YouTubeIcon />{editor.content.youtubeHeading}</h3>
+            <p className="editable-text">{editor.content.youtubeIntro}</p>
+            <div className="atelier-story__actions editable-text">
               <a className="atelier-button atelier-button--small" href={TOGURUMI_LATEST_VIDEO} target="_blank" rel="noopener noreferrer">{editor.content.youtubeVideoCta}<ArrowIcon /></a>
               <a className="atelier-link" href={TOGURUMI_YOUTUBE} target="_blank" rel="noopener noreferrer">{editor.content.youtubeChannelCta}</a>
             </div>
@@ -243,8 +243,8 @@ function HomePage() {
 
       <section className="atelier-journal atelier-wrap" aria-labelledby="journal-title">
         <div className="atelier-heading">
-          <h2 id="journal-title"><SprigIcon className="atelier-heading__sprig" />{editor.content.journalHeading}</h2>
-          <Link className="atelier-link" to="/journal">{editor.content.allEntries}</Link>
+          <h2 id="journal-title" className="editable-text"><SprigIcon className="atelier-heading__sprig" />{editor.content.journalHeading}</h2>
+          <Link className="atelier-link editable-text" to="/journal">{editor.content.allEntries}</Link>
         </div>
         {journalError ? <p role="alert">{messages.auth.genericError}</p>
           : latestPosts.length ? <div className="atelier-journal__list">{latestPosts.map(post => <Link className="atelier-journal__entry" to={`/journal/${post.slug}`} key={post.id}>

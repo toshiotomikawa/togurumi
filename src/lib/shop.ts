@@ -1,3 +1,5 @@
+import { CIRCULO_CHENILLE, type CirculoColor } from './circuloChenille'
+
 export type ShopProduct = {
   name: string
   category: string
@@ -86,10 +88,45 @@ export function parseProductColors(value: string) {
     .filter((color) => color && !SINGLE_COLOR_LABELS.has(normalize(color)))
 }
 
+function normalizeName(value: string) {
+  return normalize(value).replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim()
+}
+
+const CIRCULO_BY_CODE = new Map(CIRCULO_CHENILLE.map((color) => [color.code, color]))
+// A Círculo name only counts when it is not also a plain color word: "Branco" or "Preto" in the
+// sheet may mean any white or black, so those need the code (8001, 8990) to use the Círculo tone.
+const CIRCULO_BY_NAME = new Map(
+  CIRCULO_CHENILLE.filter((color) => !(normalizeName(color.name) in COLOR_SWATCHES)).map((color) => [normalizeName(color.name), color]),
+)
+
+/**
+ * The Círculo color the sheet points to, by code ("2500", "2500 Acqua") or by a distinctive
+ * Círculo name ("Acqua", "Chiclete"). Generic names such as "Azul" or "Rosa" return null and keep
+ * the old swatch: no Círculo tone is guessed for them.
+ */
+export function findCirculoColor(color: string): CirculoColor | null {
+  const code = /\b(\d{4})\b/.exec(color)?.[1]
+  if (code && CIRCULO_BY_CODE.has(code)) return CIRCULO_BY_CODE.get(code)!
+  const name = normalizeName(color.replace(/\b\d{4}\b/, '').replace(/^\s*[-–]\s*/, ''))
+  return CIRCULO_BY_NAME.get(name) ?? null
+}
+
 export function getColorSwatch(color: string) {
   const normalized = normalize(color.trim())
   if (/^#[\da-f]{3,8}$/i.test(normalized)) return normalized
+  const circulo = findCirculoColor(color)
+  if (circulo) return circulo.hex
   return COLOR_SWATCHES[normalized] ?? '#b9aa9b'
+}
+
+/** CSS background for a swatch: one color, or stripes for a blended Círculo yarn. */
+export function getColorSwatchBackground(color: string) {
+  const tones = findCirculoColor(color)?.tones
+  if (tones && tones.length > 1) {
+    const step = 100 / tones.length
+    return `linear-gradient(135deg, ${tones.map((tone, index) => `${tone} ${index * step}% ${(index + 1) * step}%`).join(', ')})`
+  }
+  return getColorSwatch(color)
 }
 
 export function matchesSearch(product: ShopProduct, query: string) {
