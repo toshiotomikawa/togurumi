@@ -485,7 +485,7 @@ app.post('/api/checkout', async (req, res) => {
       await readShopStock(),
       now + RESERVATION_TTL_SECONDS * 1000,
     )
-    if (!reservation.ok) {
+    if (reservation.ok === false) {
       throw new CheckoutError(reservation.available === 0 ? 'product_unavailable' : 'insufficient_stock', {
         slug: reservation.slug,
         available: reservation.available,
