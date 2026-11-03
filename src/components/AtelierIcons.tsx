@@ -25,10 +25,10 @@ export const BoxIcon = ({ className }: IconProps) => <Line className={className}
 export const InstagramIcon = ({ className }: IconProps) => <Line className={className}><rect x="4" y="4" width="16" height="16" rx="4.5" /><circle cx="12" cy="12" r="3.6" /><circle cx="16.8" cy="7.2" r=".6" fill="currentColor" /></Line>
 /** Outline like Instagram and Mail, so the social icons share one drawing style and stroke. */
 export const YouTubeIcon = ({ className }: IconProps) => <Line className={className}><rect x="3" y="5.5" width="18" height="13" rx="4" /><path d="m10.2 9.4 4.4 2.6-4.4 2.6Z" /></Line>
-/** Rating star (Flaticon 616407, 084-star; source in src/assets/icons/star.svg). Filled or empty is set by color. */
+/** Rating star (Flaticon Animals and nature, pack 616407, 084-star), supplied privately at build time. */
 export const StarIcon = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 512 512" aria-hidden="true" focusable="false">
-    <path fill="currentColor" d="M256 24 310 188 488 188 344 290 400 460 256 356 112 460 168 290 24 188 202 188Z" />
+    <path fill="currentColor" d={__RATING_STAR_PATH__} />
   </svg>
 )
 export const MailIcon =({ className }: IconProps) => <Line className={className}><rect x="3.5" y="5.5" width="17" height="13" rx="2" /><path d="m4 7 8 6 8-6" /></Line>
