@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  FallbackRateLimitStore,
   LocalRateLimitStore,
   RedisRateLimitStore,
   createRuntimeRateLimitStore,
   type RedisRateLimitClient,
 } from './rateLimitStore.js'
+import type { RateLimitStore } from './contracts.js'
 
 type Backend = {
   strings: Map<string, { value: string; expiresAt?: number }>
@@ -228,6 +230,118 @@ test('local and Redis login rate limiting produce identical blocking semantics',
   assert.equal(await redisStore.isLoginBlocked(key), false)
 })
 
+class FailingRateLimitStore implements RateLimitStore {
+  constructor(private readonly error: unknown = new Error('backend down')) {}
+
+  async consume(): Promise<boolean> {
+    throw this.error
+  }
+
+  async reset(): Promise<void> {
+    throw this.error
+  }
+
+  async isLoginBlocked(): Promise<boolean> {
+    throw this.error
+  }
+
+  async registerLoginFailure(): Promise<void> {
+    throw this.error
+  }
+}
+
+class HangingRateLimitStore implements RateLimitStore {
+  async consume(): Promise<boolean> {
+    return new Promise<boolean>(() => {})
+  }
+
+  async reset(): Promise<void> {
+    return new Promise<void>(() => {})
+  }
+
+  async isLoginBlocked(): Promise<boolean> {
+    return new Promise<boolean>(() => {})
+  }
+
+  async registerLoginFailure(): Promise<void> {
+    return new Promise<void>(() => {})
+  }
+}
+
+test('rate limits fall back to local memory when Upstash throws', async () => {
+  const warnings: string[] = []
+  const store = new FallbackRateLimitStore(
+    new FailingRateLimitStore(new TypeError('fetch failed')),
+    new LocalRateLimitStore(),
+    1_000,
+    { warn: (message: string) => warnings.push(message) },
+  )
+
+  assert.equal(await store.consume('review:ip', 1, 60_000), true)
+  assert.equal(await store.consume('review:ip', 1, 60_000), false)
+  await store.reset('review:ip')
+  assert.equal(await store.consume('review:ip', 1, 60_000), true)
+
+  assert.equal(await store.isLoginBlocked('ip:user'), false)
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    await store.registerLoginFailure('ip:user', 5, 900_000)
+  }
+  assert.equal(await store.isLoginBlocked('ip:user'), true)
+
+  assert.equal(warnings.length, 1, 'a failing backend must warn once, not on every call')
+  assert.match(warnings[0], /Upstash unavailable/)
+  assert.match(warnings[0], /fetch failed/)
+})
+
+test('a hanging Upstash call is cut off by the short timeout', async () => {
+  const warnings: string[] = []
+  const store = new FallbackRateLimitStore(
+    new HangingRateLimitStore(),
+    new LocalRateLimitStore(),
+    25,
+    { warn: (message: string) => warnings.push(message) },
+  )
+
+  const started = Date.now()
+  assert.equal(await store.consume('checkout:ip', 1, 60_000), true)
+  const elapsed = Date.now() - started
+
+  assert.ok(elapsed < 500, `the fallback must not wait for the hanging backend (took ${elapsed}ms)`)
+  assert.match(warnings[0], /timed out after 25ms/)
+})
+
+test('the primary is used while healthy and the warning returns after a recovery', async () => {
+  const warnings: string[] = []
+  let healthy = true
+  const primary: RateLimitStore = {
+    async consume() {
+      if (!healthy) throw 'offline'
+      return false
+    },
+    async reset() {},
+    async isLoginBlocked() {
+      return false
+    },
+    async registerLoginFailure() {},
+  }
+  const store = new FallbackRateLimitStore(primary, new LocalRateLimitStore(), 1_000, {
+    warn: (message: string) => warnings.push(message),
+  })
+
+  assert.equal(await store.consume('review:ip', 10, 60_000), false)
+  assert.equal(warnings.length, 0, 'a healthy primary must not warn')
+
+  healthy = false
+  assert.equal(await store.consume('review:ip', 10, 60_000), true)
+  healthy = true
+  assert.equal(await store.consume('review:ip', 10, 60_000), false)
+  healthy = false
+  assert.equal(await store.consume('review:ip', 10, 60_000), true)
+
+  assert.equal(warnings.length, 2, 'a new outage after recovery warns again')
+  assert.match(warnings[0], /offline/)
+})
+
 test('runtime selection uses local fallback and fails closed on partial Redis configuration', () => {
   assert.ok(createRuntimeRateLimitStore('secret', {}) instanceof LocalRateLimitStore)
   assert.throws(
@@ -237,5 +351,5 @@ test('runtime selection uses local fallback and fails closed on partial Redis co
   assert.ok(createRuntimeRateLimitStore('secret', {
     UPSTASH_REDIS_REST_URL: 'https://example.invalid',
     UPSTASH_REDIS_REST_TOKEN: 'token',
-  }) instanceof RedisRateLimitStore)
+  }) instanceof FallbackRateLimitStore)
 })

@@ -79,6 +79,78 @@ export class LocalRateLimitStore implements RateLimitStore {
   }
 }
 
+/** Upstash calls must answer fast; past this the local fallback takes over. */
+export const RATE_LIMIT_FALLBACK_TIMEOUT_MS = 1_000
+
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error(`rate limit backend timed out after ${timeoutMs}ms`)),
+      timeoutMs,
+    )
+    promise.then(
+      (value) => {
+        clearTimeout(timer)
+        resolve(value)
+      },
+      (err) => {
+        clearTimeout(timer)
+        reject(err)
+      },
+    )
+  })
+}
+
+function describeError(err: unknown) {
+  return err instanceof Error ? `${err.name}: ${err.message}` : String(err)
+}
+
+/**
+ * Keeps the site usable when Upstash is unreachable: every call tries Redis
+ * first, then answers from an in-process store instead of failing the route.
+ * Limits become per-instance until Redis recovers.
+ */
+export class FallbackRateLimitStore implements RateLimitStore {
+  private warned = false
+
+  constructor(
+    private readonly primary: RateLimitStore,
+    private readonly fallback: RateLimitStore = new LocalRateLimitStore(),
+    private readonly timeoutMs: number = RATE_LIMIT_FALLBACK_TIMEOUT_MS,
+    private readonly logger: Pick<Console, 'warn'> = console,
+  ) {}
+
+  consume(key: string, limit: number, windowMs: number) {
+    return this.run((store) => store.consume(key, limit, windowMs))
+  }
+
+  reset(key: string) {
+    return this.run((store) => store.reset(key))
+  }
+
+  isLoginBlocked(key: string) {
+    return this.run((store) => store.isLoginBlocked(key))
+  }
+
+  registerLoginFailure(key: string, limit: number, blockMs: number) {
+    return this.run((store) => store.registerLoginFailure(key, limit, blockMs))
+  }
+
+  private async run<T>(operation: (store: RateLimitStore) => Promise<T>): Promise<T> {
+    try {
+      const result = await withTimeout(operation(this.primary), this.timeoutMs)
+      this.warned = false
+      return result
+    } catch (err) {
+      if (!this.warned) {
+        this.warned = true
+        this.logger.warn(`[rate-limit] Upstash unavailable, using local fallback: ${describeError(err)}`)
+      }
+      return operation(this.fallback)
+    }
+  }
+}
+
 export class RedisRateLimitStore implements RateLimitStore {
   constructor(
     private readonly redis: RedisRateLimitClient,
@@ -123,6 +195,11 @@ export function createRuntimeRateLimitStore(
   if (!url && !token) return new LocalRateLimitStore()
   if (!url || !token) throw new Error('Set both UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN')
 
-  const redis = new Redis({ url, token }) as unknown as RedisRateLimitClient
-  return new RedisRateLimitStore(redis, secret)
+  const redis = new Redis({
+    url,
+    token,
+    retry: false,
+    signal: () => AbortSignal.timeout(RATE_LIMIT_FALLBACK_TIMEOUT_MS),
+  }) as unknown as RedisRateLimitClient
+  return new FallbackRateLimitStore(new RedisRateLimitStore(redis, secret), new LocalRateLimitStore())
 }
