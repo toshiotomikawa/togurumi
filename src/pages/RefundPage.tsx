@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useLocale } from '../hooks/useLocale'
 import { REFUND_REASONS, RefundRequestError, submitRefundRequest, type RefundReason } from '../lib/refunds'
@@ -13,6 +13,13 @@ function RefundPage() {
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
+  const successTitleRef = useRef<HTMLHeadingElement>(null)
+
+  useEffect(() => {
+    if (!sent) return
+    window.scrollTo(0, 0)
+    successTitleRef.current?.focus({ preventScroll: true })
+  }, [sent])
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault()
@@ -43,7 +50,9 @@ function RefundPage() {
       <div className="page page--refund">
         <section className="checkout-result checkout-result--paid" aria-live="polite">
           <span className="checkout-result__eyebrow">{messages.refund.successEyebrow}</span>
-          <h1 className="checkout-result__title">{messages.refund.successTitle}</h1>
+          <h1 className="checkout-result__title" ref={successTitleRef} tabIndex={-1}>
+            {messages.refund.successTitle}
+          </h1>
           <p className="checkout-result__body">{messages.refund.successBody}</p>
           <div className="checkout-result__actions">
             <Link to="/shop" className="button button--primary">
@@ -70,11 +79,12 @@ function RefundPage() {
 
       <form className="auth-form refund-form" onSubmit={onSubmit}>
         <label className="form-field">
-          <span>{messages.refund.orderLabel}</span>
+          <span className="visually-hidden">{messages.refund.orderLabel}</span>
           <input
             type="text"
             value={orderNumber}
             onChange={(event) => setOrderNumber(event.target.value)}
+            placeholder={messages.refund.orderPlaceholder}
             autoComplete="off"
             spellCheck={false}
             aria-describedby="refund-order-hint"
@@ -86,18 +96,19 @@ function RefundPage() {
         </p>
 
         <label className="form-field">
-          <span>{messages.refund.emailLabel}</span>
+          <span className="visually-hidden">{messages.refund.emailLabel}</span>
           <input
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
+            placeholder={messages.refund.emailPlaceholder}
             autoComplete="email"
             required
           />
         </label>
 
         <label className="form-field">
-          <span>{messages.refund.reasonLabel}</span>
+          <span className="visually-hidden">{messages.refund.reasonLabel}</span>
           <select value={reason} onChange={(event) => setReason(event.target.value as RefundReason)} required>
             <option value="" disabled>
               {messages.refund.reasonPlaceholder}
@@ -111,7 +122,7 @@ function RefundPage() {
         </label>
 
         <label className="form-field">
-          <span>{messages.refund.detailsLabel}</span>
+          <span className="visually-hidden">{messages.refund.detailsLabel}</span>
           <textarea
             value={details}
             onChange={(event) => setDetails(event.target.value)}

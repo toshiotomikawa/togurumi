@@ -5355,6 +5355,33 @@ a.product-card:hover {
   max-width: 560px;
 }
 
+/* One centered column: the hero, the policy card and the form share this width. */
+.page--narrow.page--refund {
+  max-width: 624px;
+}
+
+/* Screen-reader labels only; the text inside the boxes keeps normal weight. */
+.refund-form .form-field {
+  font-weight: 400;
+}
+
+/* studio-v5.css hides .card; these surfaces keep the refund cards visible. */
+.page--refund .refund-policy,
+.admin-page .refund-note,
+.refund-requests .refund-request {
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow);
+}
+
+.admin-page .refund-note {
+  border-left: 3px solid var(--accent);
+}
+
+.page--refund .button--primary,
+.refund-request__actions .button--primary {
+  font-weight: 700;
+}
+
 .checkout-result__order {
   margin: 0;
   color: var(--text);

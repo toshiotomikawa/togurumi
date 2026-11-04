@@ -79,7 +79,7 @@ const DEFAULTS: FaqDatabase = {
       {
         question: 'Can I change my mind about an online order?',
         answer:
-          'Yes. For purchases made on this website, you can withdraw within 7 days of receiving the order. To request a refund, use the Request a refund page (link in the site footer) and send the order number and the e-mail used at checkout. Bella reviews the order and issues the refund through Stripe.',
+          'Yes. For purchases made on this website, you can withdraw within 7 days of receiving the order. To request a refund, use the [Request a refund page](/reembolso) and send the order number and the e-mail used at checkout. Bella reviews the order and issues the refund through Stripe.',
       },
     ],
   },
@@ -132,7 +132,7 @@ const DEFAULTS: FaqDatabase = {
       {
         question: 'Posso me arrepender de uma compra feita no site?',
         answer:
-          'Sim. Em compras pela internet, você pode desistir da compra em até 7 dias corridos a partir do recebimento. Para pedir o reembolso, use a página Solicitar reembolso (link no rodapé do site) e informe o número do pedido e o e-mail usado na compra. A Bella analisa o pedido e faz o reembolso pela Stripe.',
+          'Sim. Em compras pela internet, você pode desistir da compra em até 7 dias corridos a partir do recebimento. Para pedir o reembolso, use a página [Solicitar reembolso](/reembolso) e informe o número do pedido e o e-mail usado na compra. A Bella analisa o pedido e faz o reembolso pela Stripe.',
       },
     ],
   },
@@ -185,7 +185,7 @@ const DEFAULTS: FaqDatabase = {
       {
         question: '¿Puedo arrepentirme de una compra hecha en el sitio?',
         answer:
-          'Sí. En compras hechas por internet, puedes desistir de la compra en hasta 7 días corridos desde la entrega. Para pedir el reembolso, usa la página Solicitar reembolso (enlace en el pie del sitio) e indica el número del pedido y el correo usado en la compra. Bella revisa el pedido y hace el reembolso por Stripe.',
+          'Sí. En compras hechas por internet, puedes desistir de la compra en hasta 7 días corridos desde la entrega. Para pedir el reembolso, usa la página [Solicitar reembolso](/reembolso) e indica el número del pedido y el correo usado en la compra. Bella revisa el pedido y hace el reembolso por Stripe.',
       },
     ],
   },
