@@ -31,6 +31,12 @@ export type ShippingAddress = {
   country: string | null
 }
 
+export type OrderShipping = {
+  shippingAmount: number
+  shippingService: string | null
+  shippingReview: string | null
+}
+
 export type OrderInput = {
   sessionId: string
   status: OrderStatus
@@ -42,9 +48,9 @@ export type OrderInput = {
   customerPhone: string | null
   shippingAddress: ShippingAddress | null
   items: OrderItem[]
-}
+} & Partial<OrderShipping>
 
-export type OrderRecord = OrderInput & {
+export type OrderRecord = Omit<OrderInput, keyof OrderShipping> & OrderShipping & {
   stockApplied: boolean
   stockIssues: StockIssue[]
   createdAt: number
@@ -191,6 +197,9 @@ export class LocalOrderStore implements OrderStore {
         ...input,
         status: mergeOrderStatus(existing?.status, input.status),
         items: input.items.length > 0 ? input.items : existing?.items ?? [],
+        shippingAmount: input.shippingAmount ?? existing?.shippingAmount ?? 0,
+        shippingService: input.shippingService ?? existing?.shippingService ?? null,
+        shippingReview: input.shippingReview ?? existing?.shippingReview ?? null,
         stockApplied: existing?.stockApplied ?? false,
         stockIssues: existing?.stockIssues ?? [],
         createdAt: existing?.createdAt ?? timestamp,

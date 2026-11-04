@@ -22,7 +22,7 @@
     "test:reviews": "tsx --test server/persistence/postgresReviewStore.test.ts",
     "test:content": "tsx --test server/persistence/postgresContentStores.test.ts",
     "test:journal": "tsx --test server/persistence/postgresJournalStore.test.ts server/persistence/journalClient.test.ts",
-    "test:checkout": "tsx --test server/checkout.test.ts server/shopPrice.test.ts server/shopStock.test.ts server/stripe.test.ts server/stripeWebhook.test.ts server/persistence/postgresOrderStore.test.ts",
+    "test:checkout": "tsx --test server/checkout.test.ts server/shopPrice.test.ts server/shopStock.test.ts server/shipping.test.ts server/stripe.test.ts server/stripeWebhook.test.ts server/persistence/postgresOrderStore.test.ts",
     "test:vercel": "tsx --test server/vercel.test.ts",
     "test:colors": "tsx --test src/lib/shop.test.ts"
   },

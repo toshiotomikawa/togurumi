@@ -120,6 +120,42 @@ test('a paid card checkout records the order and lowers stock once, even if rede
   assert.equal(stockCalls.length, 1)
 })
 
+test('webhook stores the shipping amount and flags a CEP mismatch', async () => {
+  const { orderStore, deliver } = harness()
+  await deliver(sessionEvent('checkout.session.completed', {
+    shipping_cost: { amount_total: 2_550 },
+    metadata: {
+      source: 'togurumi-shop',
+      reservation_id: 'res_ship',
+      shipping_service: '1',
+      shipping_cep: '99999999',
+      shipping_amount: '2550',
+      shipping_pickup: '0',
+    },
+  }))
+  const order = await orderStore.getOrder('cs_test_order1')
+  assert.equal(order?.shippingAmount, 2_550)
+  assert.equal(order?.shippingService, '1')
+  assert.equal(order?.shippingReview, 'cep_mismatch')
+})
+
+test('pickup stores zero shipping and is not a CEP mismatch', async () => {
+  const { orderStore, deliver } = harness()
+  await deliver(sessionEvent('checkout.session.completed', {
+    metadata: {
+      source: 'togurumi-shop',
+      reservation_id: 'res_pickup',
+      shipping_service: 'pickup',
+      shipping_cep: '99999999',
+      shipping_pickup: '1',
+    },
+  }))
+  const order = await orderStore.getOrder('cs_test_order1')
+  assert.equal(order?.shippingAmount, 0)
+  assert.equal(order?.shippingService, 'pickup')
+  assert.equal(order?.shippingReview, null)
+})
+
 test('Pix stays pending until the async payment succeeds', async () => {
   const { orderStore, stockCalls, deliver } = harness()
 

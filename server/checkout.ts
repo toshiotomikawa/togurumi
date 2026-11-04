@@ -34,6 +34,16 @@ export type CheckoutLine = {
   unitAmount: number
 }
 
+export type CheckoutShippingOption = {
+  id: string
+  service: string
+  label: string
+  amountCents: number
+  minDays: number | null
+  maxDays: number | null
+  pickup: boolean
+}
+
 export type CheckoutErrorCode =
   | 'invalid_cart'
   | 'product_unavailable'
@@ -170,9 +180,45 @@ export function stripeCheckoutLocale(locale: unknown): Stripe.Checkout.SessionCr
 
 export function buildCheckoutSessionParams(
   lines: CheckoutLine[],
-  options: { siteUrl: string; locale?: unknown; reservationId: string; expiresAt: number },
+  options: {
+    siteUrl: string
+    locale?: unknown
+    reservationId: string
+    expiresAt: number
+    shipping?: CheckoutShippingOption
+    shippingQuoteId?: string
+    shippingCep?: string
+  },
 ): Stripe.Checkout.SessionCreateParams {
   const siteUrl = options.siteUrl.replace(/\/+$/, '')
+  const metadata: Record<string, string> = {
+    source: CHECKOUT_SOURCE,
+    reservation_id: options.reservationId,
+  }
+  if (options.shipping) {
+    metadata.shipping_service = options.shipping.pickup ? 'pickup' : options.shipping.service
+    metadata.shipping_amount = String(options.shipping.amountCents)
+    metadata.shipping_pickup = options.shipping.pickup ? '1' : '0'
+    if (options.shippingQuoteId) metadata.shipping_quote_id = options.shippingQuoteId
+    if (options.shippingCep) metadata.shipping_cep = options.shippingCep
+  }
+  const shippingOptions: Stripe.Checkout.SessionCreateParams.ShippingOption[] | undefined = options.shipping
+    ? [{
+      shipping_rate_data: {
+        type: 'fixed_amount',
+        fixed_amount: { amount: options.shipping.amountCents, currency: 'brl' },
+        display_name: options.shipping.label,
+        ...(options.shipping.minDays !== null && options.shipping.maxDays !== null
+          ? {
+            delivery_estimate: {
+              minimum: { unit: 'business_day' as const, value: options.shipping.minDays },
+              maximum: { unit: 'business_day' as const, value: options.shipping.maxDays },
+            },
+          }
+          : {}),
+      },
+    }]
+    : undefined
 
   return {
     mode: 'payment',
@@ -193,9 +239,10 @@ export function buildCheckoutSessionParams(
       },
     })),
     shipping_address_collection: { allowed_countries: ['BR'] },
+    ...(shippingOptions ? { shipping_options: shippingOptions } : {}),
     phone_number_collection: { enabled: true },
     locale: stripeCheckoutLocale(options.locale),
-    metadata: { source: CHECKOUT_SOURCE, reservation_id: options.reservationId },
+    metadata,
     expires_at: options.expiresAt,
     success_url: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${siteUrl}/checkout/cancel`,

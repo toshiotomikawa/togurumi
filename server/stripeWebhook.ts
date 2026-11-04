@@ -55,6 +55,26 @@ function paymentIntentId(session: Stripe.Checkout.Session) {
   return typeof value === 'string' ? value : value.id
 }
 
+function shippingAmount(session: Stripe.Checkout.Session) {
+  return Math.max(0, Math.trunc(session.shipping_cost?.amount_total ?? 0))
+}
+
+function shippingService(session: Stripe.Checkout.Session) {
+  return session.metadata?.shipping_service?.trim() || null
+}
+
+function cepDigits(value: string | null | undefined) {
+  return (value ?? '').replace(/\D/g, '')
+}
+
+/** A different CEP in Stripe means the fixed shipping amount may be wrong; review it. */
+function shippingReview(session: Stripe.Checkout.Session, service: string | null) {
+  if (!service || service === 'pickup') return null
+  const quoted = cepDigits(session.metadata?.shipping_cep)
+  const actual = cepDigits(shippingAddress(session)?.postalCode)
+  return quoted && actual && quoted !== actual ? 'cep_mismatch' : null
+}
+
 /** Checkouts created by this site carry a reservation id; older ones fall back to the session id. */
 export function reservationIdOf(session: Stripe.Checkout.Session) {
   return session.metadata?.reservation_id || session.id
@@ -99,6 +119,7 @@ async function processSessionEvent(
   session: Stripe.Checkout.Session,
 ) {
   const items = await deps.listLineItems(session.id)
+  const service = shippingService(session)
   const order = await deps.orderStore.upsertOrder({
     sessionId: session.id,
     status: sessionStatus(eventType, session),
@@ -109,6 +130,9 @@ async function processSessionEvent(
     customerName: session.customer_details?.name ?? null,
     customerPhone: session.customer_details?.phone ?? null,
     shippingAddress: shippingAddress(session),
+    shippingAmount: shippingAmount(session),
+    shippingService: service,
+    shippingReview: shippingReview(session, service),
     items,
   })
 

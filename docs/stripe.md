@@ -171,9 +171,16 @@ npm run test:checkout
 
 ## Observações
 
-- A entrega hoje é só em Curitiba e região; o Checkout aceita endereços de
-  todo o Brasil e não cobra frete. Para cobrar frete, adicione
-  `shipping_options` em `buildCheckoutSessionParams`.
+- O frete é calculado no carrinho pelo SuperFrete para os 29 municípios da
+  Região Metropolitana de Curitiba (lista oficial da AMEP:
+  https://www.amep.pr.gov.br/FAQ/Municipios-da-Regiao-Metropolitana-de-Curitiba).
+  O Checkout recebe
+  em `shipping_options` só a opção escolhida; retirada grátis em Colombo e
+  seguro só acima de R$ 60. Sem as variáveis do SuperFrete, o checkout segue
+  funcionando sem frete, como antes.
+- As medidas de frete vêm de `PESO_G`, `ALTURA_CM`, `LARGURA_CM` e
+  `COMPRIMENTO_CM` na planilha; quando a célula está vazia, o servidor usa a
+  caixa P/M/G e marca a cotação como estimada.
 - O estoque é por produto (coluna `ESTOQUE`), não por cor.
 - A reserva dura 70 minutos (35 da sessão, mais 30 do Pix, mais 5 de folga).
   Na prática ela é liberada antes pelos eventos de expiração, de falha do
