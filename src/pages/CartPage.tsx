@@ -357,7 +357,7 @@ function CartPage() {
                 <div className="cart-shipping">
                   <p className="cart-shipping__title">{messages.checkout.shippingTitle}</p>
                   <div className="cart-shipping__field">
-                    <label htmlFor="cart-cep" className="cart-shipping__label">
+                    <label htmlFor="cart-cep" className="cart-shipping__label visually-hidden">
                       {messages.checkout.cepLabel}
                     </label>
                     <input
