@@ -22,6 +22,9 @@ type OrderRow = QueryResultRow & {
   customer_name: string | null
   customer_phone: string | null
   shipping_address: OrderRecord['shippingAddress']
+  shipping_amount: number
+  shipping_service: string | null
+  shipping_review: string | null
   items: OrderRecord['items']
   stock_applied: boolean
   stock_issues: StockIssue[]
@@ -44,6 +47,9 @@ function toOrder(row: OrderRow): OrderRecord {
     customerName: row.customer_name,
     customerPhone: row.customer_phone,
     shippingAddress: row.shipping_address === null ? null : parseJson(row.shipping_address),
+    shippingAmount: Number(row.shipping_amount ?? 0),
+    shippingService: row.shipping_service ?? null,
+    shippingReview: row.shipping_review ?? null,
     items: parseJson(row.items),
     stockApplied: row.stock_applied,
     stockIssues: parseJson(row.stock_issues),
@@ -91,8 +97,9 @@ export class PostgresOrderStore implements OrderStore {
     const result = await this.db.query<OrderRow>(
       `INSERT INTO orders
          (session_id, status, amount_total, currency, payment_intent_id, customer_email,
-          customer_name, customer_phone, shipping_address, items)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, $10::jsonb)
+          customer_name, customer_phone, shipping_address, shipping_amount, shipping_service,
+          shipping_review, items)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, $10, $11, $12, $13::jsonb)
        ON CONFLICT (session_id) DO UPDATE SET
          status = CASE
            WHEN orders.status = 'paid' THEN 'paid'
@@ -106,6 +113,12 @@ export class PostgresOrderStore implements OrderStore {
          customer_name = COALESCE(EXCLUDED.customer_name, orders.customer_name),
          customer_phone = COALESCE(EXCLUDED.customer_phone, orders.customer_phone),
          shipping_address = COALESCE(EXCLUDED.shipping_address, orders.shipping_address),
+         shipping_amount = CASE
+           WHEN EXCLUDED.shipping_amount > 0 THEN EXCLUDED.shipping_amount
+           ELSE orders.shipping_amount
+         END,
+         shipping_service = COALESCE(EXCLUDED.shipping_service, orders.shipping_service),
+         shipping_review = COALESCE(EXCLUDED.shipping_review, orders.shipping_review),
          items = CASE WHEN jsonb_array_length(EXCLUDED.items) > 0 THEN EXCLUDED.items ELSE orders.items END,
          updated_at = now()
        RETURNING *`,
@@ -119,6 +132,9 @@ export class PostgresOrderStore implements OrderStore {
         input.customerName,
         input.customerPhone,
         input.shippingAddress === null ? null : JSON.stringify(input.shippingAddress),
+        input.shippingAmount ?? 0,
+        input.shippingService ?? null,
+        input.shippingReview ?? null,
         JSON.stringify(input.items),
       ],
     )

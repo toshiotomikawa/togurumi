@@ -181,3 +181,60 @@ test('Checkout Session params use BRL, card and Pix, Brazilian shipping and phon
   }])
   assert.equal(buildCheckoutSessionParams(lines, { siteUrl: 'https://shop.example', reservationId: 'r', expiresAt: 0 }).locale, 'pt-BR')
 })
+
+test('Checkout Session params carry the selected shipping option and pickup', () => {
+  const lines = buildCheckoutLines([{ slug: 'urso-mochi', color: 'Rosa', quantity: 1 }], catalog)
+  const paid = buildCheckoutSessionParams(lines, {
+    siteUrl: 'https://shop.example',
+    reservationId: 'res_ship',
+    expiresAt: 1_700_002_100,
+    shipping: {
+      id: '1',
+      service: '1',
+      label: 'PAC',
+      amountCents: 2_550,
+      minDays: 5,
+      maxDays: 8,
+      pickup: false,
+    },
+    shippingQuoteId: 'quote_1',
+    shippingCep: '80000000',
+  })
+  assert.deepEqual(paid.shipping_options, [{
+    shipping_rate_data: {
+      type: 'fixed_amount',
+      fixed_amount: { amount: 2_550, currency: 'brl' },
+      display_name: 'PAC',
+      delivery_estimate: {
+        minimum: { unit: 'business_day', value: 5 },
+        maximum: { unit: 'business_day', value: 8 },
+      },
+    },
+  }])
+  assert.equal(paid.metadata?.shipping_service, '1')
+  assert.equal(paid.metadata?.shipping_amount, '2550')
+  assert.equal(paid.metadata?.shipping_cep, '80000000')
+  assert.equal(paid.metadata?.shipping_quote_id, 'quote_1')
+  assert.equal(paid.metadata?.shipping_pickup, '0')
+
+  const pickup = buildCheckoutSessionParams(lines, {
+    siteUrl: 'https://shop.example',
+    reservationId: 'res_pickup',
+    expiresAt: 1_700_002_100,
+    shipping: {
+      id: 'pickup',
+      service: 'pickup',
+      label: 'Retirada em Colombo (grátis)',
+      amountCents: 0,
+      minDays: null,
+      maxDays: null,
+      pickup: true,
+    },
+    shippingQuoteId: 'quote_2',
+    shippingCep: '80000000',
+  })
+  assert.equal(pickup.shipping_options?.[0].shipping_rate_data.fixed_amount?.amount, 0)
+  assert.equal(pickup.shipping_options?.[0].shipping_rate_data.delivery_estimate, undefined)
+  assert.equal(pickup.metadata?.shipping_service, 'pickup')
+  assert.equal(pickup.metadata?.shipping_pickup, '1')
+})

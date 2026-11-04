@@ -32,7 +32,7 @@ import { createRuntimeReviewStore } from './persistence/reviewStore.js'
 import { createRuntimeContentStores } from './persistence/contentStores.js'
 import { createRuntimeJournalStore } from './persistence/journalStore.js'
 import { SheetsError, appendSheetRow, getSheetTab, updateSheetRange } from './sheets.js'
-import { decrementProductStock, getProductImageTargets, getShopProducts, readShopStock, setProductImage } from './shop.js'
+import { decrementProductStock, getProductImageTargets, getShopProducts, getShopShipping, readShopStock, setProductImage } from './shop.js'
 import {
   CHECKOUT_SESSION_TTL_SECONDS,
   CHECKOUT_SOURCE,
@@ -48,6 +48,7 @@ import { MAX_REFUND_EMAIL, RefundError, parseRefundRequest, refundEmailMatches }
 import type { RefundRequestInput } from './refunds.js'
 import type { OrderRecord } from './orders.js'
 import { refundNotificationConfig, sendRefundNotification } from './refundNotify.js'
+import { ShippingError, quoteShipping, shippingConfig, verifyQuoteToken } from './shipping.js'
 import { getStripe, listCheckoutOrderItems, publicSiteUrl, stripeEnabled, stripeWebhookSecret } from './stripe.js'
 import { handleStripeWebhook } from './stripeWebhook.js'
 import { createRuntimeUserStore } from './persistence/userStore.js'
@@ -466,6 +467,63 @@ app.get('/api/shop/products', async (_req, res) => {
   }
 })
 
+app.get('/api/shipping/status', (_req, res) => {
+  const config = shippingConfig(process.env)
+  res.setHeader('Cache-Control', 'no-store')
+  res.json({ enabled: Boolean(config), pickup: Boolean(config?.pickupAddress) })
+})
+
+app.post('/api/shipping/quote', async (req, res) => {
+  const config = shippingConfig(process.env)
+  if (!config) {
+    res.status(503).json({ error: 'shipping_disabled' })
+    return
+  }
+  if (!await rateLimitStore.consume(`shipping:${req.ip ?? 'unknown'}`, 20, 10 * 60 * 1000)) {
+    res.status(429).json({ error: 'too_many_attempts' })
+    return
+  }
+
+  try {
+    const items = parseCartRequest(req.body)
+    const lines = buildCheckoutLines(items, await getShopProducts({ forceRefresh: true }))
+    const result = await quoteShipping({
+      cep: req.body?.cep,
+      items,
+      lines,
+      shipping: await getShopShipping(),
+      config,
+      secret: SESSION_SECRET,
+    })
+    if (!result.served) {
+      res.json({ ok: true, served: false })
+      return
+    }
+    res.json({
+      ok: true,
+      served: true,
+      quoteId: result.quoteId,
+      options: result.options,
+      estimated: result.estimated,
+    })
+  } catch (err) {
+    if (err instanceof CheckoutError) {
+      res.status(err.code === 'invalid_cart' ? 400 : 409).json({ error: err.code, ...err.details })
+      return
+    }
+    if (err instanceof ShippingError) {
+      res.status(err.code === 'invalid_cep' ? 400 : 502).json({ error: err.code })
+      return
+    }
+    if (err instanceof SheetsError) {
+      res.status(err.code === 'disabled' ? 503 : 502).json({ error: err.code })
+      return
+    }
+    console.error('[shipping] quote failed', err)
+    res.status(502).json({ error: 'quote_unavailable' })
+  }
+})
+
 app.post('/api/checkout', async (req, res) => {
   if (!stripeEnabled()) {
     res.status(503).json({ error: 'checkout_unavailable' })
@@ -479,6 +537,22 @@ app.post('/api/checkout', async (req, res) => {
 
   try {
     const items = parseCartRequest(req.body)
+    const config = shippingConfig(process.env)
+    let shipping
+    let shippingQuoteId: string | undefined
+    let shippingCep: string | undefined
+    if (config) {
+      const selection = req.body?.shipping as { quoteId?: unknown; optionId?: unknown } | undefined
+      const quoteId = typeof selection?.quoteId === 'string' ? selection.quoteId : ''
+      const optionId = typeof selection?.optionId === 'string' ? selection.optionId : ''
+      if (!quoteId || !optionId) throw new ShippingError('shipping_required')
+      const quote = verifyQuoteToken(quoteId, SESSION_SECRET, items)
+      const option = quote?.options.find((entry) => entry.id === optionId)
+      if (!quote || !option) throw new ShippingError('shipping_quote_invalid')
+      shipping = option
+      shippingQuoteId = quote.id
+      shippingCep = quote.cep
+    }
     const lines = buildCheckoutLines(items, await getShopProducts({ forceRefresh: true }))
 
     // Hold the units before sending the customer to Stripe; other checkouts
@@ -506,6 +580,9 @@ app.post('/api/checkout', async (req, res) => {
           locale: req.body?.locale,
           reservationId,
           expiresAt: Math.floor(now / 1000) + CHECKOUT_SESSION_TTL_SECONDS,
+          shipping,
+          shippingQuoteId,
+          shippingCep,
         }),
         { idempotencyKey: reservationId },
       )
@@ -518,6 +595,15 @@ app.post('/api/checkout', async (req, res) => {
   } catch (err) {
     if (err instanceof CheckoutError) {
       res.status(err.code === 'invalid_cart' ? 400 : 409).json({ error: err.code, ...err.details })
+      return
+    }
+    if (err instanceof ShippingError) {
+      const status = err.code === 'shipping_required'
+        ? 400
+        : err.code === 'shipping_quote_invalid'
+          ? 409
+          : 503
+      res.status(status).json({ error: err.code })
       return
     }
     if (err instanceof SheetsError) {
@@ -559,7 +645,12 @@ app.get('/api/checkout/status', async (req, res) => {
           : session.status === 'complete'
             ? 'pending'
             : 'open'
-    res.json({ status })
+    const shippingService = order?.shippingService ?? session.metadata?.shipping_service ?? null
+    const config = shippingConfig(process.env)
+    const pickupAddress = shippingService === 'pickup' && config?.pickupAddress
+      ? config.pickupAddress
+      : null
+    res.json({ status, shippingService, pickupAddress })
   } catch {
     res.status(404).json({ error: 'not_found' })
   }
