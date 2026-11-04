@@ -1,9 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
-import { DragHandleIcon, EditIcon } from '../components/EditableContent'
+import { useLocation } from 'react-router-dom'
+import { ChevronDownIcon, QuestionIcon } from './AtelierIcons'
+import { DragHandleIcon, EditIcon } from './EditableContent'
 import { useAuth } from '../hooks/useAuth'
 import { useLocale } from '../hooks/useLocale'
 import { getFaqContent as getStaticFaqContent } from '../i18n/faq'
 import type { FaqContent } from '../lib/faq'
+
+/** Anchor of the home-page FAQ; the old /faq address redirects here. */
+export const FAQ_ANCHOR = 'faq'
+
+const headings = {
+  'pt-BR': 'Perguntas frequentes',
+  'en-US': 'Frequently asked questions',
+  'es-ES': 'Preguntas frecuentes',
+} as const
 
 type Feedback = {
   kind: 'success' | 'error'
@@ -72,12 +83,16 @@ function moveItem<T>(items: T[], from: number, to: number): T[] {
   return next
 }
 
-function FaqPage() {
+function FaqSection() {
   const { locale, messages } = useLocale()
   const { user, logout } = useAuth()
+  const { hash, key: locationKey } = useLocation()
   const canEdit = user?.role === 'admin' || user?.role === 'moderator'
+  const heading = headings[locale]
 
   const [faq, setFaq] = useState<FaqContent>(() => getStaticFaqContent(locale))
+  // The list stays invisible (its space reserved) until the saved questions arrive, so nothing swaps on load.
+  const [ready, setReady] = useState(false)
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState<FaqContent | null>(null)
   const [saving, setSaving] = useState(false)
@@ -92,6 +107,7 @@ function FaqPage() {
 
     async function loadFaq() {
       if (cancelled) return
+      setReady(false)
       setEditing(false)
       setDraft(null)
       setFeedback(null)
@@ -101,6 +117,8 @@ function FaqPage() {
         if (!cancelled) setFaq(loaded)
       } catch {
         if (!cancelled) setFaq(getStaticFaqContent(locale))
+      } finally {
+        if (!cancelled) setReady(true)
       }
     }
 
@@ -110,6 +128,13 @@ function FaqPage() {
       cancelled = true
     }
   }, [locale, logout])
+
+  // Links to /#faq (footer, the old /faq address) land on this section.
+  useEffect(() => {
+    if (hash !== `#${FAQ_ANCHOR}` || !ready) return
+    const frame = requestAnimationFrame(() => document.getElementById(FAQ_ANCHOR)?.scrollIntoView())
+    return () => cancelAnimationFrame(frame)
+  }, [hash, locationKey, ready])
 
   function startEditing() {
     setDraft(cloneFaq(faq))
@@ -219,36 +244,37 @@ function FaqPage() {
     }
   }
 
+  const feedbackNode = feedback && (
+    <p className={`editor-feedback editor-feedback--${feedback.kind}`} role={feedback.kind === 'error' ? 'alert' : 'status'}>
+      {feedback.text}
+    </p>
+  )
+
+  const title = (
+    <div className="atelier-heading atelier-faq__heading">
+      <h2 id="faq-title">
+        <QuestionIcon className="atelier-faq__icon" />
+        {heading}
+      </h2>
+      {canEdit && !editing && (
+        <button
+          type="button"
+          className="button icon-button"
+          onClick={startEditing}
+          disabled={!ready}
+          aria-label={messages.faqEditor.editButton}
+          title={messages.faqEditor.editButton}
+        >
+          <EditIcon />
+        </button>
+      )}
+    </div>
+  )
+
   if (editing && draft) {
     return (
-      <div className="page page--faq page--faq-editing">
-        <section className="faq-hero faq-hero--editing">
-          <label className="form-field">
-            <span>{messages.faqEditor.eyebrowLabel}</span>
-            <input
-              type="text"
-              value={draft.eyebrow}
-              onChange={(event) => updateDraft((current) => ({ ...current, eyebrow: event.target.value }))}
-            />
-          </label>
-          <label className="form-field">
-            <span>{messages.faqEditor.titleLabel}</span>
-            <input
-              type="text"
-              value={draft.title}
-              onChange={(event) => updateDraft((current) => ({ ...current, title: event.target.value }))}
-            />
-          </label>
-          <label className="form-field">
-            <span>{messages.faqEditor.introLabel}</span>
-            <textarea
-              value={draft.intro}
-              onChange={(event) => updateDraft((current) => ({ ...current, intro: event.target.value }))}
-              rows={3}
-            />
-          </label>
-        </section>
-
+      <section className="atelier-faq atelier-wrap atelier-faq--editing" id={FAQ_ANCHOR} aria-labelledby="faq-title">
+        {title}
         <div className="faq-list faq-list--editing" role="list" aria-label={messages.faqEditor.questionLabel}>
           {draft.items.map((item, index) => (
             <div
@@ -328,12 +354,7 @@ function FaqPage() {
                       }
                     />
                   </label>
-                  <button
-                    type="button"
-                    className="button button--danger"
-                    disabled={saving}
-                    onClick={() => removeItem(index)}
-                  >
+                  <button type="button" className="button button--danger" disabled={saving} onClick={() => removeItem(index)}>
                     {messages.faqEditor.removeItem}
                   </button>
                 </div>
@@ -361,60 +382,27 @@ function FaqPage() {
           </button>
         </div>
 
-        {feedback && (
-          <p
-            className={`editor-feedback editor-feedback--${feedback.kind}`}
-            role={feedback.kind === 'error' ? 'alert' : 'status'}
-          >
-            {feedback.text}
-          </p>
-        )}
-      </div>
+        {feedbackNode}
+      </section>
     )
   }
 
+  // Hidden for everyone when there are no questions; staff still get the heading and the edit button.
+  if (ready && faq.items.length === 0 && !canEdit) return null
+
   return (
-    <div className="page page--faq">
-      <section className="faq-hero">
-        <span className="faq-hero__eyebrow">{faq.eyebrow}</span>
-        <h1 className="faq-hero__title">{faq.title}</h1>
-        <p className="faq-hero__intro">{faq.intro}</p>
-      </section>
-
-      {canEdit && (
-        <div className="faq-editor__actions faq-editor__actions--view">
-          <button
-            type="button"
-            className="button icon-button"
-            onClick={startEditing}
-            aria-label={messages.faqEditor.editButton}
-            title={messages.faqEditor.editButton}
-          >
-            <EditIcon />
-          </button>
-        </div>
-      )}
-
-      {feedback && (
-        <p
-          className={`editor-feedback editor-feedback--${feedback.kind}`}
-          role={feedback.kind === 'error' ? 'alert' : 'status'}
-        >
-          {feedback.text}
-        </p>
-      )}
-
+    <section className="atelier-faq atelier-wrap" id={FAQ_ANCHOR} aria-labelledby="faq-title" aria-busy={!ready}>
+      {title}
+      {feedbackNode}
       {faq.items.length > 0 ? (
-        <div className="faq-list">
+        <div className={`atelier-faq__list${ready ? '' : ' atelier-faq__list--pending'}`}>
           {faq.items.map((item, index) => (
-            <details className="faq-item" key={`${index}-${item.question}`}>
+            <details className="atelier-faq__item" key={`${index}-${item.question}`}>
               <summary>
-                <span className="faq-item__question">{item.question}</span>
-                <span className="faq-item__indicator" aria-hidden="true" />
+                <span className="atelier-faq__question">{item.question}</span>
+                <ChevronDownIcon className="atelier-faq__chevron" />
               </summary>
-              <div className="faq-item__answer">
-                <p>{item.answer}</p>
-              </div>
+              <p className="atelier-faq__answer">{item.answer}</p>
             </details>
           ))}
         </div>
@@ -424,8 +412,8 @@ function FaqPage() {
           <p className="faq-empty__body">{messages.faq.emptyBody}</p>
         </div>
       )}
-    </div>
+    </section>
   )
 }
 
-export default FaqPage
+export default FaqSection

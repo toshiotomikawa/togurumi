@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowIcon, Branch, CartIcon, CrownIcon, GiftIcon, HandHeartIcon, HeartIcon, InstagramIcon, OrnamentRule, SprigIcon, YouTubeIcon } from '../components/AtelierIcons'
 import { EditActions, EditFeedback, EditField } from '../components/EditableContent'
+import FaqSection from '../components/FaqSection'
 import ReviewsSection from '../components/ReviewsSection'
 import { useCart } from '../hooks/useCart'
 import { useEditableContent } from '../hooks/useEditableContent'
@@ -256,6 +257,8 @@ function HomePage() {
       </section>
 
       <div className="atelier-reviews atelier-wrap"><ReviewsSection /></div>
+
+      <FaqSection />
     </div>
   )
 }

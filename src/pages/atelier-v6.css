@@ -463,6 +463,29 @@ body, #root { background: var(--v6-cream); }
 .atelier-journal__entry p { margin: 0; font-size: 15px; line-height: 1.55; }
 .atelier-journal__date { font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--v6-olive); }
 
+/* ── FAQ at the end of the home page (replaces the old /faq page) ── */
+.atelier-faq { padding-block: 8px 48px; scroll-margin-top: 88px; }
+.atelier-faq__heading { align-items: center; }
+.atelier-faq__icon { width: 30px; height: 30px; color: var(--v6-olive); flex: 0 0 auto; }
+.atelier-faq__list { background: var(--v6-card); border: 1px solid var(--v6-line); border-radius: 12px; box-shadow: var(--v6-shadow); padding-inline: 22px; }
+.atelier-faq__list--pending { visibility: hidden; }
+.atelier-faq__item + .atelier-faq__item { border-top: 1px solid var(--v6-line); }
+.atelier-faq__item summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-inline: -10px; padding: 18px 10px; cursor: pointer; list-style: none; color: var(--v6-choc); font-family: var(--sans); font-size: 17px; font-weight: 700; line-height: 1.35; border-radius: 6px; }
+.atelier-faq__item summary::-webkit-details-marker { display: none; }
+.atelier-faq__item summary:hover .atelier-faq__question { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.atelier-faq__item summary:focus-visible { outline: 2px solid var(--v6-olive); outline-offset: -2px; }
+.atelier-faq__question { min-width: 0; overflow-wrap: anywhere; }
+.atelier-faq__chevron { width: 22px; height: 22px; flex: 0 0 auto; color: var(--v6-olive); transition: transform .2s ease; }
+.atelier-faq__item[open] .atelier-faq__chevron { transform: rotate(180deg); }
+.atelier-faq__answer { margin: 0; padding: 0 38px 20px 0; font-size: 16px; line-height: 1.65; color: var(--v6-body); overflow-wrap: anywhere; }
+.atelier-faq--editing .faq-list { margin-top: 0; }
+@media (max-width: 600px) {
+  .atelier-faq__list { padding-inline: 16px; }
+  .atelier-faq__item summary { font-size: 16px; padding-block: 16px; }
+  .atelier-faq__answer { padding-right: 0; font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) { .atelier-faq__chevron { transition: none; } }
+
 /* ── Product page: way back to the shop and category ── */
 .atelier-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 18px; font-size: 14px; font-weight: 600; color: var(--v6-body); }
 .atelier-crumbs a { color: var(--v6-choc) !important; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
