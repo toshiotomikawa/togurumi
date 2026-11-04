@@ -8,5 +8,11 @@ export type BootstrapAccount = {
 }
 
 export async function bootstrapUsers(store: UserStore, accounts: BootstrapAccount[]) {
-  return Promise.all(accounts.map((account) => store.ensureSeed(account.username, account.password, account.role)))
+  // Sequential: the local user store rewrites data/users.json on every seed,
+  // so concurrent seeds can truncate each other's file.
+  const seeded = []
+  for (const account of accounts) {
+    seeded.push(await store.ensureSeed(account.username, account.password, account.role))
+  }
+  return seeded
 }

@@ -34,7 +34,11 @@
       },
       {
         "question": "Can I return or exchange an item?",
-        "answer": "Since each piece is handmade, we don't accept returns for change of mind, but if your order arrives damaged or different from what was agreed, get in touch and we'll make it right."
+        "answer": "Since each piece is handmade, we don't exchange pieces for a change of mind, except for the 7-day right of withdrawal on online purchases (see the refund question). If your order arrives damaged or different from what was agreed, get in touch and we'll make it right."
+      },
+      {
+        "question": "Can I change my mind about an online order?",
+        "answer": "Yes. For purchases made on this website, you can withdraw within 7 days of receiving the order. To request a refund, use the [Request a refund page](/reembolso) and send the order number and the e-mail used at checkout. Bella reviews the order and issues the refund through Stripe."
       }
     ]
   },
@@ -73,7 +77,11 @@
       },
       {
         "question": "Posso trocar ou devolver um produto?",
-        "answer": "Como cada peça é feita à mão, não aceitamos trocas por simples desistência, mas se o pedido chegar danificado ou diferente do combinado, fale com a gente que resolvemos."
+        "answer": "Como cada peça é feita à mão, não fazemos trocas por simples mudança de ideia, mas compras feitas no site têm o direito de arrependimento de 7 dias (veja a pergunta sobre reembolso). Se o pedido chegar danificado ou diferente do combinado, fale com a gente que resolvemos."
+      },
+      {
+        "question": "Posso me arrepender de uma compra feita no site?",
+        "answer": "Sim. Em compras pela internet, você pode desistir da compra em até 7 dias corridos a partir do recebimento. Para pedir o reembolso, use a página [Solicitar reembolso](/reembolso) e informe o número do pedido e o e-mail usado na compra. A Bella analisa o pedido e faz o reembolso pela Stripe."
       }
     ]
   },
@@ -112,7 +120,11 @@
       },
       {
         "question": "¿Puedo devolver o cambiar un producto?",
-        "answer": "Como cada pieza es hecha a mano, no aceptamos devoluciones por simple arrepentimiento, pero si tu pedido llega dañado o distinto a lo acordado, contáctanos y lo resolvemos."
+        "answer": "Como cada pieza es hecha a mano, no hacemos cambios por simple cambio de opinión, pero las compras hechas en el sitio tienen el derecho de desistimiento de 7 días (mira la pregunta sobre reembolsos). Si tu pedido llega dañado o distinto a lo acordado, contáctanos y lo resolvemos."
+      },
+      {
+        "question": "¿Puedo arrepentirme de una compra hecha en el sitio?",
+        "answer": "Sí. En compras hechas por internet, puedes desistir de la compra en hasta 7 días corridos desde la entrega. Para pedir el reembolso, usa la página [Solicitar reembolso](/reembolso) e indica el número del pedido y el correo usado en la compra. Bella revisa el pedido y hace el reembolso por Stripe."
       }
     ]
   }
