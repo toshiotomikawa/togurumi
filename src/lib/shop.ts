@@ -119,12 +119,42 @@ export function getColorSwatch(color: string) {
   return COLOR_SWATCHES[normalized] ?? '#b9aa9b'
 }
 
-/** CSS background for a swatch: one color, or stripes for a blended Círculo yarn. */
+// A hatched chip says "this variant has no tone set" instead of painting a made-up beige.
+const UNKNOWN_TONE_BACKGROUND = 'repeating-linear-gradient(135deg, var(--border-strong) 0 4px, var(--surface) 4px 9px)'
+
+/**
+ * One tone, or two for a bicolor piece. The sheet keeps the whole label as one color
+ * ("Amarelo com rosa"), so the second tone is optional and lives inside that label.
+ */
+export function parseColorTones(color: string) {
+  return color
+    .split(/\s*(?:\+|&)\s*|\s+(?:com|e)\s+/i)
+    .map((tone) => tone.trim())
+    .filter(Boolean)
+}
+
+function hasTone(color: string) {
+  const normalized = normalize(color.trim())
+  if (/^#[\da-f]{3,8}$/i.test(normalized)) return true
+  return Boolean(findCirculoColor(color)) || Object.hasOwn(COLOR_SWATCHES, normalized)
+}
+
+export function isKnownColorTone(color: string) {
+  const tones = parseColorTones(color)
+  return tones.length > 0 && tones.every(hasTone)
+}
+
+/** CSS background for a swatch: a solid tone, two halves for a bicolor piece, or stripes for a blended Círculo yarn. */
 export function getColorSwatchBackground(color: string) {
-  const tones = findCirculoColor(color)?.tones
-  if (tones && tones.length > 1) {
-    const step = 100 / tones.length
-    return `linear-gradient(135deg, ${tones.map((tone, index) => `${tone} ${index * step}% ${(index + 1) * step}%`).join(', ')})`
+  const tones = parseColorTones(color)
+  if (!isKnownColorTone(color)) return UNKNOWN_TONE_BACKGROUND
+  if (tones.length === 2) {
+    return `linear-gradient(90deg, ${getColorSwatch(tones[0])} 0 50%, ${getColorSwatch(tones[1])} 50% 100%)`
+  }
+  const blend = findCirculoColor(color)?.tones
+  if (blend && blend.length > 1) {
+    const step = 100 / blend.length
+    return `linear-gradient(135deg, ${blend.map((tone, index) => `${tone} ${index * step}% ${(index + 1) * step}%`).join(', ')})`
   }
   return getColorSwatch(color)
 }
