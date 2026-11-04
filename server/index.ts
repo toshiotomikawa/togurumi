@@ -43,6 +43,11 @@ import {
   parseCartRequest,
 } from './checkout.js'
 import { createRuntimeOrderStore } from './persistence/orderStore.js'
+import { createRuntimeRefundStore } from './persistence/refundStore.js'
+import { MAX_REFUND_EMAIL, RefundError, parseRefundRequest, refundEmailMatches } from './refunds.js'
+import type { RefundRequestInput } from './refunds.js'
+import type { OrderRecord } from './orders.js'
+import { refundNotificationConfig, sendRefundNotification } from './refundNotify.js'
 import { getStripe, listCheckoutOrderItems, publicSiteUrl, stripeEnabled, stripeWebhookSecret } from './stripe.js'
 import { handleStripeWebhook } from './stripeWebhook.js'
 import { createRuntimeUserStore } from './persistence/userStore.js'
@@ -63,6 +68,7 @@ const { siteContentStore, faqStore } = createRuntimeContentStores()
 const journalStore = createRuntimeJournalStore()
 const userStore = createRuntimeUserStore()
 const orderStore = createRuntimeOrderStore()
+const refundStore = createRuntimeRefundStore()
 
 if (process.env.NODE_ENV === 'production' && SESSION_SECRET === 'dev-only-change-me') {
   throw new Error('Set SESSION_SECRET in production')
@@ -557,6 +563,100 @@ app.get('/api/checkout/status', async (req, res) => {
   } catch {
     res.status(404).json({ error: 'not_found' })
   }
+})
+
+/**
+ * Manual refund request. The response never says whether the order exists:
+ * a wrong e-mail, an unpaid order and a paid order get the same answer.
+ */
+app.post('/api/refunds', async (req, res) => {
+  if (!await rateLimitStore.consume(`refund:${req.ip ?? 'unknown'}`, 10, 10 * 60 * 1000)) {
+    res.status(429).json({ error: 'too_many_attempts' })
+    return
+  }
+
+  let input: RefundRequestInput
+  try {
+    input = parseRefundRequest(req.body)
+  } catch (err) {
+    if (err instanceof RefundError) {
+      res.status(400).json({ error: err.code })
+      return
+    }
+    throw err
+  }
+
+  const email = typeof req.body?.email === 'string' ? req.body.email.trim() : ''
+  if (!email || email.length > MAX_REFUND_EMAIL || !isValidEmail(email)) {
+    res.status(400).json({ error: 'invalid_request' })
+    return
+  }
+
+  try {
+    const order = await orderStore.getOrder(input.sessionId)
+    if (!refundEmailMatches(order, email)) {
+      res.json({ received: true })
+      return
+    }
+
+    const request = await refundStore.add(input)
+    if (request) {
+      const config = refundNotificationConfig()
+      if (config) {
+        try {
+          await sendRefundNotification(config, request, order, `${publicSiteUrl()}/admin/refunds`)
+        } catch (err) {
+          // The request is already stored; a missing e-mail must not fail the customer.
+          console.error('[refund] notification failed', err)
+        }
+      }
+    }
+    res.json({ received: true })
+  } catch (err) {
+    console.error('[refund] failed to record request', err)
+    res.status(500).json({ error: 'refund_failed' })
+  }
+})
+
+function refundOrderSummary(order: OrderRecord | null) {
+  if (!order) return null
+  return {
+    status: order.status,
+    amountTotal: order.amountTotal,
+    currency: order.currency,
+    customerEmail: order.customerEmail,
+    customerName: order.customerName,
+    items: order.items,
+    createdAt: order.createdAt,
+  }
+}
+
+app.get('/api/admin/refund-requests', requireStaff, async (_req, res) => {
+  const requests = await refundStore.list()
+  const withOrders = await Promise.all(requests.map(async (request) => ({
+    ...request,
+    order: refundOrderSummary(await orderStore.getOrder(request.sessionId).catch(() => null)),
+  })))
+  res.json({ requests: withOrders })
+})
+
+app.patch<{ id: string }>('/api/admin/refund-requests/:id', requireStaff, async (req, res) => {
+  const status = req.body?.status
+  if (status !== 'approved' && status !== 'declined') {
+    res.status(400).json({ error: 'invalid_status' })
+    return
+  }
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(req.params.id)) {
+    res.status(404).json({ error: 'not_found' })
+    return
+  }
+
+  const request = await refundStore.setStatus(req.params.id, status)
+  if (!request) {
+    res.status(404).json({ error: 'not_found' })
+    return
+  }
+  res.json({ request })
 })
 
 app.get('/api/shop/product-images', requireStaff, async (_req, res) => {

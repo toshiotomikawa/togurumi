@@ -19,6 +19,8 @@ import NotFoundPage from './pages/NotFoundPage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 import ProductPage from './pages/ProductPage'
 import ProductImagesPage from './pages/ProductImagesPage'
+import RefundPage from './pages/RefundPage'
+import RefundRequestsPage from './pages/RefundRequestsPage'
 import SearchPage from './pages/SearchPage'
 import ShopPage from './pages/ShopPage'
 
@@ -40,6 +42,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
           <Route path="/checkout/cancel" element={<CheckoutCancelPage />} />
+          <Route path="/reembolso" element={<RefundPage />} />
           <Route path="/journal" element={<JournalPage />} />
           <Route path="/journal/:slug" element={<JournalPostPage />} />
           <Route path="/reviews" element={<Navigate to="/#reviews" replace />} />
@@ -68,6 +71,14 @@ function App() {
             element={
               <ProtectedRoute roles={['admin', 'moderator']}>
                 <ProductImagesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/refunds"
+            element={
+              <ProtectedRoute roles={['admin', 'moderator']}>
+                <RefundRequestsPage />
               </ProtectedRoute>
             }
           />
