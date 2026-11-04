@@ -519,7 +519,8 @@ app.post('/api/shipping/quote', async (req, res) => {
       res.status(err.code === 'disabled' ? 503 : 502).json({ error: err.code })
       return
     }
-    console.error('[shipping] quote failed', err)
+    // Log the code only: fetch errors can echo request headers, and the token must never reach the logs.
+    console.error('[shipping] quote failed', err instanceof ShippingError ? err.code : err instanceof Error ? err.name : 'unknown')
     res.status(502).json({ error: 'quote_unavailable' })
   }
 })
