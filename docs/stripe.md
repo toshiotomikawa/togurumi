@@ -179,8 +179,11 @@ npm run test:checkout
   seguro só acima de R$ 60. Sem as variáveis do SuperFrete, o checkout segue
   funcionando sem frete, como antes.
 - As medidas de frete vêm de `PESO_G`, `ALTURA_CM`, `LARGURA_CM` e
-  `COMPRIMENTO_CM` na planilha; quando a célula está vazia, o servidor usa a
-  caixa P/M/G e marca a cotação como estimada.
+  `COMPRIMENTO_CM` na planilha. `PESO_G` é o peso da peça sem embalagem; o
+  peso da embalagem vem de `SHIPPING_PACKAGING_WEIGHT_G` (50 g por padrão) e é
+  somado uma vez por pedido. As dimensões, quando preenchidas, são as do pacote
+  pronto. Quando uma célula está vazia, o servidor usa a caixa P/M/G e marca a
+  cotação como estimada.
 - O estoque é por produto (coluna `ESTOQUE`), não por cor.
 - A reserva dura 70 minutos (35 da sessão, mais 30 do Pix, mais 5 de folga).
   Na prática ela é liberada antes pelos eventos de expiração, de falha do

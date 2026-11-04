@@ -17,6 +17,7 @@ export type ShippingEnvironment = {
   SHIPPING_PICKUP_ADDRESS?: string
   SHIPPING_INSURANCE_MIN_SUBTOTAL_CENTS?: string
   SHIPPING_FALLBACK_CENTS?: string
+  SHIPPING_PACKAGING_WEIGHT_G?: string
 }
 
 export type ShippingMode = 'sandbox' | 'production'
@@ -31,6 +32,7 @@ export type ShippingConfig = {
   pickupAddress: string | null
   insuranceMinCents: number
   fallbackCents: number
+  packagingWeightG: number
 }
 
 export type ShippingPackage = {
@@ -127,11 +129,11 @@ const SERVICE_LABELS: Record<string, string> = {
   '17': 'Mini Envios',
 }
 
-const PACKAGING_WEIGHT_G = 50
+const DEFAULT_PACKAGING_WEIGHT_G = 50
 const BOXES = [
-  { id: 'P', maxWeightG: 500, maxItems: 2, heightCm: 15, widthCm: 20, lengthCm: 25, tareG: 50, estimatedWeightG: 300 },
-  { id: 'M', maxWeightG: 1_500, maxItems: 5, heightCm: 20, widthCm: 25, lengthCm: 35, tareG: 100, estimatedWeightG: 700 },
-  { id: 'G', maxWeightG: 5_000, maxItems: 99, heightCm: 25, widthCm: 35, lengthCm: 45, tareG: 150, estimatedWeightG: 1_200 },
+  { id: 'P', maxWeightG: 500, maxItems: 2, heightCm: 15, widthCm: 20, lengthCm: 25, estimatedWeightG: 300 },
+  { id: 'M', maxWeightG: 1_500, maxItems: 5, heightCm: 20, widthCm: 25, lengthCm: 35, estimatedWeightG: 700 },
+  { id: 'G', maxWeightG: 5_000, maxItems: 99, heightCm: 25, widthCm: 35, lengthCm: 45, estimatedWeightG: 1_200 },
 ] as const
 
 function normalize(value: string) {
@@ -191,6 +193,7 @@ export function shippingConfig(environment: ShippingEnvironment = process.env): 
     pickupAddress: environment.SHIPPING_PICKUP_ADDRESS?.trim() || null,
     insuranceMinCents: parseCents(environment.SHIPPING_INSURANCE_MIN_SUBTOTAL_CENTS, DEFAULT_INSURANCE_MIN_CENTS),
     fallbackCents: parseCents(environment.SHIPPING_FALLBACK_CENTS, 0),
+    packagingWeightG: parseCents(environment.SHIPPING_PACKAGING_WEIGHT_G, DEFAULT_PACKAGING_WEIGHT_G),
   }
 }
 
@@ -207,12 +210,15 @@ function positiveNumber(value: number | undefined) {
 }
 
 /**
- * Uses the measured piece when every cell is present; otherwise falls back to
- * the P/M/G box and marks the quote as estimated. Dimensions are not summed.
+ * PESO_G is the piece without packaging; the packaging weight is added once
+ * per order. Measured dimensions are the finished package, so they are used
+ * as-is. When a cell is empty the P/M/G box is used instead and the quote is
+ * marked estimated. Dimensions are not summed.
  */
 export function buildShippingPackage(
   lines: CheckoutLine[],
   shipping: Record<string, ShopShipping>,
+  packagingWeightG = DEFAULT_PACKAGING_WEIGHT_G,
 ): ShippingPackage {
   const quantities = lines.reduce((total, line) => total + line.quantity, 0)
   const measured = lines.map((line) => {
@@ -225,33 +231,34 @@ export function buildShippingPackage(
       lengthCm: positiveNumber(entry?.lengthCm),
     }
   })
-  const allMeasured = measured.every((entry) =>
-    entry.weightG !== null && entry.heightCm !== null && entry.widthCm !== null && entry.lengthCm !== null)
+  const allWeighed = measured.every((entry) => entry.weightG !== null)
+  const allMeasured = allWeighed && measured.every((entry) =>
+    entry.heightCm !== null && entry.widthCm !== null && entry.lengthCm !== null)
   const totalWeightG = measured.reduce((total, entry) => total + (entry.weightG ?? 0) * entry.quantity, 0)
 
   if (quantities === 1 && allMeasured) {
     const item = measured[0]
     return {
-      weightKg: Math.max(0.1, Math.round((((item.weightG ?? 0) + PACKAGING_WEIGHT_G) / 1000) * 1000) / 1000),
-      heightCm: Math.ceil((item.heightCm ?? 0) + 2),
-      widthCm: Math.ceil((item.widthCm ?? 0) + 2),
-      lengthCm: Math.ceil((item.lengthCm ?? 0) + 2),
+      weightKg: Math.max(0.1, Math.round((((item.weightG ?? 0) + packagingWeightG) / 1000) * 1000) / 1000),
+      heightCm: item.heightCm ?? 0,
+      widthCm: item.widthCm ?? 0,
+      lengthCm: item.lengthCm ?? 0,
       box: 'item',
       estimated: false,
     }
   }
 
+  const billedWeightG = allWeighed ? totalWeightG + packagingWeightG : totalWeightG
   const box = BOXES.find((candidate) =>
-    quantities <= candidate.maxItems && totalWeightG <= candidate.maxWeightG) ?? BOXES[BOXES.length - 1]
-  const estimated = !allMeasured
-  const weightG = estimated ? box.estimatedWeightG : totalWeightG + box.tareG
+    quantities <= candidate.maxItems && billedWeightG <= candidate.maxWeightG) ?? BOXES[BOXES.length - 1]
+  const weightG = allWeighed ? billedWeightG : box.estimatedWeightG
   return {
     weightKg: Math.max(0.1, Math.round((weightG / 1000) * 1000) / 1000),
     heightCm: box.heightCm,
     widthCm: box.widthCm,
     lengthCm: box.lengthCm,
     box: box.id,
-    estimated,
+    estimated: !allMeasured,
   }
 }
 
@@ -389,7 +396,7 @@ export async function quoteShipping(input: {
   }
 
   const subtotalCents = checkoutTotalAmount(input.lines)
-  const packageInfo = buildShippingPackage(input.lines, input.shipping)
+  const packageInfo = buildShippingPackage(input.lines, input.shipping, input.config.packagingWeightG)
   const options = await superFreteQuote(input.config, cep, packageInfo, subtotalCents, fetchImpl)
     .catch((err: unknown) => {
       if (!(err instanceof ShippingError) || err.code !== 'quote_unavailable') throw err
