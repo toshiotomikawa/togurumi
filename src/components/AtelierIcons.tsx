@@ -13,6 +13,8 @@ function Line({ children, className, viewBox = '0 0 24 24' }: IconProps & { chil
 export const HeartIcon = ({ className }: IconProps) => <Line className={className}><path d="M12 20s-7.5-4.6-7.5-10.1A4.3 4.3 0 0 1 12 7.4a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20Z" /></Line>
 export const CartIcon = ({ className }: IconProps) => <Line className={className}><path d="M3 4h2.2l2.1 10.2a1.5 1.5 0 0 0 1.5 1.2h8.4a1.5 1.5 0 0 0 1.4-1.1L20.3 8H6.2" /><circle cx="9.5" cy="19.3" r="1.2" /><circle cx="17" cy="19.3" r="1.2" /><path d="M10 11.2h7.6" /></Line>
 export const ArrowIcon = ({ className }: IconProps) => <Line className={className}><path d="M4.5 12h14.5M13.5 6.5 19 12l-5.5 5.5" /></Line>
+export const ChevronDownIcon = ({ className }: IconProps) => <Line className={className}><path d="m6.5 9.5 5.5 5.5 5.5-5.5" /></Line>
+export const QuestionIcon = ({ className }: IconProps) => <Line className={className}><circle cx="12" cy="12" r="8.5" /><path d="M9.6 9.6a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.7" /><circle cx="12" cy="16.9" r=".6" fill="currentColor" /></Line>
 export const MinusIcon = ({ className }: IconProps) => <Line className={className}><path d="M6 12h12" /></Line>
 export const PlusIcon = ({ className }: IconProps) => <Line className={className}><path d="M6 12h12M12 6v12" /></Line>
 export const HandHeartIcon = ({ className }: IconProps) => <Line className={className} viewBox="0 0 48 48"><path d="M24 20s-7-4.3-7-9.4A3.9 3.9 0 0 1 24 8.4a3.9 3.9 0 0 1 7 2.2C31 15.7 24 20 24 20Z" /><path d="M5 30h6l7 3.5h7.5a2.5 2.5 0 0 1 0 5H18" /><path d="M25.5 38.5 38 32a2.6 2.6 0 0 1 3 4.2L30 43.5H17.5L11 40.5H5" /></Line>
