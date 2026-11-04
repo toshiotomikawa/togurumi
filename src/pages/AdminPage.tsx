@@ -32,6 +32,10 @@ function AdminPage() {
           <h2>{messages.auth.adminImagesCardTitle}</h2>
           <p>{messages.auth.adminImagesCardBody}</p>
         </Link>
+        <Link to="/admin/refunds" className="card admin-card-link">
+          <h2>{messages.auth.adminRefundsCardTitle}</h2>
+          <p>{messages.auth.adminRefundsCardBody}</p>
+        </Link>
       </div>
 
       <div className="admin-actions">

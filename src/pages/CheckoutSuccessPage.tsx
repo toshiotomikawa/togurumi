@@ -60,10 +60,20 @@ function CheckoutSuccessPage() {
         <h1 className="checkout-result__title">{copy[0]}</h1>
         <p className="checkout-result__body">{copy[1]}</p>
         <p className="checkout-result__body">{messages.shop.deliveryNotice}</p>
+        {sessionId ? (
+          <p className="checkout-result__order">
+            {messages.checkout.orderNumberLabel}: <span>{sessionId}</span>
+          </p>
+        ) : null}
         <div className="checkout-result__actions">
           {state === 'failed' ? (
             <Link to="/cart" className="button button--primary">
               {messages.checkout.backToCart}
+            </Link>
+          ) : null}
+          {state === 'paid' ? (
+            <Link to={`/reembolso?pedido=${encodeURIComponent(sessionId)}`} className="button">
+              {messages.checkout.refundCta}
             </Link>
           ) : null}
           <Link to="/shop" className={state === 'failed' ? 'button' : 'button button--primary'}>
