@@ -315,8 +315,10 @@ export type Messages = {
     policyBody: string
     reviewNote: string
     orderLabel: string
+    orderPlaceholder: string
     orderHint: string
     emailLabel: string
+    emailPlaceholder: string
     reasonLabel: string
     reasonPlaceholder: string
     detailsLabel: string
@@ -780,8 +782,10 @@ const enUS: Messages = {
     policyBody: 'For purchases made on this website, you may withdraw within 7 days of receiving the order. Send the order number and the e-mail used at checkout and Bella will review the request.',
     reviewNote: 'Bella reviews each request and replies by e-mail. Refunds are issued through Stripe; nothing is refunded automatically.',
     orderLabel: 'Order number',
-    orderHint: 'It is shown on the order confirmation page. It starts with "cs_" and ends with the Stripe payment reference.',
+    orderPlaceholder: 'Order number',
+    orderHint: 'Copy the number shown on the purchase confirmation page.',
     emailLabel: 'E-mail used at checkout',
+    emailPlaceholder: 'you@example.com',
     reasonLabel: 'Reason',
     reasonPlaceholder: 'Choose a reason',
     detailsLabel: 'Tell us more (optional)',
@@ -1249,8 +1253,10 @@ const ptBR: Messages = {
     policyBody: 'Em compras feitas pela internet, você pode desistir da compra em até 7 dias corridos a partir do recebimento. Informe o número do pedido e o e-mail usado na compra para a Bella analisar a solicitação.',
     reviewNote: 'A Bella analisa cada pedido e responde por e-mail. O reembolso é feito pela Stripe; nada é estornado automaticamente.',
     orderLabel: 'Número do pedido',
-    orderHint: 'Ele aparece na página de confirmação do pedido, começa com "cs_" e termina com o código do Stripe.',
+    orderPlaceholder: 'Número do pedido',
+    orderHint: 'Copie o número que aparece na página de confirmação da compra.',
     emailLabel: 'E-mail usado na compra',
+    emailPlaceholder: 'voce@exemplo.com',
     reasonLabel: 'Motivo',
     reasonPlaceholder: 'Escolha um motivo',
     detailsLabel: 'Conte mais (opcional)',
@@ -1718,8 +1724,10 @@ const esES: Messages = {
     policyBody: 'En compras hechas por internet, puedes desistir de la compra en hasta 7 días corridos desde la entrega. Indica el número del pedido y el correo usado en la compra para que Bella revise la solicitud.',
     reviewNote: 'Bella revisa cada pedido y responde por correo. El reembolso se hace por Stripe; nada se reembolsa automáticamente.',
     orderLabel: 'Número del pedido',
-    orderHint: 'Aparece en la página de confirmación del pedido, empieza por "cs_" y termina con el código de Stripe.',
+    orderPlaceholder: 'Número del pedido',
+    orderHint: 'Copia el número que aparece en la página de confirmación de la compra.',
     emailLabel: 'Correo usado en la compra',
+    emailPlaceholder: 'tu@ejemplo.com',
     reasonLabel: 'Motivo',
     reasonPlaceholder: 'Elige un motivo',
     detailsLabel: 'Cuéntanos más (opcional)',

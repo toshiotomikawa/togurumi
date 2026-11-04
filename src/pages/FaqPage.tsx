@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { DragHandleIcon, EditIcon } from '../components/EditableContent'
 import { useAuth } from '../hooks/useAuth'
 import { useLocale } from '../hooks/useLocale'
@@ -70,6 +71,20 @@ function moveItem<T>(items: T[], from: number, to: number): T[] {
   const [moved] = next.splice(from, 1)
   next.splice(to, 0, moved)
   return next
+}
+
+/** Renders the `[label](/path)` links editors can write inside an answer. */
+function renderAnswer(answer: string) {
+  return answer.split(/(\[[^\]]+\]\(\/[^)]+\))/g).map((part, index) => {
+    const match = /^\[([^\]]+)\]\((\/[^)]+)\)$/.exec(part)
+    return match ? (
+      <Link key={index} to={match[2]}>
+        {match[1]}
+      </Link>
+    ) : (
+      part
+    )
+  })
 }
 
 function FaqPage() {
@@ -413,7 +428,7 @@ function FaqPage() {
                 <span className="faq-item__indicator" aria-hidden="true" />
               </summary>
               <div className="faq-item__answer">
-                <p>{item.answer}</p>
+                <p>{renderAnswer(item.answer)}</p>
               </div>
             </details>
           ))}
