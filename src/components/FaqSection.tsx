@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ChevronDownIcon, QuestionIcon } from './AtelierIcons'
 import { DragHandleIcon, EditIcon } from './EditableContent'
 import { useAuth } from '../hooks/useAuth'
@@ -81,6 +81,20 @@ function moveItem<T>(items: T[], from: number, to: number): T[] {
   const [moved] = next.splice(from, 1)
   next.splice(to, 0, moved)
   return next
+}
+
+/** Renders the `[label](/path)` links editors can write inside an answer. */
+function renderAnswer(answer: string) {
+  return answer.split(/(\[[^\]]+\]\(\/[^)]+\))/g).map((part, index) => {
+    const match = /^\[([^\]]+)\]\((\/[^)]+)\)$/.exec(part)
+    return match ? (
+      <Link key={index} to={match[2]}>
+        {match[1]}
+      </Link>
+    ) : (
+      part
+    )
+  })
 }
 
 function FaqSection() {
@@ -402,7 +416,7 @@ function FaqSection() {
                 <span className="atelier-faq__question">{item.question}</span>
                 <ChevronDownIcon className="atelier-faq__chevron" />
               </summary>
-              <p className="atelier-faq__answer">{item.answer}</p>
+              <p className="atelier-faq__answer">{renderAnswer(item.answer)}</p>
             </details>
           ))}
         </div>

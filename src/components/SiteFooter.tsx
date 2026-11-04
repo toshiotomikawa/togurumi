@@ -26,6 +26,7 @@ function SiteFooter() {
   const infoLinks = [
     { to: '/#faq', label: messages.nav.faq },
     { to: '/contact', label: messages.nav.contact },
+    { to: '/reembolso', label: messages.footer.refund },
     { to: '/privacy', label: messages.nav.privacy },
   ]
 

@@ -43,6 +43,8 @@ export type Messages = {
     adminJournalCardBody: string
     adminImagesCardTitle: string
     adminImagesCardBody: string
+    adminRefundsCardTitle: string
+    adminRefundsCardBody: string
     imagesTitle: string
     imagesIntro: string
     imagesProductLabel: string
@@ -114,6 +116,7 @@ export type Messages = {
     note: string
     navLabel: string
     socialLabel: string
+    refund: string
   }
   home: {
     eyebrow: string
@@ -301,6 +304,55 @@ export type Messages = {
     cancelEyebrow: string
     cancelTitle: string
     cancelBody: string
+    orderNumberLabel: string
+    refundCta: string
+  }
+  refund: {
+    eyebrow: string
+    title: string
+    intro: string
+    policyTitle: string
+    policyBody: string
+    reviewNote: string
+    orderLabel: string
+    orderPlaceholder: string
+    orderHint: string
+    emailLabel: string
+    emailPlaceholder: string
+    reasonLabel: string
+    reasonPlaceholder: string
+    detailsLabel: string
+    detailsPlaceholder: string
+    submit: string
+    submitting: string
+    successEyebrow: string
+    successTitle: string
+    successBody: string
+    errorInvalid: string
+    errorTooMany: string
+    errorGeneric: string
+    reasonLabels: Record<
+      'changed_mind' | 'damaged' | 'wrong_item' | 'not_received' | 'duplicate' | 'other',
+      string
+    >
+  }
+  refundAdmin: {
+    title: string
+    intro: string
+    draftNote: string
+    empty: string
+    dateLabel: string
+    customerLabel: string
+    amountLabel: string
+    reasonLabel: string
+    statusPending: string
+    statusApproved: string
+    statusDeclined: string
+    approve: string
+    decline: string
+    updateError: string
+    noOrder: string
+    back: string
   }
   reviews: {
     eyebrow: string
@@ -417,6 +469,8 @@ const enUS: Messages = {
     adminJournalCardBody: 'Create, edit, translate, and remove Togurumi journal posts.',
     adminImagesCardTitle: 'Product images',
     adminImagesCardBody: 'Upload product photos and connect them to the Google Sheets catalog.',
+    adminRefundsCardTitle: 'Refund requests',
+    adminRefundsCardBody: 'Review refund requests and mark them approved or declined.',
     imagesTitle: 'Product images',
     imagesIntro: 'Choose a catalog product and upload the photo that should appear in the shop.',
     imagesProductLabel: 'Product',
@@ -489,6 +543,7 @@ const enUS: Messages = {
     note: 'Handmade amigurumi by Bella · orders and custom pieces via Instagram direct @togurumi',
     navLabel: 'Footer',
     socialLabel: 'Social and contact',
+    refund: 'Request a refund',
   },
   home: {
     eyebrow: 'トグルミ',
@@ -716,6 +771,59 @@ const enUS: Messages = {
     cancelEyebrow: 'Checkout',
     cancelTitle: 'Payment cancelled',
     cancelBody: 'No charge was made and your cart is still saved on this device.',
+    orderNumberLabel: 'Order number',
+    refundCta: 'Request a refund',
+  },
+  refund: {
+    eyebrow: 'Support',
+    title: 'Request a refund',
+    intro: 'Tell us which order you would like refunded. This form sends a request; Bella reviews it and issues the refund by hand.',
+    policyTitle: '7-day right of withdrawal',
+    policyBody: 'For purchases made on this website, you may withdraw within 7 days of receiving the order. Send the order number and the e-mail used at checkout and Bella will review the request.',
+    reviewNote: 'Bella reviews each request and replies by e-mail. Refunds are issued through Stripe; nothing is refunded automatically.',
+    orderLabel: 'Order number',
+    orderPlaceholder: 'Order number',
+    orderHint: 'Copy the number shown on the purchase confirmation page.',
+    emailLabel: 'E-mail used at checkout',
+    emailPlaceholder: 'you@example.com',
+    reasonLabel: 'Reason',
+    reasonPlaceholder: 'Choose a reason',
+    detailsLabel: 'Tell us more (optional)',
+    detailsPlaceholder: 'What happened?',
+    submit: 'Send request',
+    submitting: 'Sending…',
+    successEyebrow: 'Request',
+    successTitle: 'Request received',
+    successBody: 'If the order number and e-mail match a paid order, the request is now with Bella. She replies by e-mail after reviewing it.',
+    errorInvalid: 'Check the order number: it must be the code shown on the order confirmation page.',
+    errorTooMany: 'Too many attempts. Wait a few minutes and try again.',
+    errorGeneric: 'We could not send the request. Please try again.',
+    reasonLabels: {
+      changed_mind: 'I changed my mind',
+      damaged: 'The piece arrived damaged',
+      wrong_item: 'The piece is different from the one I bought',
+      not_received: 'The order did not arrive',
+      duplicate: 'I was charged twice',
+      other: 'Another reason',
+    },
+  },
+  refundAdmin: {
+    title: 'Refund requests',
+    intro: 'Every request sent from the site. Marking a request does not move money: refund it in the Stripe dashboard.',
+    draftNote: 'Draft: the 7-day right of withdrawal text on the refund page is waiting for Bella to confirm it.',
+    empty: 'No refund requests yet.',
+    dateLabel: 'Requested',
+    customerLabel: 'Customer',
+    amountLabel: 'Paid',
+    reasonLabel: 'Reason',
+    statusPending: 'Pending',
+    statusApproved: 'Approved',
+    statusDeclined: 'Declined',
+    approve: 'Mark approved',
+    decline: 'Mark declined',
+    updateError: 'Could not complete the action. Try again.',
+    noOrder: 'Order data unavailable',
+    back: 'Back to admin',
   },
   reviews: {
     eyebrow: 'Reviews',
@@ -832,6 +940,8 @@ const ptBR: Messages = {
     adminJournalCardBody: 'Crie, edite, traduza e remova posts do blog da Togurumi.',
     adminImagesCardTitle: 'Imagens dos produtos',
     adminImagesCardBody: 'Envie fotos dos produtos e vincule-as ao catálogo do Google Sheets.',
+    adminRefundsCardTitle: 'Pedidos de reembolso',
+    adminRefundsCardBody: 'Revise as solicitações e marque como aprovadas ou recusadas.',
     imagesTitle: 'Imagens dos produtos',
     imagesIntro: 'Escolha um produto do catálogo e envie a foto que deve aparecer na loja.',
     imagesProductLabel: 'Produto',
@@ -904,6 +1014,7 @@ const ptBR: Messages = {
     note: 'Amigurumis feitos à mão pela Bella · pedidos e encomendas pelo direct @togurumi',
     navLabel: 'Rodapé',
     socialLabel: 'Redes e contato',
+    refund: 'Solicitar reembolso',
   },
   home: {
     eyebrow: 'トグルミ',
@@ -1131,6 +1242,59 @@ const ptBR: Messages = {
     cancelEyebrow: 'Pagamento',
     cancelTitle: 'Pagamento cancelado',
     cancelBody: 'Nenhuma cobrança foi feita e seu carrinho continua salvo neste aparelho.',
+    orderNumberLabel: 'Número do pedido',
+    refundCta: 'Solicitar reembolso',
+  },
+  refund: {
+    eyebrow: 'Atendimento',
+    title: 'Solicitar reembolso',
+    intro: 'Diga qual pedido você quer reembolsar. Este formulário registra a solicitação; a Bella analisa e faz o reembolso manualmente.',
+    policyTitle: 'Direito de arrependimento de 7 dias',
+    policyBody: 'Em compras feitas pela internet, você pode desistir da compra em até 7 dias corridos a partir do recebimento. Informe o número do pedido e o e-mail usado na compra para a Bella analisar a solicitação.',
+    reviewNote: 'A Bella analisa cada pedido e responde por e-mail. O reembolso é feito pela Stripe; nada é estornado automaticamente.',
+    orderLabel: 'Número do pedido',
+    orderPlaceholder: 'Número do pedido',
+    orderHint: 'Copie o número que aparece na página de confirmação da compra.',
+    emailLabel: 'E-mail usado na compra',
+    emailPlaceholder: 'voce@exemplo.com',
+    reasonLabel: 'Motivo',
+    reasonPlaceholder: 'Escolha um motivo',
+    detailsLabel: 'Conte mais (opcional)',
+    detailsPlaceholder: 'O que aconteceu?',
+    submit: 'Enviar solicitação',
+    submitting: 'Enviando…',
+    successEyebrow: 'Solicitação',
+    successTitle: 'Solicitação recebida',
+    successBody: 'Se o número do pedido e o e-mail correspondem a um pedido pago, a solicitação já está com a Bella. Ela responde por e-mail depois de analisar.',
+    errorInvalid: 'Confira o número do pedido: ele deve ser o código que aparece na página de confirmação.',
+    errorTooMany: 'Muitas tentativas. Aguarde alguns minutos e tente de novo.',
+    errorGeneric: 'Não foi possível enviar a solicitação. Tente novamente.',
+    reasonLabels: {
+      changed_mind: 'Mudei de ideia',
+      damaged: 'A peça chegou danificada',
+      wrong_item: 'A peça é diferente da comprada',
+      not_received: 'O pedido não chegou',
+      duplicate: 'Fui cobrado duas vezes',
+      other: 'Outro motivo',
+    },
+  },
+  refundAdmin: {
+    title: 'Pedidos de reembolso',
+    intro: 'Todas as solicitações enviadas pelo site. Marcar não movimenta dinheiro: o reembolso é feito no painel da Stripe.',
+    draftNote: 'Rascunho: o texto do direito de arrependimento de 7 dias na página de reembolso aguarda a confirmação da Bella.',
+    empty: 'Nenhuma solicitação de reembolso ainda.',
+    dateLabel: 'Solicitado em',
+    customerLabel: 'Cliente',
+    amountLabel: 'Pago',
+    reasonLabel: 'Motivo',
+    statusPending: 'Pendente',
+    statusApproved: 'Aprovada',
+    statusDeclined: 'Recusada',
+    approve: 'Marcar aprovada',
+    decline: 'Marcar recusada',
+    updateError: 'Não foi possível concluir a ação. Tente novamente.',
+    noOrder: 'Dados do pedido indisponíveis',
+    back: 'Voltar ao admin',
   },
   reviews: {
     eyebrow: 'Avaliações',
@@ -1247,6 +1411,8 @@ const esES: Messages = {
     adminJournalCardBody: 'Crea, edita, traduce y elimina publicaciones del diario de Togurumi.',
     adminImagesCardTitle: 'Imágenes de productos',
     adminImagesCardBody: 'Sube fotos de productos y vincúlalas al catálogo de Google Sheets.',
+    adminRefundsCardTitle: 'Solicitudes de reembolso',
+    adminRefundsCardBody: 'Revisa las solicitudes y márcalas como aprobadas o rechazadas.',
     imagesTitle: 'Imágenes de productos',
     imagesIntro: 'Elige un producto del catálogo y sube la foto que debe aparecer en la tienda.',
     imagesProductLabel: 'Producto',
@@ -1319,6 +1485,7 @@ const esES: Messages = {
     note: 'Amigurumis hechos a mano por Bella · pedidos y encargos por el direct de Instagram @togurumi',
     navLabel: 'Pie de página',
     socialLabel: 'Redes y contacto',
+    refund: 'Solicitar reembolso',
   },
   home: {
     eyebrow: 'トグルミ',
@@ -1546,6 +1713,59 @@ const esES: Messages = {
     cancelEyebrow: 'Pago',
     cancelTitle: 'Pago cancelado',
     cancelBody: 'No se realizó ningún cargo y tu carrito sigue guardado en este dispositivo.',
+    orderNumberLabel: 'Número del pedido',
+    refundCta: 'Solicitar reembolso',
+  },
+  refund: {
+    eyebrow: 'Atención',
+    title: 'Solicitar reembolso',
+    intro: 'Dinos qué pedido quieres reembolsar. Este formulario registra la solicitud; Bella la revisa y hace el reembolso a mano.',
+    policyTitle: 'Derecho de desistimiento de 7 días',
+    policyBody: 'En compras hechas por internet, puedes desistir de la compra en hasta 7 días corridos desde la entrega. Indica el número del pedido y el correo usado en la compra para que Bella revise la solicitud.',
+    reviewNote: 'Bella revisa cada pedido y responde por correo. El reembolso se hace por Stripe; nada se reembolsa automáticamente.',
+    orderLabel: 'Número del pedido',
+    orderPlaceholder: 'Número del pedido',
+    orderHint: 'Copia el número que aparece en la página de confirmación de la compra.',
+    emailLabel: 'Correo usado en la compra',
+    emailPlaceholder: 'tu@ejemplo.com',
+    reasonLabel: 'Motivo',
+    reasonPlaceholder: 'Elige un motivo',
+    detailsLabel: 'Cuéntanos más (opcional)',
+    detailsPlaceholder: '¿Qué pasó?',
+    submit: 'Enviar solicitud',
+    submitting: 'Enviando…',
+    successEyebrow: 'Solicitud',
+    successTitle: 'Solicitud recibida',
+    successBody: 'Si el número del pedido y el correo corresponden a un pedido pagado, la solicitud ya está con Bella. Ella responde por correo después de revisarla.',
+    errorInvalid: 'Revisa el número del pedido: debe ser el código que aparece en la página de confirmación.',
+    errorTooMany: 'Demasiados intentos. Espera unos minutos y vuelve a intentarlo.',
+    errorGeneric: 'No pudimos enviar la solicitud. Inténtalo de nuevo.',
+    reasonLabels: {
+      changed_mind: 'Cambié de opinión',
+      damaged: 'La pieza llegó dañada',
+      wrong_item: 'La pieza es distinta de la comprada',
+      not_received: 'El pedido no llegó',
+      duplicate: 'Me cobraron dos veces',
+      other: 'Otro motivo',
+    },
+  },
+  refundAdmin: {
+    title: 'Solicitudes de reembolso',
+    intro: 'Todas las solicitudes enviadas desde el sitio. Marcar no mueve dinero: el reembolso se hace en el panel de Stripe.',
+    draftNote: 'Borrador: el texto del derecho de desistimiento de 7 días en la página de reembolso espera la confirmación de Bella.',
+    empty: 'Todavía no hay solicitudes de reembolso.',
+    dateLabel: 'Solicitado el',
+    customerLabel: 'Cliente',
+    amountLabel: 'Pagado',
+    reasonLabel: 'Motivo',
+    statusPending: 'Pendiente',
+    statusApproved: 'Aprobada',
+    statusDeclined: 'Rechazada',
+    approve: 'Marcar aprobada',
+    decline: 'Marcar rechazada',
+    updateError: 'No se pudo completar la acción. Inténtalo de nuevo.',
+    noOrder: 'Datos del pedido no disponibles',
+    back: 'Volver al admin',
   },
   reviews: {
     eyebrow: 'Reseñas',
