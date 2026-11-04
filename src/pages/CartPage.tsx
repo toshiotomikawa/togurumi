@@ -1,9 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../hooks/useCart'
 import { useShopProducts } from '../hooks/useShopProducts'
 import { useLocale } from '../hooks/useLocale'
-import { CheckoutRequestError, startCheckout } from '../lib/checkout'
+import {
+  CheckoutRequestError,
+  fetchShippingStatus,
+  requestShippingQuote,
+  startCheckout,
+  type ShippingQuote,
+} from '../lib/checkout'
 import { formatPrice, getColorSwatchBackground } from '../lib/shop'
 import { slugify } from '../lib/slug'
 import type { CartItem } from '../context/cart'
@@ -26,12 +32,37 @@ function CartPage() {
   const [statusMessage, setStatusMessage] = useState('')
   const [checkoutPending, setCheckoutPending] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
+  const [shippingEnabled, setShippingEnabled] = useState(false)
+  const [cep, setCep] = useState('')
+  const [quote, setQuote] = useState<ShippingQuote | null>(null)
+  const [selectedOptionId, setSelectedOptionId] = useState('')
+  const [quotePending, setQuotePending] = useState(false)
+  const [quoteError, setQuoteError] = useState('')
+
+  useEffect(() => {
+    let active = true
+    void fetchShippingStatus().then((status) => {
+      if (active) setShippingEnabled(status.enabled)
+    })
+    return () => {
+      active = false
+    }
+  }, [])
 
   // Show the current catalog price when it is loaded; the server recalculates it at checkout anyway.
   const priceOf = (item: CartItem) =>
     products.find((entry) => slugify(entry.name) === item.slug)?.price ?? item.price
   const total = items.reduce((sum, item) => sum + priceOf(item) * item.quantity, 0)
   const lineCount = items.length
+  const selectedOption = quote?.options.find((option) => option.id === selectedOptionId) ?? null
+  const shippingAmount = selectedOption ? selectedOption.amountCents / 100 : 0
+  const orderTotal = total + shippingAmount
+
+  function resetShipping() {
+    setQuote(null)
+    setSelectedOptionId('')
+    setQuoteError('')
+  }
 
   function announce(message: string) {
     // A cart change makes the previous checkout error stale.
@@ -44,6 +75,7 @@ function CartPage() {
   function handleDecrease(item: CartItem) {
     const next = item.quantity - 1
     updateQuantity(item.slug, next, item.color)
+    resetShipping()
     if (next <= 0) {
       announce(fillTemplate(messages.cart.removedFeedback, { name: item.name }))
     } else {
@@ -59,6 +91,7 @@ function CartPage() {
   function handleIncrease(item: CartItem) {
     const next = item.quantity + 1
     updateQuantity(item.slug, next, item.color)
+    resetShipping()
     announce(
       fillTemplate(messages.cart.quantityIncreasedFeedback, {
         name: item.name,
@@ -83,17 +116,80 @@ function CartPage() {
         return messages.checkout.errorNotConfigured
       case 'too_many_attempts':
         return messages.checkout.errorTooMany
+      case 'shipping_required':
+        return messages.checkout.errorShippingRequired
+      case 'shipping_quote_invalid':
+        return messages.checkout.errorShippingExpired
+      case 'shipping_disabled':
+      case 'quote_unavailable':
+      case 'shipping_failed':
+        return messages.checkout.errorShippingUnavailable
+      case 'invalid_cep':
+        return messages.checkout.errorInvalidCep
       default:
         return messages.checkout.errorGeneric
     }
   }
 
+  function shippingErrorMessage(error: unknown) {
+    const failure = error instanceof CheckoutRequestError ? error.failure : { error: 'shipping_failed' }
+    switch (failure.error) {
+      case 'invalid_cep':
+        return messages.checkout.errorInvalidCep
+      case 'too_many_attempts':
+        return messages.checkout.errorTooMany
+      case 'outside_area':
+        return messages.checkout.outsideArea
+      case 'product_unavailable':
+      case 'insufficient_stock':
+      case 'invalid_color':
+      case 'invalid_cart':
+        return checkoutErrorMessage(error)
+      default:
+        return messages.checkout.errorShippingUnavailable
+    }
+  }
+
+  async function handleQuote() {
+    if (quotePending || items.length === 0) return
+    const digits = cep.replace(/\D/g, '')
+    if (digits.length !== 8) {
+      setQuoteError(messages.checkout.errorInvalidCep)
+      return
+    }
+    setQuotePending(true)
+    setQuoteError('')
+    setQuote(null)
+    setSelectedOptionId('')
+    try {
+      const result = await requestShippingQuote(digits, items)
+      if (!result.served) {
+        setQuoteError(messages.checkout.outsideArea)
+        return
+      }
+      setQuote({ quoteId: result.quoteId, options: result.options, estimated: result.estimated })
+      setSelectedOptionId(result.options[0]?.id ?? '')
+    } catch (error) {
+      setQuoteError(shippingErrorMessage(error))
+    } finally {
+      setQuotePending(false)
+    }
+  }
+
   async function handleCheckout() {
     if (checkoutPending || items.length === 0) return
+    if (shippingEnabled && !selectedOption) {
+      setCheckoutError(messages.checkout.errorShippingRequired)
+      return
+    }
     setCheckoutPending(true)
     setCheckoutError('')
     try {
-      const url = await startCheckout(items, locale)
+      const url = await startCheckout(
+        items,
+        locale,
+        selectedOption && quote ? { quoteId: quote.quoteId, optionId: selectedOption.id } : undefined,
+      )
       window.location.assign(url)
     } catch (error) {
       setCheckoutError(checkoutErrorMessage(error))
@@ -103,6 +199,7 @@ function CartPage() {
 
   function handleRemove(item: CartItem) {
     removeItem(item.slug, item.color)
+    resetShipping()
     announce(fillTemplate(messages.cart.removedFeedback, { name: item.name }))
   }
 
@@ -256,6 +353,74 @@ function CartPage() {
                 {messages.cart.summaryTitle}
               </h2>
 
+              {shippingEnabled ? (
+                <div className="cart-shipping">
+                  <p className="cart-shipping__title">{messages.checkout.shippingTitle}</p>
+                  <div className="cart-shipping__field">
+                    <label htmlFor="cart-cep" className="cart-shipping__label visually-hidden">
+                      {messages.checkout.cepLabel}
+                    </label>
+                    <input
+                      id="cart-cep"
+                      className="cart-shipping__input"
+                      inputMode="numeric"
+                      autoComplete="postal-code"
+                      maxLength={9}
+                      placeholder={messages.checkout.cepPlaceholder}
+                      value={cep}
+                      onChange={(event) => {
+                        setCep(event.target.value)
+                        resetShipping()
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="button cart-shipping__quote"
+                      onClick={handleQuote}
+                      disabled={quotePending}
+                      aria-busy={quotePending}
+                    >
+                      {quotePending ? messages.checkout.quoting : messages.checkout.quoteButton}
+                    </button>
+                  </div>
+                  {quoteError ? (
+                    <p className="cart-shipping__error" role="alert">{quoteError}</p>
+                  ) : null}
+                  {quote ? (
+                    <fieldset className="cart-shipping__options">
+                      <legend className="visually-hidden">{messages.checkout.selectShipping}</legend>
+                      {quote.options.map((option) => (
+                        <label className="cart-shipping__option" key={option.id}>
+                          <input
+                            type="radio"
+                            name="shipping-option"
+                            value={option.id}
+                            checked={selectedOptionId === option.id}
+                            onChange={() => setSelectedOptionId(option.id)}
+                          />
+                          <span className="cart-shipping__option-name">
+                            {option.pickup ? messages.checkout.pickupOption : option.label}
+                          </span>
+                          <span className="cart-shipping__option-price">
+                            {option.pickup ? messages.checkout.free : formatPrice(option.amountCents / 100, locale)}
+                          </span>
+                          {option.minDays !== null && option.maxDays !== null ? (
+                            <span className="cart-shipping__option-days">
+                              {option.minDays === option.maxDays
+                                ? fillTemplate(messages.checkout.shippingDays, { days: option.minDays })
+                                : fillTemplate(messages.checkout.shippingDaysRange, { min: option.minDays, max: option.maxDays })}
+                            </span>
+                          ) : null}
+                        </label>
+                      ))}
+                    </fieldset>
+                  ) : null}
+                  {quote?.estimated ? (
+                    <p className="cart-shipping__estimated">{messages.checkout.shippingEstimated}</p>
+                  ) : null}
+                </div>
+              ) : null}
+
               <dl className="cart-summary__rows">
                 <div className="cart-summary__row">
                   <dt>{messages.cart.unitsLabel}</dt>
@@ -269,11 +434,23 @@ function CartPage() {
                   <dt>{messages.cart.linesLabel}</dt>
                   <dd>{linesLabel}</dd>
                 </div>
+                {shippingEnabled ? (
+                  <div className="cart-summary__row">
+                    <dt>{messages.checkout.shipping}</dt>
+                    <dd>
+                      {selectedOption
+                        ? selectedOption.pickup
+                          ? messages.checkout.free
+                          : formatPrice(selectedOption.amountCents / 100, locale)
+                        : '—'}
+                    </dd>
+                  </div>
+                ) : null}
                 <div className="cart-summary__row cart-summary__row--total">
                   <dt>{messages.cart.total}</dt>
                   <dd>
                     <strong role="status" aria-live="polite">
-                      {formatPrice(total, locale)}
+                      {formatPrice(orderTotal, locale)}
                     </strong>
                   </dd>
                 </div>

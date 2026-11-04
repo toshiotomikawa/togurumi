@@ -225,6 +225,35 @@ export async function decrementProductStock(
 }
 
 /** Current ESTOQUE per product slug, read fresh from the sheet. */
+export type ShopShipping = {
+  weightG?: number
+  heightCm?: number
+  widthCm?: number
+  lengthCm?: number
+}
+
+function positiveCell(value: string | undefined) {
+  const parsed = Number(String(value ?? '').replace(',', '.'))
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined
+}
+
+/** Shipping measurements live beside ESTOQUE; empty cells stay undefined for the P/M/G fallback. */
+export async function getShopShipping(
+  access: Pick<StockSheetAccess, 'getRows'> = sheetStockAccess,
+): Promise<Record<string, ShopShipping>> {
+  const shipping: Record<string, ShopShipping> = {}
+  for (const row of await access.getRows()) {
+    if (!row['MODELO']) continue
+    shipping[slugifyProductName(row['MODELO'])] = {
+      weightG: positiveCell(row['PESO_G']),
+      heightCm: positiveCell(row['ALTURA_CM']),
+      widthCm: positiveCell(row['LARGURA_CM']),
+      lengthCm: positiveCell(row['COMPRIMENTO_CM']),
+    }
+  }
+  return shipping
+}
+
 export async function readShopStock(
   access: Pick<StockSheetAccess, 'getRows'> = sheetStockAccess,
 ): Promise<Record<string, number>> {
