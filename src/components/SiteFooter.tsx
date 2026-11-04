@@ -24,7 +24,7 @@ function SiteFooter() {
     { to: '/journal', label: messages.nav.journal },
   ]
   const infoLinks = [
-    { to: '/faq', label: messages.nav.faq },
+    { to: '/#faq', label: messages.nav.faq },
     { to: '/contact', label: messages.nav.contact },
     { to: '/privacy', label: messages.nav.privacy },
   ]

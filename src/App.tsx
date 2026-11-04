@@ -9,7 +9,6 @@ import CartPage from './pages/CartPage'
 import CheckoutCancelPage from './pages/CheckoutCancelPage'
 import CheckoutSuccessPage from './pages/CheckoutSuccessPage'
 import ContactPage from './pages/ContactPage'
-import FaqPage from './pages/FaqPage'
 import HomePage from './pages/HomePage'
 import JournalEditorPage from './pages/JournalEditorPage'
 import JournalPage from './pages/JournalPage'
@@ -44,7 +43,7 @@ function App() {
           <Route path="/journal/:slug" element={<JournalPostPage />} />
           <Route path="/reviews" element={<Navigate to="/#reviews" replace />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/faq" element={<Navigate to="/#faq" replace />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route
