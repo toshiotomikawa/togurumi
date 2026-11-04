@@ -352,4 +352,8 @@ test('runtime selection uses local fallback and fails closed on partial Redis co
     UPSTASH_REDIS_REST_URL: 'https://example.invalid',
     UPSTASH_REDIS_REST_TOKEN: 'token',
   }) instanceof FallbackRateLimitStore)
+  assert.ok(createRuntimeRateLimitStore('secret', {
+    TOGURUMI_REDIS_KV_REST_API_URL: 'https://example.invalid',
+    TOGURUMI_REDIS_KV_REST_API_TOKEN: 'token',
+  }) instanceof FallbackRateLimitStore)
 })

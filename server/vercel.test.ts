@@ -27,7 +27,23 @@ test('production and Vercel runtimes require durable stores and a session secret
   )
   assert.throws(
     () => validateRuntimeEnvironment({ ...productionEnvironment, UPSTASH_REDIS_REST_TOKEN: '' }),
-    /UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN are required/,
+    /Set both UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN/,
+  )
+  assert.throws(
+    () => validateRuntimeEnvironment({
+      NODE_ENV: 'production',
+      DATABASE_URL: 'postgres://example',
+      SESSION_SECRET: 'test-session-secret',
+    }),
+    /TOGURUMI_REDIS_KV_REST_API_URL and TOGURUMI_REDIS_KV_REST_API_TOKEN/,
+  )
+  assert.throws(
+    () => validateRuntimeEnvironment({
+      ...productionEnvironment,
+      TOGURUMI_REDIS_KV_REST_API_URL: 'https://redis.example',
+      TOGURUMI_REDIS_KV_REST_API_TOKEN: '',
+    }),
+    /Set both TOGURUMI_REDIS_KV_REST_API_URL and TOGURUMI_REDIS_KV_REST_API_TOKEN/,
   )
   assert.throws(
     () => validateRuntimeEnvironment({ ...productionEnvironment, SESSION_SECRET: 'dev-only-change-me' }),
@@ -38,6 +54,13 @@ test('production and Vercel runtimes require durable stores and a session secret
     /DATABASE_URL is required/,
   )
   assert.doesNotThrow(() => validateRuntimeEnvironment(productionEnvironment))
+  assert.doesNotThrow(() => validateRuntimeEnvironment({
+    NODE_ENV: 'production',
+    DATABASE_URL: 'postgres://example',
+    SESSION_SECRET: 'test-session-secret',
+    TOGURUMI_REDIS_KV_REST_API_URL: 'https://redis.example',
+    TOGURUMI_REDIS_KV_REST_API_TOKEN: 'token',
+  }))
 })
 
 test('local development keeps the existing configuration fallbacks', () => {
@@ -88,6 +111,8 @@ test('importing the Express app does not start a listener', () => {
         DATABASE_URL: '',
         UPSTASH_REDIS_REST_URL: '',
         UPSTASH_REDIS_REST_TOKEN: '',
+        TOGURUMI_REDIS_KV_REST_API_URL: '',
+        TOGURUMI_REDIS_KV_REST_API_TOKEN: '',
       },
     },
   )

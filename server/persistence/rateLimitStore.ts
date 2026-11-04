@@ -1,11 +1,7 @@
 import { createHmac, randomUUID } from 'node:crypto'
 import { Redis } from '@upstash/redis'
 import type { RateLimitStore } from './contracts.js'
-
-type RateLimitEnvironment = {
-  UPSTASH_REDIS_REST_URL?: string
-  UPSTASH_REDIS_REST_TOKEN?: string
-}
+import { resolveUpstashConfig, type UpstashEnvironment } from './upstash.js'
 
 export interface RedisRateLimitClient {
   get<T>(key: string): Promise<T | null>
@@ -187,17 +183,13 @@ export class RedisRateLimitStore implements RateLimitStore {
 
 export function createRuntimeRateLimitStore(
   secret: string,
-  environment: RateLimitEnvironment = process.env,
+  environment: UpstashEnvironment = process.env,
 ): RateLimitStore {
-  const url = environment.UPSTASH_REDIS_REST_URL?.trim()
-  const token = environment.UPSTASH_REDIS_REST_TOKEN?.trim()
-
-  if (!url && !token) return new LocalRateLimitStore()
-  if (!url || !token) throw new Error('Set both UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN')
+  const config = resolveUpstashConfig(environment)
+  if (!config) return new LocalRateLimitStore()
 
   const redis = new Redis({
-    url,
-    token,
+    ...config,
     retry: false,
     signal: () => AbortSignal.timeout(RATE_LIMIT_FALLBACK_TIMEOUT_MS),
   }) as unknown as RedisRateLimitClient

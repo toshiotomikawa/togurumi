@@ -191,4 +191,8 @@ test('runtime selection falls back locally and rejects partial Redis configurati
     UPSTASH_REDIS_REST_URL: 'https://example.invalid',
     UPSTASH_REDIS_REST_TOKEN: 'test-token',
   }) instanceof RedisSessionStore)
+  assert.ok(createRuntimeSessionStore('secret', 30_000, {
+    TOGURUMI_REDIS_KV_REST_API_URL: 'https://example.invalid',
+    TOGURUMI_REDIS_KV_REST_API_TOKEN: 'test-token',
+  }) instanceof RedisSessionStore)
 })
