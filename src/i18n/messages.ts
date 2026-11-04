@@ -279,6 +279,25 @@ export type Messages = {
     button: string
     redirecting: string
     secureNote: string
+    shippingTitle: string
+    cepLabel: string
+    cepPlaceholder: string
+    quoteButton: string
+    quoting: string
+    errorInvalidCep: string
+    outsideArea: string
+    errorShippingUnavailable: string
+    errorShippingRequired: string
+    errorShippingExpired: string
+    shippingEstimated: string
+    shipping: string
+    free: string
+    pickupOption: string
+    selectShipping: string
+    shippingDays: string
+    shippingDaysRange: string
+    pickupHeading: string
+    pickupBody: string
     errorUnavailable: string
     errorInsufficientStock: string
     errorInvalidColor: string
@@ -694,6 +713,25 @@ const enUS: Messages = {
     button: 'Checkout',
     redirecting: 'Opening secure payment…',
     secureNote: 'Payment is handled securely by Stripe. Pay by card or Pix; you will enter the delivery address on the next step.',
+    shippingTitle: 'Delivery',
+    cepLabel: 'Postal code (CEP)',
+    cepPlaceholder: '00000-000',
+    quoteButton: 'Calculate shipping',
+    quoting: 'Calculating...',
+    errorInvalidCep: 'Enter a valid 8-digit CEP.',
+    outsideArea: 'We do not deliver to this CEP yet.',
+    errorShippingUnavailable: 'We could not calculate shipping right now. Try again.',
+    errorShippingRequired: 'Choose a delivery option to continue.',
+    errorShippingExpired: 'The shipping quote expired. Calculate it again.',
+    shippingEstimated: 'Estimated shipping.',
+    shipping: 'Shipping',
+    free: 'Free',
+    pickupOption: 'Pickup in Colombo (free)',
+    selectShipping: 'Delivery options',
+    shippingDays: '{days} business days',
+    shippingDaysRange: '{min}–{max} business days',
+    pickupHeading: 'Pickup in Colombo',
+    pickupBody: 'Bella will get in touch to arrange the day and time.',
     errorUnavailable: '{name} is no longer available. Remove it from the cart to continue.',
     errorInsufficientStock: 'Only {available} of {name} left in stock. Lower the quantity to continue.',
     errorInvalidColor: 'The colour chosen for {name} is no longer offered. Remove it and add it again from the product page.',
@@ -1109,6 +1147,25 @@ const ptBR: Messages = {
     button: 'Finalizar compra',
     redirecting: 'Abrindo o pagamento seguro…',
     secureNote: 'O pagamento é processado com segurança pelo Stripe. Pague com cartão ou Pix; o endereço de entrega é informado na próxima etapa.',
+    shippingTitle: 'Entrega',
+    cepLabel: 'CEP',
+    cepPlaceholder: '00000-000',
+    quoteButton: 'Calcular frete',
+    quoting: 'Calculando...',
+    errorInvalidCep: 'Informe um CEP válido com 8 dígitos.',
+    outsideArea: 'Ainda não entregamos nesse CEP.',
+    errorShippingUnavailable: 'Não foi possível calcular o frete agora. Tente novamente.',
+    errorShippingRequired: 'Escolha uma opção de entrega para continuar.',
+    errorShippingExpired: 'A cotação expirou. Calcule o frete novamente.',
+    shippingEstimated: 'Frete estimado.',
+    shipping: 'Frete',
+    free: 'Grátis',
+    pickupOption: 'Retirada em Colombo (grátis)',
+    selectShipping: 'Opções de entrega',
+    shippingDays: '{days} dias úteis',
+    shippingDaysRange: '{min}–{max} dias úteis',
+    pickupHeading: 'Retirada em Colombo',
+    pickupBody: 'A Bella entra em contato para combinar dia e horário.',
     errorUnavailable: '{name} não está mais disponível. Remova do carrinho para continuar.',
     errorInsufficientStock: 'Restam apenas {available} unidade(s) de {name}. Diminua a quantidade para continuar.',
     errorInvalidColor: 'A cor escolhida para {name} não está mais disponível. Remova e adicione novamente pela página do produto.',
@@ -1524,6 +1581,25 @@ const esES: Messages = {
     button: 'Finalizar compra',
     redirecting: 'Abriendo el pago seguro…',
     secureNote: 'El pago se procesa de forma segura con Stripe. Paga con tarjeta o Pix; la dirección de entrega se indica en el siguiente paso.',
+    shippingTitle: 'Entrega',
+    cepLabel: 'CEP',
+    cepPlaceholder: '00000-000',
+    quoteButton: 'Calcular envío',
+    quoting: 'Calculando...',
+    errorInvalidCep: 'Introduce un CEP válido de 8 dígitos.',
+    outsideArea: 'Todavía no entregamos en este CEP.',
+    errorShippingUnavailable: 'No pudimos calcular el envío ahora. Inténtalo de nuevo.',
+    errorShippingRequired: 'Elige una opción de entrega para continuar.',
+    errorShippingExpired: 'La cotización caducó. Calcula el envío de nuevo.',
+    shippingEstimated: 'Envío estimado.',
+    shipping: 'Envío',
+    free: 'Gratis',
+    pickupOption: 'Recogida en Colombo (gratis)',
+    selectShipping: 'Opciones de entrega',
+    shippingDays: '{days} días hábiles',
+    shippingDaysRange: '{min}–{max} días hábiles',
+    pickupHeading: 'Recogida en Colombo',
+    pickupBody: 'Bella se pondrá en contacto para acordar el día y la hora.',
     errorUnavailable: '{name} ya no está disponible. Elimínalo del carrito para continuar.',
     errorInsufficientStock: 'Solo quedan {available} unidad(es) de {name}. Reduce la cantidad para continuar.',
     errorInvalidColor: 'El color elegido para {name} ya no está disponible. Elimínalo y vuelve a añadirlo desde la página del producto.',

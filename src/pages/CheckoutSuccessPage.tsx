@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useCart } from '../hooks/useCart'
 import { useLocale } from '../hooks/useLocale'
-import { fetchCheckoutStatus, type CheckoutStatus } from '../lib/checkout'
+import { fetchCheckoutStatus, type CheckoutStatus, type CheckoutStatusResult } from '../lib/checkout'
 
 const POLL_INTERVAL_MS = 5000
 const MAX_POLLS = 24
@@ -15,6 +15,7 @@ function CheckoutSuccessPage() {
   const [searchParams] = useSearchParams()
   const sessionId = searchParams.get('session_id') ?? ''
   const [state, setState] = useState<ViewState>(sessionId ? 'checking' : 'unknown')
+  const [shipping, setShipping] = useState<CheckoutStatusResult | null>(null)
 
   useEffect(() => {
     if (!sessionId) return
@@ -23,9 +24,11 @@ function CheckoutSuccessPage() {
     let timer: number | undefined
 
     async function check() {
-      const status = await fetchCheckoutStatus(sessionId)
+      const result = await fetchCheckoutStatus(sessionId)
       if (cancelled) return
       polls += 1
+      if (result) setShipping(result)
+      const status = result?.status ?? null
 
       if (status === 'paid' || status === 'pending') clearCart()
       if (status === 'pending' && polls < MAX_POLLS) {
@@ -59,7 +62,15 @@ function CheckoutSuccessPage() {
         <span className="checkout-result__eyebrow">{messages.checkout.successEyebrow}</span>
         <h1 className="checkout-result__title">{copy[0]}</h1>
         <p className="checkout-result__body">{copy[1]}</p>
-        <p className="checkout-result__body">{messages.shop.deliveryNotice}</p>
+        {state === 'paid' && shipping?.shippingService === 'pickup' && shipping.pickupAddress ? (
+          <div className="checkout-result__pickup">
+            <h2 className="checkout-result__pickup-title">{messages.checkout.pickupHeading}</h2>
+            <p className="checkout-result__body">{shipping.pickupAddress}</p>
+            <p className="checkout-result__body">{messages.checkout.pickupBody}</p>
+          </div>
+        ) : (
+          <p className="checkout-result__body">{messages.shop.deliveryNotice}</p>
+        )}
         <div className="checkout-result__actions">
           {state === 'failed' ? (
             <Link to="/cart" className="button button--primary">
