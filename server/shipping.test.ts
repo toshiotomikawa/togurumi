@@ -26,6 +26,7 @@ function config(overrides: Partial<ShippingConfig> = {}): ShippingConfig {
     pickupAddress: 'Rua do Ponto, 1',
     insuranceMinCents: 6_000,
     fallbackCents: 0,
+    packagingWeightG: 50,
     ...overrides,
   }
 }
@@ -83,6 +84,18 @@ test('RMC default list keeps the 29 official municipalities', () => {
   assert.equal(parsed.servedCities.has(officeCityKey('Quitandinha', 'PR')), true)
   assert.equal(parsed.pickupAddress, null)
   assert.equal(parsed.insuranceMinCents, 6_000)
+  assert.equal(parsed.packagingWeightG, 50)
+})
+
+test('the packaging weight is read from the environment', () => {
+  const parsed = shippingConfig({
+    SUPERFRETE_TOKEN: 'token',
+    SUPERFRETE_ORIGIN_CEP: '12345678',
+    SUPERFRETE_CONTACT_EMAIL: 'shop@example.com',
+    SHIPPING_PACKAGING_WEIGHT_G: '120',
+  })
+  assert.ok(parsed)
+  assert.equal(parsed.packagingWeightG, 120)
 })
 
 test('shipping is disabled without the SuperFrete token, origin CEP and contact e-mail', () => {
@@ -110,9 +123,9 @@ test('package uses measured dimensions for one piece and a box for several', () 
   const one = buildShippingPackage(lines, shipping)
   assert.deepEqual(one, {
     weightKg: 0.25,
-    heightCm: 12,
-    widthCm: 12,
-    lengthCm: 12,
+    heightCm: 10,
+    widthCm: 10,
+    lengthCm: 10,
     box: 'item',
     estimated: false,
   })
@@ -125,12 +138,30 @@ test('package uses measured dimensions for one piece and a box for several', () 
     polvo: { weightG: 100, heightCm: 10, widthCm: 10, lengthCm: 10 },
   })
   assert.deepEqual(several, {
-    weightKg: 0.6,
+    weightKg: 0.55,
     heightCm: 20,
     widthCm: 25,
     lengthCm: 35,
     box: 'M',
     estimated: false,
+  })
+})
+
+test('packaging weight is configurable and added to the piece weight', () => {
+  const result = buildShippingPackage(lines, shipping, 120)
+  assert.equal(result.weightKg, 0.32)
+  assert.equal(result.estimated, false)
+})
+
+test('a known weight with empty dimensions uses the box and stays estimated', () => {
+  const result = buildShippingPackage(lines, { abelha: { weightG: 200 } })
+  assert.deepEqual(result, {
+    weightKg: 0.25,
+    heightCm: 15,
+    widthCm: 20,
+    lengthCm: 25,
+    box: 'P',
+    estimated: true,
   })
 })
 
