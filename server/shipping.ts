@@ -209,18 +209,50 @@ function positiveNumber(value: number | undefined) {
   return typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : null
 }
 
+function boxVolumeCm3(box: (typeof BOXES)[number]) {
+  return box.heightCm * box.widthCm * box.lengthCm
+}
+
+function boxMaxSideCm(box: (typeof BOXES)[number]) {
+  return Math.max(box.heightCm, box.widthCm, box.lengthCm)
+}
+
+function boxFits(
+  box: (typeof BOXES)[number],
+  volumeCm3: number,
+  maxSideCm: number,
+  weightG: number | null,
+) {
+  return maxSideCm <= boxMaxSideCm(box)
+    && volumeCm3 <= boxVolumeCm3(box)
+    && (weightG === null || weightG <= box.maxWeightG)
+}
+
+function smallestBox(volumeCm3: number, maxSideCm: number, weightG: number | null) {
+  return BOXES.find((box) => boxFits(box, volumeCm3, maxSideCm, weightG)) ?? BOXES[BOXES.length - 1]
+}
+
+function lineBox(quantity: number, weightG: number | null) {
+  return BOXES.find((box) =>
+    quantity <= box.maxItems && (weightG === null || weightG <= box.maxWeightG)) ?? BOXES[BOXES.length - 1]
+}
+
+function toWeightKg(weightG: number) {
+  return Math.max(0.1, Math.round((weightG / 1000) * 1000) / 1000)
+}
+
 /**
- * PESO_G is the piece without packaging; the packaging weight is added once
- * per order. Measured dimensions are the finished package, so they are used
- * as-is. When a cell is empty the P/M/G box is used instead and the quote is
- * marked estimated. Dimensions are not summed.
+ * PESO_G is the piece without packaging; the packaging tare is added once per
+ * order. Measured dimensions are the finished package, so they are used as-is.
+ * Missing dimensions fall back to that piece's standard P/M/G box. Several
+ * pieces use the smallest box that fits the largest side and the total volume;
+ * if none fits, the largest box is used and the quote is marked estimated.
  */
 export function buildShippingPackage(
   lines: CheckoutLine[],
   shipping: Record<string, ShopShipping>,
   packagingWeightG = DEFAULT_PACKAGING_WEIGHT_G,
 ): ShippingPackage {
-  const quantities = lines.reduce((total, line) => total + line.quantity, 0)
   const measured = lines.map((line) => {
     const entry = shipping[line.slug]
     return {
@@ -231,34 +263,63 @@ export function buildShippingPackage(
       lengthCm: positiveNumber(entry?.lengthCm),
     }
   })
-  const allWeighed = measured.every((entry) => entry.weightG !== null)
-  const allMeasured = allWeighed && measured.every((entry) =>
-    entry.heightCm !== null && entry.widthCm !== null && entry.lengthCm !== null)
-  const totalWeightG = measured.reduce((total, entry) => total + (entry.weightG ?? 0) * entry.quantity, 0)
+  const quantity = measured.reduce((total, item) => total + item.quantity, 0)
+  const allWeighed = measured.every((item) => item.weightG !== null)
+  const pieceWeightG = measured.reduce((total, item) => total + (item.weightG ?? 0) * item.quantity, 0)
+  const packageWeightG = allWeighed ? pieceWeightG + packagingWeightG : null
 
-  if (quantities === 1 && allMeasured) {
-    const item = measured[0]
+  const packages = measured.map((item) => {
+    if (item.heightCm !== null && item.widthCm !== null && item.lengthCm !== null) {
+      return {
+        volumeCm3: item.heightCm * item.widthCm * item.lengthCm * item.quantity,
+        maxSideCm: Math.max(item.heightCm, item.widthCm, item.lengthCm),
+        missingDims: false,
+      }
+    }
+    const box = lineBox(item.quantity, item.weightG === null ? null : item.weightG * item.quantity)
     return {
-      weightKg: Math.max(0.1, Math.round((((item.weightG ?? 0) + packagingWeightG) / 1000) * 1000) / 1000),
+      volumeCm3: boxVolumeCm3(box) * Math.ceil(item.quantity / box.maxItems),
+      maxSideCm: boxMaxSideCm(box),
+      missingDims: true,
+    }
+  })
+  const volumeCm3 = packages.reduce((total, item) => total + item.volumeCm3, 0)
+  const maxSideCm = packages.reduce((max, item) => Math.max(max, item.maxSideCm), 0)
+  const missingDims = packages.some((item) => item.missingDims)
+
+  if (quantity === 1 && !missingDims) {
+    const item = measured[0]
+    const dims = {
       heightCm: item.heightCm ?? 0,
       widthCm: item.widthCm ?? 0,
       lengthCm: item.lengthCm ?? 0,
+    }
+    if (allWeighed) {
+      return {
+        weightKg: toWeightKg(pieceWeightG + packagingWeightG),
+        ...dims,
+        box: 'item',
+        estimated: false,
+      }
+    }
+    const box = smallestBox(volumeCm3, maxSideCm, null)
+    return {
+      weightKg: toWeightKg(box.estimatedWeightG),
+      ...dims,
       box: 'item',
-      estimated: false,
+      estimated: true,
     }
   }
 
-  const billedWeightG = allWeighed ? totalWeightG + packagingWeightG : totalWeightG
-  const box = BOXES.find((candidate) =>
-    quantities <= candidate.maxItems && billedWeightG <= candidate.maxWeightG) ?? BOXES[BOXES.length - 1]
-  const weightG = allWeighed ? billedWeightG : box.estimatedWeightG
+  const box = smallestBox(volumeCm3, maxSideCm, packageWeightG)
+  const overflow = !boxFits(box, volumeCm3, maxSideCm, packageWeightG)
   return {
-    weightKg: Math.max(0.1, Math.round((weightG / 1000) * 1000) / 1000),
+    weightKg: toWeightKg(packageWeightG ?? box.estimatedWeightG),
     heightCm: box.heightCm,
     widthCm: box.widthCm,
     lengthCm: box.lengthCm,
     box: box.id,
-    estimated: !allMeasured,
+    estimated: !allWeighed || missingDims || overflow,
   }
 }
 

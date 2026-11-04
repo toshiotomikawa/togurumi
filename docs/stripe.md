@@ -182,8 +182,12 @@ npm run test:checkout
   `COMPRIMENTO_CM` na planilha. `PESO_G` é o peso da peça sem embalagem; o
   peso da embalagem vem de `SHIPPING_PACKAGING_WEIGHT_G` (50 g por padrão) e é
   somado uma vez por pedido. As dimensões, quando preenchidas, são as do pacote
-  pronto. Quando uma célula está vazia, o servidor usa a caixa P/M/G e marca a
-  cotação como estimada.
+  pronto. Uma peça com medidas usa essas medidas; uma peça sem medidas usa a
+  caixa P/M/G. Com várias peças, o servidor escolhe a menor caixa P/M/G que
+  comporte o maior lado, o volume total e o peso, estimando pela caixa padrão a
+  peça sem medida; se nenhuma caixa couber, usa a maior e marca a cotação como
+  estimada. Qualquer peso ou medida faltando também marca a cotação como
+  estimada.
 - O estoque é por produto (coluna `ESTOQUE`), não por cor.
 - A reserva dura 70 minutos (35 da sessão, mais 30 do Pix, mais 5 de folga).
   Na prática ela é liberada antes pelos eventos de expiração, de falha do

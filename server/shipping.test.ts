@@ -119,7 +119,7 @@ test('custom served cities replace the default and are normalized', () => {
   assert.equal(parsed.servedCities.has(officeCityKey('Sao Jose dos Pinhais', 'PR')), true)
 })
 
-test('package uses measured dimensions for one piece and a box for several', () => {
+test('one measured piece uses its dimensions and adds packaging once', () => {
   const one = buildShippingPackage(lines, shipping)
   assert.deepEqual(one, {
     weightKg: 0.25,
@@ -129,21 +129,102 @@ test('package uses measured dimensions for one piece and a box for several', () 
     box: 'item',
     estimated: false,
   })
+})
 
-  const several = buildShippingPackage([
-    { ...lines[0], quantity: 2 },
-    { ...lines[0], slug: 'polvo', quantity: 3 },
-  ], {
-    abelha: { weightG: 100, heightCm: 10, widthCm: 10, lengthCm: 10 },
-    polvo: { weightG: 100, heightCm: 10, widthCm: 10, lengthCm: 10 },
+test('one piece without dimensions uses the P/M/G box and stays estimated', () => {
+  const result = buildShippingPackage(lines, { abelha: { weightG: 200 } })
+  assert.deepEqual(result, {
+    weightKg: 0.25,
+    heightCm: 15,
+    widthCm: 20,
+    lengthCm: 25,
+    box: 'P',
+    estimated: true,
   })
-  assert.deepEqual(several, {
-    weightKg: 0.55,
+})
+
+test('several pieces pick the smallest box that fits the largest side and the volume', () => {
+  const result = buildShippingPackage([
+    { ...lines[0], quantity: 2 },
+  ], {
+    abelha: { weightG: 100, heightCm: 20, widthCm: 20, lengthCm: 20 },
+  })
+  assert.deepEqual(result, {
+    weightKg: 0.25,
     heightCm: 20,
     widthCm: 25,
     lengthCm: 35,
     box: 'M',
     estimated: false,
+  })
+})
+
+test('packaging is added once per package, not once per piece', () => {
+  const result = buildShippingPackage([
+    { ...lines[0], quantity: 3 },
+  ], {
+    abelha: { weightG: 100, heightCm: 10, widthCm: 10, lengthCm: 10 },
+  })
+  assert.equal(result.weightKg, 0.35)
+  assert.equal(result.estimated, false)
+})
+
+test('weight can push a measured order into a larger box', () => {
+  const result = buildShippingPackage([
+    { ...lines[0], quantity: 2 },
+  ], {
+    abelha: { weightG: 240, heightCm: 10, widthCm: 10, lengthCm: 10 },
+  })
+  assert.equal(result.box, 'M')
+  assert.equal(result.weightKg, 0.53)
+  assert.equal(result.estimated, false)
+})
+
+test('one measured piece without weight stays estimated', () => {
+  const result = buildShippingPackage(lines, {
+    abelha: { heightCm: 10, widthCm: 10, lengthCm: 10 },
+  })
+  assert.deepEqual(result, {
+    weightKg: 0.3,
+    heightCm: 10,
+    widthCm: 10,
+    lengthCm: 10,
+    box: 'item',
+    estimated: true,
+  })
+})
+
+test('an order larger than the largest box uses it and stays estimated', () => {
+  const result = buildShippingPackage([
+    { ...lines[0], quantity: 2 },
+  ], {
+    abelha: { weightG: 100, heightCm: 30, widthCm: 30, lengthCm: 30 },
+  })
+  assert.deepEqual(result, {
+    weightKg: 0.25,
+    heightCm: 25,
+    widthCm: 35,
+    lengthCm: 45,
+    box: 'G',
+    estimated: true,
+  })
+})
+
+test('a missing dimension falls back to that piece standard box and marks the order estimated', () => {
+  const result = buildShippingPackage([
+    { ...lines[0], slug: 'abelha', quantity: 1 },
+    { ...lines[0], slug: 'polvo', quantity: 1 },
+  ], {
+    abelha: { weightG: 200, heightCm: 20, widthCm: 20, lengthCm: 20 },
+    polvo: { weightG: 100 },
+  })
+  assert.deepEqual(result, {
+    weightKg: 0.35,
+    heightCm: 20,
+    widthCm: 25,
+    lengthCm: 35,
+    box: 'M',
+    estimated: true,
   })
 })
 
