@@ -18,7 +18,8 @@ type Feedback = {
 }
 
 const ACCEPTED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp'])
-const MAX_FILE_BYTES = 8 * 1024 * 1024
+// Vercel rejects request bodies above about 4.5 MB before they reach the server.
+const MAX_FILE_BYTES = 4 * 1024 * 1024
 
 function ProductImagesPage() {
   const { messages } = useLocale()

@@ -105,10 +105,13 @@ export async function setProductImage(
   productName: string,
   color: string,
   imageUrl: string,
+  access: StockSheetAccess = sheetStockAccess,
 ): Promise<ProductImages> {
-  const rows = await getSheetTab('CATALOGO', { forceRefresh: true })
+  const rows = await access.getRows()
   const row = rows[rowNumber - 2]
-  if (!row || row['MODELO'] !== productName) throw new SheetsError('row_changed')
+  // The admin form sends the trimmed name, but the sheet cell may hold stray spaces.
+  const currentName = row?.['MODELO'] ?? ''
+  if (!row || currentName.trim() !== productName) throw new SheetsError('row_changed')
 
   const currentImageValue = row['IMAGEM'] ?? ''
   const colorHeader = Object.hasOwn(row, 'CORES') ? 'CORES' : 'Cores'
@@ -120,13 +123,12 @@ export async function setProductImage(
   if (color) images.colors[color] = imageUrl
   else images.default = imageUrl
 
-  await updateSheetCellByHeader(
-    'CATALOGO',
+  await access.updateCell(
     rowNumber,
     'IMAGEM',
     serializeProductImages(images),
     [
-      { header: 'MODELO', value: productName },
+      { header: 'MODELO', value: currentName },
       { header: 'IMAGEM', value: currentImageValue },
       { header: colorHeader, value: colorValue },
     ],

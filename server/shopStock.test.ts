@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { SheetsError } from './sheets.js'
-import { decrementShopStock } from './shop.js'
+import { decrementShopStock, setProductImage } from './shop.js'
 
 function fakeSheet(rows: Record<string, string>[], options: { conflicts?: number } = {}) {
   let conflicts = options.conflicts ?? 0
@@ -73,4 +73,21 @@ test('a concurrent sheet edit is retried, then surfaced', async () => {
     (err: unknown) => err instanceof SheetsError && err.code === 'row_changed',
   )
   assert.equal(stuck.rows[0].ESTOQUE, '4')
+})
+
+test('a product image saves when the sheet name has stray spaces', async () => {
+  const sheet = fakeSheet([
+    { MODELO: 'Boba Tea ', CORES: 'Marrom, Rosa', IMAGEM: '' },
+  ])
+  const images = await setProductImage(2, 'Boba Tea', 'Marrom', 'https://ik.imagekit.io/x/a.png', sheet.access)
+  assert.equal(images.colors.Marrom, 'https://ik.imagekit.io/x/a.png')
+  assert.equal(sheet.writes.length, 1)
+})
+
+test('a product image is refused when the row now holds another product', async () => {
+  const sheet = fakeSheet([{ MODELO: 'Urso Mochi', CORES: 'Rosa', IMAGEM: '' }])
+  await assert.rejects(
+    setProductImage(2, 'Boba Tea', 'Rosa', 'https://ik.imagekit.io/x/a.png', sheet.access),
+    (err: unknown) => err instanceof SheetsError && err.code === 'row_changed',
+  )
 })
