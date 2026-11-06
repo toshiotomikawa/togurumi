@@ -613,19 +613,6 @@ a:active {
 }
 
 /* Layout helpers */
-.page {
-  width: min(960px, 100%);
-  margin: 0 auto;
-  padding: 48px 20px 80px;
-}
-
-.page--home {
-  width: min(1160px, 100%);
-}
-
-.page--narrow {
-  width: min(720px, 100%);
-}
 
 /* Hero */
 .hero {
@@ -1203,10 +1190,6 @@ html[data-theme='night'] .home-journal-card {
 }
 
 /* Journal listing (v3) */
-.page--journal {
-  width: min(900px, 100%);
-}
-
 .journal-hero {
   text-align: left;
   padding: 28px 0 8px;
@@ -1463,10 +1446,6 @@ html[data-theme='night'] .home-journal-card {
 }
 
 /* Journal article (v3) */
-.page--journal-post {
-  width: min(760px, 100%);
-}
-
 .journal-post-nav {
   margin: 8px 0 0;
 }
@@ -1896,7 +1875,6 @@ html[data-theme='night'] .home-journal-card {
 
 /* Product detail (v3) */
 .page--product {
-  width: min(1100px, 100%);
   padding-top: 28px;
 }
 
@@ -2376,10 +2354,6 @@ html[data-theme='night'] .home-journal-card {
 }
 
 /* Shop page */
-.page--shop {
-  width: min(1160px, 100%);
-}
-
 .shop-hero {
   text-align: left;
   padding: 28px 0 8px;
@@ -2540,10 +2514,6 @@ html[data-theme='night'] .home-journal-card {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-
-.page--search {
-  width: min(1160px, 100%);
 }
 
 .search-hero {
@@ -3282,10 +3252,6 @@ a.product-card:hover {
 }
 
 /* Legal (v3) */
-.page--legal {
-  width: min(1000px, 100%);
-}
-
 .legal-hero {
   max-width: 46rem;
   padding: 28px 0 8px;
@@ -3454,14 +3420,6 @@ a.product-card:hover {
 }
 
 /* FAQ (v3) */
-.page--faq {
-  width: min(900px, 100%);
-}
-
-.page--faq-editing {
-  width: min(960px, 100%);
-}
-
 .faq-hero {
   text-align: left;
   padding: 28px 0 8px;
@@ -3761,10 +3719,6 @@ a.product-card:hover {
 }
 
 /* Contact (v3) */
-.page--contact {
-  width: min(1040px, 100%);
-}
-
 .contact-hero {
   text-align: left;
   padding: 28px 0 8px;
@@ -4205,10 +4159,6 @@ a.product-card:hover {
 }
 
 /* Cart page (v3) */
-.page--cart {
-  width: min(1160px, 100%);
-}
-
 .cart-hero {
   text-align: left;
   padding: 28px 0 8px;
@@ -4835,7 +4785,6 @@ a.product-card:hover {
 /* Staff login (v3) */
 .page--auth {
   position: relative;
-  width: min(720px, 100%);
 }
 
 .page--auth .auth-card {
@@ -4929,10 +4878,6 @@ a.product-card:hover {
 }
 
 /* Not found (v3) */
-.page--notfound {
-  width: min(760px, 100%);
-}
-
 .notfound {
   position: relative;
   display: flex;
@@ -5472,10 +5417,6 @@ a.product-card:hover {
 }
 
 /* One centered column: the hero, the policy card and the form share this width. */
-.page--narrow.page--refund {
-  max-width: 624px;
-}
-
 /* Screen-reader labels only; the text inside the boxes keeps normal weight. */
 .refund-form .form-field {
   font-weight: 400;
