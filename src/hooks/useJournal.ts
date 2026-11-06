@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { SupportedLocale } from '../lib/i18n'
-import { fetchJournalPost, fetchJournalPosts, type JournalPost } from '../lib/journal'
+import {
+  fetchJournalPost,
+  fetchJournalPosts,
+  readCachedJournalPost,
+  readCachedJournalPosts,
+  type JournalPost,
+} from '../lib/journal'
 
 export function useJournalPosts(locale: SupportedLocale, author?: string, includeArchived = false, managerKey?: string) {
   const requestKey = `${locale}\u0000${author ?? ''}\u0000${includeArchived}\u0000${managerKey ?? ''}`
@@ -12,7 +18,8 @@ export function useJournalPosts(locale: SupportedLocale, author?: string, includ
     try {
       setResult({ key: requestKey, posts: await fetchJournalPosts(locale, author, includeArchived), error: false })
     } catch {
-      setResult({ key: requestKey, posts: [], error: true })
+      const cached = readCachedJournalPosts(locale, author)
+      setResult({ key: requestKey, posts: cached ?? [], error: !cached })
     }
   }, [locale, author, includeArchived, requestKey])
 
@@ -20,12 +27,22 @@ export function useJournalPosts(locale: SupportedLocale, author?: string, includ
     let cancelled = false
     void fetchJournalPosts(locale, author, includeArchived)
       .then((posts) => { if (!cancelled) setResult({ key: requestKey, posts, error: false }) })
-      .catch(() => { if (!cancelled) setResult({ key: requestKey, posts: [], error: true }) })
+      .catch(() => {
+        if (cancelled) return
+        const cached = readCachedJournalPosts(locale, author)
+        setResult({ key: requestKey, posts: cached ?? [], error: !cached })
+      })
     return () => { cancelled = true }
   }, [locale, author, includeArchived, requestKey])
 
   const current = result.key === requestKey
-  return { posts: current ? result.posts : [], loaded: current, error: current && result.error, reload }
+  const cached = current ? undefined : readCachedJournalPosts(locale, author)
+  return {
+    posts: current ? result.posts : cached ?? [],
+    loaded: current || cached !== undefined,
+    error: current && result.error,
+    reload,
+  }
 }
 
 export function useJournalPost(
@@ -45,11 +62,20 @@ export function useJournalPost(
 
     void fetchJournalPost(slug, locale, includeArchived)
       .then((post) => { if (!cancelled) setResult({ key: requestKey, post, error: false }) })
-      .catch(() => { if (!cancelled) setResult({ key: requestKey, error: true }) })
+      .catch(() => {
+        if (cancelled) return
+        const cached = readCachedJournalPost(slug, locale)
+        setResult({ key: requestKey, post: cached, error: !cached })
+      })
 
     return () => { cancelled = true }
   }, [slug, locale, includeArchived, requestKey])
 
   const current = result.key === requestKey
-  return { post: current ? result.post : undefined, loaded: !slug || current, error: current && result.error }
+  const cached = current || !slug ? undefined : readCachedJournalPost(slug, locale)
+  return {
+    post: current ? result.post : cached,
+    loaded: !slug || current || cached !== undefined,
+    error: current && result.error,
+  }
 }
