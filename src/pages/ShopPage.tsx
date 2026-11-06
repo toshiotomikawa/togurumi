@@ -51,7 +51,11 @@ function ShopPage() {
             <h1 className="shop-hero__title editable-text">{editor.content.title}</h1>
             <p className="shop-hero__intro editable-text">{editor.content.intro}</p>
           </div>
-          {cover && <img className="shop-hero__photo" src={cover.image} alt={cover.name} />}
+          {cover ? (
+            <img className="shop-hero__photo" src={cover.image} alt={cover.name} />
+          ) : !loaded ? (
+            <div className="shop-hero__photo shop-hero__photo--pending" aria-hidden="true" />
+          ) : null}
         </section>
       )}
 
@@ -77,16 +81,21 @@ function ShopPage() {
         <p className="shop-delivery-note">{messages.shop.deliveryNotice}</p>
 
         {!loaded ? (
-          <div
-            className="card-grid card-grid--products"
-            aria-busy="true"
-            aria-live="polite"
-            aria-label={messages.shop.loadingLabel}
-          >
-            {Array.from({ length: SKELETON_COUNT }, (_, index) => (
-              <ProductCardSkeleton key={`skeleton-${index}`} />
-            ))}
-          </div>
+          <>
+            <div className="tag-filter tag-filter--pending" aria-hidden="true">
+              <span className="tag-filter__item">{messages.shop.allCategories}</span>
+            </div>
+            <div
+              className="card-grid card-grid--products"
+              aria-busy="true"
+              aria-live="polite"
+              aria-label={messages.shop.loadingLabel}
+            >
+              {Array.from({ length: SKELETON_COUNT }, (_, index) => (
+                <ProductCardSkeleton key={`skeleton-${index}`} />
+              ))}
+            </div>
+          </>
         ) : products.length > 0 ? (
           <>
             {categories.length > 1 && (

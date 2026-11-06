@@ -77,6 +77,8 @@ a, button, input, textarea, select, summary { -webkit-tap-highlight-color: trans
 .product-card--sold-out .product-card__image { filter: none; opacity: .85; }
 .shop-hero--photographic { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, .6fr); gap: 48px; align-items: center; }
 .shop-hero__photo { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 50% 50% 16px 16px; }
+.shop-hero__photo--pending { background: var(--v6-cream-2); }
+.tag-filter--pending { visibility: hidden; }
 .shop-delivery-note, .product-detail__delivery { background: var(--v5-sage); color: var(--v5-green); border: none; padding: 20px 24px; border-radius: 16px; line-height: 1.6; }
 .tag-filter { gap: 12px; margin-block: 28px; }
 .tag-filter__item { min-height: 44px; border-radius: 999px; padding: 12px 20px; border: 1px solid var(--border-strong); background: transparent; color: var(--text-h); font-size: 15px; }
