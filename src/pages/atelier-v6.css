@@ -96,7 +96,7 @@ body, #root { background: var(--v6-cream); }
 
 /* ── Header ─────────────────────────────────────────── */
 #root .site-header { position: sticky; top: 0; z-index: 30; background: color-mix(in srgb, var(--v6-cream) 94%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--v6-line); }
-#root .site-header__inner { max-width: 1440px; width: 100%; padding: 10px 40px; display: flex; flex-wrap: nowrap; align-items: center; justify-content: flex-start; gap: 28px; min-height: 68px; }
+#root .site-header__inner { max-width: var(--atelier-page); width: 100%; padding: 10px var(--atelier-gutter); display: flex; flex-wrap: nowrap; align-items: center; justify-content: flex-start; gap: 28px; min-height: 68px; }
 #root .site-brand { width: auto; justify-content: flex-start; gap: 8px; flex: 0 0 auto; }
 #root .site-brand__mark { width: 42px; height: 42px; flex: 0 0 auto; background: var(--v6-brick); mask-size: contain; mask-repeat: no-repeat; mask-position: center; -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; }
 #root .site-brand__logo { height: 44px; }
@@ -114,8 +114,12 @@ body, #root { background: var(--v6-cream); }
 #root .cart-link__badge--empty { display: none; }
 
 /* ── Shared atoms ───────────────────────────────────── */
-.atelier-wrap { width: min(1240px, 100%); margin-inline: auto; padding-inline: 32px; }
-.atelier-wrap--wide { width: min(1440px, 100%); }
+/* One page edge for the whole home page: every section lines up with the header. */
+#root { --atelier-page: 1440px; --atelier-gutter: 40px; }
+@media (max-width: 900px) { #root { --atelier-gutter: 20px; } }
+@media (max-width: 600px) { #root { --atelier-gutter: 16px; } }
+.atelier-wrap { width: min(var(--atelier-page), 100%); margin-inline: auto; padding-inline: var(--atelier-gutter); }
+.atelier-wrap--wide { width: min(var(--atelier-page), 100%); }
 .atelier-home { font-family: var(--sans); color: var(--v6-body); background: var(--v6-cream); }
 .atelier-home h1, .atelier-home h2, .atelier-home h3 { color: var(--v6-choc); margin: 0; }
 .atelier-button { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 10px 30px; border-radius: 999px; background: var(--v6-olive); color: var(--v6-on-olive) !important; font-weight: 700; font-size: 17px; text-decoration: none; box-shadow: 0 6px 16px -10px #3c4520; transition: background .2s ease, transform .2s ease; }
@@ -144,8 +148,8 @@ body, #root { background: var(--v6-cream); }
 .atelier-hero__warmth { position: absolute; inset: 0; background: radial-gradient(90% 120% at 60% 40%, #ffe2b833 0%, #e3a76a55 70%, #b8783f80 100%), linear-gradient(90deg, #f3e3cc 0%, #f3e3cc00 30%); mix-blend-mode: multiply; pointer-events: none; }
 :root[data-theme="night"] .atelier-hero__tile img { filter: sepia(.4) saturate(1.05) hue-rotate(-10deg) brightness(.72); }
 :root[data-theme="night"] .atelier-hero__warmth { background: linear-gradient(90deg, #241b14 0%, #241b1400 34%), linear-gradient(180deg, transparent 50%, #1c150fcc 100%); mix-blend-mode: normal; }
-.atelier-hero__leaf { position: absolute; left: -26px; top: -18px; width: 120px; color: var(--v6-leaf); opacity: .55; transform: rotate(160deg) scaleX(-1); z-index: 0; pointer-events: none; }
-.atelier-hero__inner { position: relative; width: min(1440px, 100%); padding-inline: clamp(32px, 8vw, 150px); }
+.atelier-hero__leaf { position: absolute; left: -44px; top: -34px; width: 84px; color: var(--v6-leaf); opacity: .55; transform: rotate(160deg) scaleX(-1); z-index: 0; pointer-events: none; }
+.atelier-hero__inner { position: relative; width: min(var(--atelier-page), 100%); padding-inline: var(--atelier-gutter); }
 .atelier-hero__words { max-width: 430px; padding-block: 28px; }
 .atelier-hero h1 { font-size: clamp(36px, 3.2vw, 46px); line-height: 1.05; font-weight: 500; letter-spacing: -.015em; font-variation-settings: 'SOFT' 50, 'WONK' 0; text-wrap: balance; }
 .atelier-hero__rule { width: 180px; margin: 10px 0 12px; color: var(--v6-brick); }
@@ -153,7 +157,7 @@ body, #root { background: var(--v6-cream); }
 .atelier-hero__words p { margin: 0 0 18px; font-size: 16.5px; line-height: 1.5; color: var(--v6-choc-2); max-width: 41ch; }
 
 /* ── Benefits ───────────────────────────────────────── */
-.atelier-benefits { list-style: none; margin: 18px auto 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: var(--v6-cream-2); border-radius: 14px; padding: 18px 12px; max-width: 1160px; width: calc(100% - 64px); }
+.atelier-benefits { list-style: none; margin: 18px auto 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: var(--v6-cream-2); border-radius: 14px; padding: 18px 12px; max-width: calc(var(--atelier-page) - 2 * var(--atelier-gutter)); width: calc(100% - 2 * var(--atelier-gutter)); }
 .atelier-benefits li { display: flex; align-items: center; gap: 16px; padding: 4px 24px; min-width: 0; }
 .atelier-benefits li + li { border-left: 1px solid var(--v6-line-strong); }
 .atelier-benefits__icon { width: 50px; height: 50px; flex: 0 0 auto; color: var(--v6-choc-2); }
@@ -162,7 +166,7 @@ body, #root { background: var(--v6-cream); }
 
 /* ── Collection ─────────────────────────────────────── */
 .atelier-collection { padding-block: 30px 28px; }
-.atelier-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 14px; padding-inline: 8px; }
+.atelier-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
 .atelier-heading h2 { display: inline-flex; align-items: center; gap: 12px; font-size: clamp(28px, 2.3vw, 34px); font-weight: 500; letter-spacing: -.01em; }
 .atelier-heading__sprig { width: 44px; height: 28px; color: var(--v6-olive); }
 .atelier-cards { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 14px; }
@@ -189,7 +193,7 @@ body, #root { background: var(--v6-cream); }
 .atelier-empty { text-align: center; padding: 40px 0; }
 
 /* ── Last pieces band ───────────────────────────────── */
-.atelier-band { position: relative; display: grid; grid-template-columns: minmax(380px, 1fr) 2.4fr; gap: 24px; align-items: center; margin-block: 6px 40px; padding: 14px 18px 14px 0; border-radius: 16px; overflow: hidden; background: linear-gradient(100deg, var(--v6-olive-soft) 0%, color-mix(in srgb, var(--v6-olive-soft) 60%, var(--v6-cream)) 32%, var(--v6-cream-2) 34%, var(--v6-cream-2) 100%); width: calc(min(1440px, 100%) - 64px); padding-inline: 0 18px; }
+.atelier-band { position: relative; max-width: calc(var(--atelier-page) - 2 * var(--atelier-gutter)); width: calc(100% - 2 * var(--atelier-gutter)); display: grid; grid-template-columns: minmax(380px, 1fr) 2.4fr; gap: 24px; align-items: center; margin-block: 6px 40px; padding: 14px 18px 14px 0; border-radius: 16px; overflow: hidden; background: linear-gradient(100deg, var(--v6-olive-soft) 0%, color-mix(in srgb, var(--v6-olive-soft) 60%, var(--v6-cream)) 32%, var(--v6-cream-2) 34%, var(--v6-cream-2) 100%); padding-inline: 0 18px; }
 .atelier-band__leaf { position: absolute; left: -6px; bottom: -34px; width: 110px; color: var(--v6-leaf); opacity: .7; transform: rotate(8deg); pointer-events: none; }
 .atelier-band__words { position: relative; display: flex; gap: 16px; align-items: flex-start; padding: 18px 0 18px 64px; }
 .atelier-band__crown { width: 48px; height: 48px; color: var(--v6-gold); flex: 0 0 auto; }
@@ -239,7 +243,7 @@ body, #root { background: var(--v6-cream); }
 /* ── Footer ─────────────────────────────────────────── */
 #root .site-footer--atelier { position: relative; overflow: hidden; margin-top: 0; background: var(--v6-olive-dark); color: var(--v5-footer-text); }
 :root:not([data-theme="night"]) #root .site-footer--atelier { background: #56643c; }
-#root .site-footer--atelier .site-footer__inner { max-width: 1440px; width: 100%; margin: 0 auto; padding: 30px clamp(32px, 6vw, 110px) 18px; display: grid; grid-template-columns: auto minmax(0, 1.2fr) auto auto minmax(0, 1.3fr); gap: 28px 40px; align-items: start; }
+#root .site-footer--atelier .site-footer__inner { max-width: var(--atelier-page); width: 100%; margin: 0 auto; padding: 30px var(--atelier-gutter) 18px; display: grid; grid-template-columns: auto minmax(0, 1.2fr) auto auto minmax(0, 1.3fr); gap: 28px 40px; align-items: start; }
 .site-footer__leaf { position: absolute; width: 96px; color: #8e9c66; opacity: .55; pointer-events: none; }
 .site-footer__leaf--left { left: -18px; bottom: -40px; transform: rotate(12deg); }
 .site-footer__leaf--right { right: -18px; top: -20px; transform: scaleX(-1) rotate(-10deg); }
@@ -347,6 +351,7 @@ body, #root { background: var(--v6-cream); }
 .atelier-product .product-detail__sold-out-badge { position: absolute; top: 20px; left: 20px; background: var(--v6-card); color: var(--v6-choc); border: 1px solid var(--v6-line); }
 
 /* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 1520px) { .atelier-hero__leaf { display: none; } }
 @media (max-width: 1280px) {
   .atelier-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
   .atelier-band { grid-template-columns: 1fr; padding: 0 18px 18px; background: linear-gradient(180deg, var(--v6-olive-soft), var(--v6-cream-2)); }
@@ -359,7 +364,7 @@ body, #root { background: var(--v6-cream); }
   .atelier-benefits li:nth-child(3) { border-left: 0; }
 }
 @media (max-width: 900px) {
-  #root .site-header__inner { padding: 10px 20px; gap: 14px; justify-content: space-between; min-height: 60px; }
+  #root .site-header__inner { gap: 14px; justify-content: space-between; min-height: 60px; }
   #root .site-header__divider { display: none; }
   #root .site-brand__mark { width: 34px; height: 34px; }
   #root .site-brand__logo { height: 36px; }
@@ -381,26 +386,23 @@ body, #root { background: var(--v6-cream); }
   #root .site-footer--atelier .site-footer__social, #root .site-footer__news { padding-left: 0; border-left: 0; grid-column: auto; }
 }
 @media (max-width: 600px) {
-  .atelier-wrap { padding-inline: 16px; }
-  .atelier-hero__inner { padding-inline: 20px; }
   .atelier-hero h1 { font-size: 38px; }
   .atelier-hero__words p { font-size: 16px; }
   .atelier-hero__stage { height: 230px; }
   .atelier-hero__tile + .atelier-hero__tile { margin-left: -48px; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 48px); mask-image: linear-gradient(90deg, transparent 0, #000 48px); }
   .atelier-hero__tile { flex-basis: calc(33.334% + 32px); }
-  .atelier-benefits { width: calc(100% - 32px); grid-template-columns: 1fr 1fr; padding: 14px 6px; gap: 14px 0; }
+  .atelier-benefits { grid-template-columns: 1fr 1fr; padding: 14px 6px; gap: 14px 0; }
   .atelier-benefits li { flex-direction: column; align-items: flex-start; gap: 8px; padding: 2px 12px; }
   .atelier-benefits__icon { width: 38px; height: 38px; }
   .atelier-benefits h2 { font-size: 16px; }
   .atelier-benefits p { font-size: 12.5px; }
   .atelier-heading { flex-direction: column; align-items: flex-start; gap: 6px; padding-inline: 0; }
   .atelier-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .atelier-band { width: calc(100% - 32px); }
   .atelier-band__words { padding: 20px 0 0 12px; }
   .atelier-band__crown { width: 38px; height: 38px; }
   .atelier-band__photos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .atelier-band__leaf { display: none; }
-  #root .site-footer--atelier .site-footer__inner { grid-template-columns: 1fr; padding: 28px 20px 16px; }
+  #root .site-footer--atelier .site-footer__inner { grid-template-columns: 1fr; padding: 28px var(--atelier-gutter) 16px; }
   #root .site-footer--atelier .site-footer__columns { gap: 48px; }
   .atelier-product .product-detail__image { aspect-ratio: 1; }
   .product-detail__seal { width: 92px; height: 92px; left: 14px; bottom: 14px; }
