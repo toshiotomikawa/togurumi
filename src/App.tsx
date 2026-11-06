@@ -1,8 +1,10 @@
+import { useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute'
 import SiteFooter from './components/SiteFooter'
 import SiteHeader from './components/SiteHeader'
 import { useLocale } from './hooks/useLocale'
+import { preloadJournal } from './lib/journal'
 import AccountPage from './pages/AccountPage'
 import AdminPage from './pages/AdminPage'
 import CartPage from './pages/CartPage'
@@ -24,7 +26,12 @@ import SearchPage from './pages/SearchPage'
 import ShopPage from './pages/ShopPage'
 
 function App() {
-  const { messages } = useLocale()
+  const { messages, locale } = useLocale()
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => { void preloadJournal(locale).catch(() => {}) }, 1200)
+    return () => window.clearTimeout(timer)
+  }, [locale])
 
   return (
     <>

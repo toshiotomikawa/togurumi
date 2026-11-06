@@ -359,16 +359,26 @@ function parseJournalInput(body: unknown): JournalPostInput {
   }
 }
 
+/** Lets the CDN answer public journal reads at once and refresh them in the background. */
+function setPublicJournalCache(req: express.Request, res: express.Response) {
+  res.setHeader(
+    'Cache-Control',
+    req.query.includeArchived === '1'
+      ? 'no-store'
+      : 'public, max-age=0, s-maxage=60, stale-while-revalidate=604800',
+  )
+}
+
 app.get('/api/public/journal', async (req, res) => {
   const locale = String(req.query.locale ?? '')
   if (!isJournalLocale(locale)) {
     res.status(400).json({ error: 'invalid_input' })
     return
   }
-  res.setHeader('Cache-Control', 'no-store')
   const author = String(req.query.author ?? '').trim() || undefined
   const includeArchived = req.query.includeArchived === '1' && Boolean(req.session.userId)
   const posts = await journalStore.listPublic(locale, author, includeArchived)
+  setPublicJournalCache(req, res)
   res.json({ posts })
 })
 
@@ -378,13 +388,14 @@ app.get('/api/public/journal/:slug', async (req, res) => {
     res.status(400).json({ error: 'invalid_input' })
     return
   }
-  res.setHeader('Cache-Control', 'no-store')
   const includeArchived = req.query.includeArchived === '1' && Boolean(req.session.userId)
   const post = await journalStore.getPublic(req.params.slug, locale, includeArchived)
   if (!post) {
+    res.setHeader('Cache-Control', 'no-store')
     res.status(404).json({ error: 'not_found' })
     return
   }
+  setPublicJournalCache(req, res)
   res.json({ post })
 })
 
