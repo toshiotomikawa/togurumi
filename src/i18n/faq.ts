@@ -40,7 +40,7 @@ const enUS: FaqContent = {
     {
       question: 'How do shipping and delivery work?',
       answer:
-        'For now, delivery is available only in Curitiba and the metropolitan region. Shipping to all Brazilian states is planned for the future. Orders are packed with care, and delivery details are arranged at checkout.',
+        'For now, we ship only to Curitiba and its metropolitan region, and all of Brazil is coming soon. Shipping is calculated in the cart from your CEP, with PAC and Sedex options, plus free pickup in Colombo. Orders are packed with care.',
     },
     {
       question: 'What materials do you use?',
@@ -50,7 +50,7 @@ const enUS: FaqContent = {
     {
       question: 'What payment methods do you accept?',
       answer:
-        "Online checkout isn't open just yet, we'll update this page as soon as it is. In the meantime, reach out through the contact page to arrange a purchase.",
+        "We accept card and Pix, with secure payment through Stripe.",
     },
     {
       question: 'Can I return or exchange an item?',
@@ -94,7 +94,7 @@ const ptBR: FaqContent = {
     {
       question: 'Como funciona o envio?',
       answer:
-        'Por enquanto, as entregas são somente para Curitiba e região metropolitana. Futuramente, atenderemos todos os estados do Brasil. Os pedidos são embalados com cuidado e os detalhes de entrega são combinados no fechamento da compra.',
+        'Por enquanto, enviamos somente para Curitiba e região metropolitana, e em breve atenderemos todo o Brasil. O frete é calculado no carrinho pelo seu CEP, com opções de PAC e Sedex, e também há retirada grátis em Colombo. Os pedidos são embalados com cuidado.',
     },
     {
       question: 'Quais materiais vocês usam?',
@@ -104,7 +104,7 @@ const ptBR: FaqContent = {
     {
       question: 'Quais formas de pagamento são aceitas?',
       answer:
-        'A finalização de compra online ainda não está disponível, vamos atualizar esta página assim que estiver. Por enquanto, fale com a gente pela página de contato para combinar a compra.',
+        'Aceitamos cartão e Pix, com pagamento seguro pela Stripe.',
     },
     {
       question: 'Posso trocar ou devolver um produto?',
@@ -148,7 +148,7 @@ const esES: FaqContent = {
     {
       question: '¿Cómo funciona el envío?',
       answer:
-        'Por ahora, las entregas son solo para Curitiba y su región metropolitana. Más adelante enviaremos a todos los estados de Brasil. Los pedidos se empacan con cuidado y los detalles de entrega se coordinan al finalizar la compra.',
+        'Por ahora, enviamos solo a Curitiba y su región metropolitana, y pronto llegaremos a todo Brasil. El envío se calcula en el carrito con tu CEP, con opciones de PAC y Sedex, además de recogida gratis en Colombo. Los pedidos se empacan con cuidado.',
     },
     {
       question: '¿Qué materiales usan?',
@@ -158,7 +158,7 @@ const esES: FaqContent = {
     {
       question: '¿Qué métodos de pago aceptan?',
       answer:
-        'El pago en línea todavía no está disponible, actualizaremos esta página en cuanto lo esté. Por ahora, escríbenos por la página de contacto para coordinar la compra.',
+        'Aceptamos tarjeta y Pix, con pago seguro a través de Stripe.',
     },
     {
       question: '¿Puedo devolver o cambiar un producto?',
