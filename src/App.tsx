@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import SiteFooter from './components/SiteFooter'
 import SiteHeader from './components/SiteHeader'
 import { useLocale } from './hooks/useLocale'
+import { preloadShopProducts } from './hooks/useShopProducts'
 import { preloadJournal } from './lib/journal'
 import AccountPage from './pages/AccountPage'
 import AdminPage from './pages/AdminPage'
@@ -29,7 +30,10 @@ function App() {
   const { messages, locale } = useLocale()
 
   useEffect(() => {
-    const timer = window.setTimeout(() => { void preloadJournal(locale).catch(() => {}) }, 1200)
+    const timer = window.setTimeout(() => {
+      void preloadJournal(locale).catch(() => {})
+      void preloadShopProducts().catch(() => {})
+    }, 1200)
     return () => window.clearTimeout(timer)
   }, [locale])
 
