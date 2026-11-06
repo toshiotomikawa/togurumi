@@ -29,8 +29,7 @@ a, button, input, textarea, select, summary { -webkit-tap-highlight-color: trans
 .site-mobile-panel { box-shadow: none; }
 .mobile-preferences__label, .mobile-preferences__button .settings-toggle__glyph { text-transform: none; letter-spacing: 0; font-size: 14px; }
 .settings-toggle__menu { border-radius: 20px; box-shadow: var(--v5-shadow); background: var(--surface); }
-.page { width: min(1240px, 100%); max-width: 1240px; padding: 40px 32px 88px; margin-inline: auto; }
-.page--narrow { max-width: 800px; }
+.page { width: min(var(--atelier-page), 100%); padding: 40px var(--atelier-gutter) 88px; margin-inline: auto; }
 .page :is(h1, h2, h3) { color: var(--text-h); }
 .page :is(.shop-hero__title, .journal-hero__title, .search-hero__title, .faq-hero__title, .contact-hero__title, .legal-hero__title, .cart-hero__title) {
   font-size: clamp(38px, 4.4vw, 58px); line-height: 1.08; letter-spacing: -.025em; max-width: 22ch; margin: 0 0 24px;
@@ -118,7 +117,6 @@ a, button, input, textarea, select, summary { -webkit-tap-highlight-color: trans
 .journal-card__title { font-size: clamp(28px, 3vw, 38px); grid-column: 1; margin: 0; }
 .journal-card__meta { grid-column: 1; grid-row: 2; color: var(--text); font-size: 15px; margin: 0; }
 .journal-card__summary { grid-column: 2; grid-row: 1 / span 2; font-size: 17px; margin: 0; }
-.page--journal-post { max-width: 960px; }
 .journal-article__header { width: 100%; max-width: none; background: var(--v5-pink); padding: 48px; border: none; border-radius: 0 0 32px 32px; margin-bottom: 48px; }
 .journal-article__title { font-size: clamp(36px, 4.6vw, 58px); margin: 0 0 24px; }
 .journal-article__meta { gap: 12px 24px; font-size: 15px; }
@@ -128,7 +126,6 @@ a, button, input, textarea, select, summary { -webkit-tap-highlight-color: trans
 .journal-post__body blockquote { background: var(--v5-sage); border-color: var(--v5-green); border-radius: 0 16px 16px 0; color: var(--v5-green); }
 .journal-post__body a, .legal-body a, .faq-item__answer a { text-decoration: underline; text-underline-offset: 4px; }
 .journal-post__body pre { max-width: 100%; overflow-x: auto; }
-.page--faq { max-width: 1040px; }
 .faq-list { gap: 0; }
 .faq-item { border: none; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; }
 .faq-item:not(.faq-item--editing):hover { border-color: var(--border-strong); background: transparent; }
@@ -176,7 +173,7 @@ a, button, input, textarea, select, summary { -webkit-tap-highlight-color: trans
 .cart-summary__row--total { border-color: var(--border-strong); }
 .cart-empty, .checkout-result, .search-empty, .shop-empty, .journal-empty, .faq-empty { background: var(--v5-sage); border: none; padding: 48px; border-radius: 24px; }
 .cart-empty__deco, .journal-empty__deco, .auth-page__ornament, .notfound__ornament { display: none; }
-.page--auth { max-width: 740px; padding-top: 48px; }
+.page--auth { padding-top: 48px; }
 .page--auth .auth-card { padding: 48px; border: none; background: var(--v5-pink); border-radius: 32px; box-shadow: none; }
 .auth-card__title, .auth-card h1 { font-size: 40px; }
 .auth-lock { color: var(--accent); background: transparent; border: none; }
@@ -192,10 +189,9 @@ a, button, input, textarea, select, summary { -webkit-tap-highlight-color: trans
 .auth-message, .editor-feedback { border-radius: 12px; padding: 16px 20px; }
 .editor-feedback--error, .auth-message { color: var(--v5-error); background: var(--surface-2); border-color: var(--v5-error); }
 .editor-feedback--success { color: var(--v5-success); background: var(--v5-sage); border-color: var(--v5-success); }
-.account-page { max-width: 1040px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; align-items: start; }
+.account-page { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; align-items: start; }
 .account-page .auth-card { background: var(--v5-pink); padding: 32px; }
 .account-page .auth-card + .auth-card { margin-top: 0; background: var(--v5-sage); }
-.page--notfound { max-width: 900px; }
 .notfound { padding: 64px 48px; border-radius: 0 0 40px 40px; background: var(--v5-pink); }
 .notfound__title { font-size: clamp(40px, 6vw, 68px); }
 .notfound__actions { gap: 16px; flex-wrap: wrap; }
@@ -217,7 +213,7 @@ a, button, input, textarea, select, summary { -webkit-tap-highlight-color: trans
   .cart-summary__panel { position: static; }
 }
 @media (max-width: 760px) {
-  .page { padding: 24px 20px 56px; }
+  .page { padding: 24px var(--atelier-gutter) 56px; }
   .page :is(.shop-hero, .journal-hero, .search-hero, .faq-hero, .contact-hero, .legal-hero, .cart-hero) { padding: 32px 24px; margin-bottom: 32px; border-radius: 0 0 28px 28px; }
   .shop-hero--photographic { gap: 24px; grid-template-columns: minmax(0, 1fr) minmax(0, .5fr); }
   .card-grid--products, .card-grid--patterns { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 20px; }
@@ -296,3 +292,6 @@ a, button, input, textarea, select, summary { -webkit-tap-highlight-color: trans
 }
 :root[data-theme="system"] .site-brand__logo { filter: brightness(0) invert(1); }
 }
+/* Refund page: the heading lines up with the form on the shared left edge. */
+.page--refund .hero { text-align: left; margin-inline: 0; padding-inline: 0; }
+.page--refund .hero :is(p, h1) { margin-inline: 0; }
