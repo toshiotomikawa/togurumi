@@ -13,7 +13,7 @@ pagamento pelo webhook `POST /api/stripe/webhook`.
    ignorados.
 2. **`POST /api/checkout`** (`server/checkout.ts`):
    - recusa carrinho malformado (máx. 20 linhas e 20 unidades por linha);
-   - procura cada produto no catálogo e usa o `PREÇO FINAL` da planilha,
+   - procura cada produto no catálogo e usa o `PREÇO` da planilha,
      convertido para centavos;
    - valida a cor contra a coluna `CORES` (produtos de cor única não aceitam
      cor);
@@ -199,7 +199,7 @@ npm run test:checkout
 ## Proteções da auditoria de lançamento
 
 - Produção exige `DATABASE_URL`; o adaptador de pedidos nunca usa memória nesse ambiente.
-- `PREÇO FINAL` aceita reais inteiros ou vírgula e duas casas decimais, com `R$` opcional
+- `PREÇO` aceita reais inteiros ou vírgula e duas casas decimais, com `R$` opcional
   e pontos só para milhares completos. `49.90`, texto inválido, zero e negativos são recusados.
   Uma célula vazia continua excluindo o produto da loja.
 - Checkout lê preço e estoque com atualização forçada. Falha na planilha responde 503;

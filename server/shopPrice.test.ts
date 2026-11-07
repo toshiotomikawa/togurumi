@@ -12,6 +12,29 @@ test('BRL prices are parsed exactly without guessing decimal separators', () => 
 })
 
 
+test('catalog reads the sale price from a column named PREÇO', async (t) => {
+  const { JWT } = await import('google-auth-library')
+  const { getShopProducts } = await import('./shop.js')
+  const { resetAuthClientForTest } = await import('./sheets.js')
+  const names = ['GOOGLE_SHEETS_SPREADSHEET_ID', 'GOOGLE_SHEETS_SERVICE_ACCOUNT_EMAIL', 'GOOGLE_SHEETS_SERVICE_ACCOUNT_PRIVATE_KEY']
+  const previous = names.map(name => process.env[name])
+  names.forEach(name => { process.env[name] = 'test-placeholder' })
+  t.mock.method(JWT.prototype, 'request', async () => ({
+    data: { values: [['MODELO', 'SUGERIDO', 'PREÇO', 'MANTER?'], ['Abelha', 'R$ 25,50', 'R$ 35,00', 'Sim'], ['Appa', 'R$ 82,50', '', 'Sim']] },
+  }))
+  resetAuthClientForTest()
+  try {
+    const products = await getShopProducts({ forceRefresh: true })
+    assert.deepEqual(products.map(product => [product.name, product.price]), [['Abelha', 35]])
+  } finally {
+    names.forEach((name, i) => {
+      if (previous[i] === undefined) delete process.env[name]
+      else process.env[name] = previous[i]
+    })
+    resetAuthClientForTest()
+  }
+})
+
 test('checkout catalog forces fresh prices and never falls back after a sheet error', async (t) => {
   const { JWT } = await import('google-auth-library')
   const { getShopProducts } = await import('./shop.js')
