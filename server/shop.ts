@@ -70,6 +70,11 @@ export function parsePrice(value: string): number {
   return cents / 100
 }
 
+/** The sale price column has been named both PREÇO and PREÇO FINAL in the sheet. */
+function priceCell(row: Record<string, string>) {
+  return row['PREÇO FINAL'] ?? row['PREAO FINAL'] ?? row['PRECO FINAL'] ?? row['PREÇO'] ?? row['PRECO'] ?? ''
+}
+
 export type ProductImageTarget = {
   rowNumber: number
   name: string
@@ -142,10 +147,10 @@ export async function getShopProducts(options: { forceRefresh?: boolean } = {}):
     const rows = await getSheetTab('CATALOGO', options)
 
     const products = rows
-      .filter((row) => row['MANTER?']?.trim().toLowerCase() === 'sim' && (row['PREÇO FINAL'] ?? row['PREAO FINAL'] ?? row['PRECO FINAL'])?.trim())
+      .filter((row) => row['MANTER?']?.trim().toLowerCase() === 'sim' && priceCell(row).trim())
       .map((row) => {
         const images = parseProductImages(row['IMAGEM'] ?? '')
-        const priceField = row['PREÇO FINAL'] ?? row['PREAO FINAL'] ?? row['PRECO FINAL'] ?? ''
+        const priceField = priceCell(row)
         const descField = row['DESCRIÇÃO'] ?? row['DESCRIAAO'] ?? row['DESCRICAO'] ?? ''
         return {
           name: row['MODELO'],
