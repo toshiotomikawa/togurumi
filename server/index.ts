@@ -923,7 +923,7 @@ app.put<{ locale: string; section: string }>('/api/content/:locale/:section', re
   }
 })
 
-app.get('/api/sheets/:tab', async (req, res) => {
+app.get<{ tab: string }>('/api/sheets/:tab', requireStaff, async (req, res) => {
   try {
     const rows = await getSheetTab(req.params.tab)
     res.json({ rows })
