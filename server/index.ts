@@ -15,7 +15,7 @@ import {
   originAllowed,
 } from './authSession.js'
 import { SESSION_COOKIE, clearCookieOptions, sessionCookieOptions } from './cookies.js'
-import { fetchGoogleProfile, googleAuthUrl, googleEnabled } from './google.js'
+import { fetchGoogleProfile, googleAuthUrl, googleEnabled, googleStaffAllowed } from './google.js'
 import { deleteImageKitFile, ImageKitError, imageKitEnabled, uploadProductImage } from './imageKit.js'
 import {
   JournalError,
@@ -335,6 +335,10 @@ app.get('/api/auth/google/callback', async (req, res) => {
     const profile = await fetchGoogleProfile(code)
     let user = await userStore.findByGoogleId(profile.sub)
     if (!user) {
+      if (!googleStaffAllowed(profile.email, profile.emailVerified)) {
+        res.redirect(`${APP_URL}/login?error=google_not_allowed`)
+        return
+      }
       user = await userStore.createWithGoogle(profile.sub, profile.email, 'moderator')
     }
 

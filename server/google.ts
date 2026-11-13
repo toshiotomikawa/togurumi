@@ -23,6 +23,7 @@ export function googleAuthUrl(state: string) {
 type GoogleProfile = {
   sub: string
   email: string
+  emailVerified: boolean
 }
 
 export async function fetchGoogleProfile(code: string): Promise<GoogleProfile> {
@@ -49,8 +50,17 @@ export async function fetchGoogleProfile(code: string): Promise<GoogleProfile> {
 
   if (!profileRes.ok) throw new Error('google_profile_failed')
 
-  const profile = (await profileRes.json()) as { sub?: string; email?: string }
+  const profile = (await profileRes.json()) as { sub?: string; email?: string; email_verified?: boolean }
   if (!profile.sub || !profile.email) throw new Error('google_profile_failed')
 
-  return { sub: profile.sub, email: profile.email }
+  return { sub: profile.sub, email: profile.email, emailVerified: profile.email_verified === true }
+}
+
+/** Only verified emails listed in GOOGLE_STAFF_EMAILS (comma-separated) may become staff. */
+export function googleStaffAllowed(email: string, emailVerified: boolean): boolean {
+  const allowed = (process.env.GOOGLE_STAFF_EMAILS ?? '')
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean)
+  return emailVerified && allowed.includes(email.trim().toLowerCase())
 }
