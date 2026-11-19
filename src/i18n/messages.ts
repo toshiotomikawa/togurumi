@@ -18,6 +18,7 @@ export type Messages = {
     menuLabel: string
     menuCloseLabel: string
     skipToContent: string
+    backToTop: string
   }
   theme: { system: string; day: string; night: string; menuLabel: string }
   locale: { system: string; enUS: string; ptBR: string; esES: string; menuLabel: string }
@@ -463,6 +464,7 @@ const enUS: Messages = {
     menuLabel: 'Menu',
     menuCloseLabel: 'Close menu',
     skipToContent: 'Skip to main content',
+    backToTop: 'Back to top',
   },
   theme: { system: 'System', day: 'Day', night: 'Night', menuLabel: 'Theme' },
   locale: { system: 'System', enUS: 'English', ptBR: 'Portuguese (Brazil)', esES: 'Spanish', menuLabel: 'Language' },
@@ -953,6 +955,7 @@ const ptBR: Messages = {
     menuLabel: 'Menu',
     menuCloseLabel: 'Fechar menu',
     skipToContent: 'Pular para o conteúdo principal',
+    backToTop: 'Voltar ao topo',
   },
   theme: { system: 'Sistema', day: 'Dia', night: 'Noite', menuLabel: 'Tema' },
   locale: { system: 'Sistema', enUS: 'Inglês', ptBR: 'Português (Brasil)', esES: 'Espanhol', menuLabel: 'Idioma' },
@@ -1443,6 +1446,7 @@ const esES: Messages = {
     menuLabel: 'Menú',
     menuCloseLabel: 'Cerrar menú',
     skipToContent: 'Saltar al contenido principal',
+    backToTop: 'Volver arriba',
   },
   theme: { system: 'Sistema', day: 'Día', night: 'Noche', menuLabel: 'Tema' },
   locale: { system: 'Sistema', enUS: 'Inglés', ptBR: 'Portugués (Brasil)', esES: 'Español', menuLabel: 'Idioma' },

@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
+import BackToTop from './components/BackToTop'
 import ProtectedRoute from './components/ProtectedRoute'
 import SiteFooter from './components/SiteFooter'
 import SiteHeader from './components/SiteHeader'
@@ -108,6 +109,7 @@ function App() {
         </Suspense>
       </main>
       <SiteFooter />
+      <BackToTop />
     </>
   )
 }

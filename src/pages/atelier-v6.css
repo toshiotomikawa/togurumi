@@ -549,6 +549,15 @@ body, #root { background: var(--v6-cream); }
 .product-card__invite { display: block; margin-top: 8px; }
 .atelier-product .product-detail__invite { margin: 14px 0 6px; }
 
+/* Back to top: bottom right, shown after one screen of scrolling. */
+.back-to-top { position: fixed; right: 24px; bottom: 24px; z-index: 40; width: 48px; height: 48px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--v6-olive); color: var(--v6-on-olive); box-shadow: var(--v6-shadow); cursor: pointer; opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .2s ease, transform .2s ease, visibility 0s linear .2s; }
+.back-to-top.is-shown { opacity: 1; visibility: visible; transform: none; transition: opacity .2s ease, transform .2s ease, visibility 0s; }
+.back-to-top:hover { background: var(--v6-olive-dark); }
+.back-to-top:focus-visible { outline: 2px solid var(--v6-olive); outline-offset: 3px; }
+.back-to-top svg { width: 22px; height: 22px; }
+@media (prefers-reduced-motion: reduce) { .back-to-top { transition: none; } }
+@media (max-width: 840px) { .back-to-top { right: 16px; bottom: 16px; } }
+
 /* Phones: every link and control outside running text gives the thumb at least 48px (Material).
    Where the visible shape must stay small, an invisible layer around it takes the tap. */
 @media (max-width: 840px) {
