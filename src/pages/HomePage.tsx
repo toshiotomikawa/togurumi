@@ -13,6 +13,7 @@ import { useShopProducts } from '../hooks/useShopProducts'
 import { formatPrice, parseProductColors, type ShopProduct } from '../lib/shop'
 import { slugify } from '../lib/slug'
 import { photoProps } from '../lib/images'
+import { HERO_PHOTO_SIZES, pickHeroPieces } from '../lib/hero'
 import { TOGURUMI_INSTAGRAM_DM, TOGURUMI_LATEST_VIDEO, TOGURUMI_YOUTUBE } from '../lib/togurumi'
 
 /** A piece counts as "last units" only when the real stock is this low. */
@@ -59,9 +60,6 @@ const copy = {
     studio: 'Dentro del taller', about: 'Un hilo, una aguja. Y Bella.', sign: 'Con cariño, Bella',
   },
 }
-
-/** Group shots read best in the wide hero; any other photographed piece fills the gaps. */
-const HERO_PREFERRED = ['pato-formoso', 'capivara-sereia', 'bebe-baleia']
 
 function YarnIcon({ className }: { className?: string }) {
   return (
@@ -121,10 +119,7 @@ function HomePage() {
   const photographed = products.filter(product => product.image)
   const available = photographed.filter(product => product.stock > 0)
   const selected = [...available.filter(product => product.highlight), ...available.filter(product => !product.highlight)].slice(0, 8)
-  const heroPieces = [
-    ...HERO_PREFERRED.map(slug => photographed.find(product => slugify(product.name) === slug)).filter((product): product is ShopProduct => Boolean(product)),
-    ...photographed.filter(product => !HERO_PREFERRED.includes(slugify(product.name))),
-  ].slice(0, 3)
+  const heroPieces = pickHeroPieces(products)
   const lastPieces = available.filter(product => product.stock <= LOW_STOCK).sort((a, b) => a.stock - b.stock).slice(0, 4)
   const latestPosts = posts.slice(0, 3)
 
@@ -157,7 +152,7 @@ function HomePage() {
         </div>
       </section> : <section className="atelier-hero" aria-labelledby="home-title">
         <div className="atelier-hero__stage" aria-busy={!loaded}>
-          {heroPieces.map((product, index) => <div className={`atelier-hero__tile atelier-hero__tile--${index}`} key={product.name}><PiecePhoto product={product} eager sizes="(max-width: 840px) 60vw, 34vw" /></div>)}
+          {heroPieces.map((product, index) => <div className={`atelier-hero__tile atelier-hero__tile--${index}`} key={product.name}><PiecePhoto product={product} eager sizes={HERO_PHOTO_SIZES} /></div>)}
           <span className="atelier-hero__warmth" aria-hidden="true" />
         </div>
         <Branch className="atelier-hero__leaf" />

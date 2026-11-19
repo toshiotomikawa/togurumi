@@ -537,7 +537,8 @@ a:active {
   opacity: 0;
   /* Hidden, not just zero-width, so keyboard focus never lands on a box nobody can see. */
   visibility: hidden;
-  transition: width 0.2s ease, opacity 0.2s ease, margin-right 0.2s ease;
+  /* Stays visible until the close animation ends. */
+  transition: width 0.2s ease, opacity 0.2s ease, margin-right 0.2s ease, visibility 0s linear 0.2s;
 }
 
 .site-search.is-open input {
@@ -547,6 +548,7 @@ a:active {
   opacity: 1;
   visibility: visible;
   border-color: var(--border);
+  transition: width 0.2s ease, opacity 0.2s ease, margin-right 0.2s ease, visibility 0s;
 }
 
 @media (max-width: 900px) {

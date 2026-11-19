@@ -18,6 +18,8 @@ function readCachedProducts(): ShopProduct[] | undefined {
 }
 
 let inFlight: Promise<ShopProduct[]> | undefined
+let fetchedAt = 0
+const FRESH_MS = 30_000
 
 /** Callers that ask while a request is out share it, so the page loads the catalog once. */
 function fetchShopProducts(): Promise<ShopProduct[]> {
@@ -31,6 +33,7 @@ async function requestShopProducts(): Promise<ShopProduct[]> {
   const data = await res.json()
   const products: ShopProduct[] = data.products ?? []
   memoryCache = products
+  fetchedAt = Date.now()
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify(products))
   } catch {
@@ -41,6 +44,7 @@ async function requestShopProducts(): Promise<ShopProduct[]> {
 
 /** Quietly loads the catalog before the shop is opened, so it appears complete at once. */
 export async function preloadShopProducts() {
+  if (Date.now() - fetchedAt < FRESH_MS) return
   await fetchShopProducts()
 }
 

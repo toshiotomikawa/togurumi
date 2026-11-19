@@ -48,6 +48,10 @@ function dropCache(key: string) {
 }
 
 const postsKey = (locale: SupportedLocale, author?: string) => `posts:${locale}:${author ?? ''}`
+/** When this page last loaded each list, so the background preload skips a list it just fetched. */
+const fetchedAt = new Map<string, number>()
+const FRESH_MS = 30_000
+
 const postKey = (slug: string, locale: SupportedLocale) => `post:${locale}:${slug}`
 
 /** The last public list seen on this device, shown at once while a fresh copy loads. */
@@ -71,7 +75,10 @@ export async function fetchJournalPosts(
   if (!response.ok) throw new Error('journal_load_failed')
   const data = await response.json() as { posts?: JournalPost[] }
   const posts = data.posts ?? []
-  if (!includeArchived) writeCache(postsKey(locale, author), posts)
+  if (!includeArchived) {
+    writeCache(postsKey(locale, author), posts)
+    fetchedAt.set(postsKey(locale, author), Date.now())
+  }
   return posts
 }
 
@@ -98,7 +105,8 @@ export async function fetchJournalPost(
 
 /** Quietly loads the blog before it is opened, so a first visit to it is instant too. */
 export async function preloadJournal(locale: SupportedLocale) {
-  const posts = await fetchJournalPosts(locale)
+  const fresh = Date.now() - (fetchedAt.get(postsKey(locale)) ?? 0) < FRESH_MS
+  const posts = fresh ? readCachedJournalPosts(locale) ?? [] : await fetchJournalPosts(locale)
   await Promise.all(
     posts
       .slice(0, 6)

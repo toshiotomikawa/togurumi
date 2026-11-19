@@ -549,10 +549,16 @@ body, #root { background: var(--v6-cream); }
 .product-card__invite { display: block; margin-top: 8px; }
 .atelier-product .product-detail__invite { margin: 14px 0 6px; }
 
-/* Phones: every link and control outside running text is at least 44px tall to the thumb. */
+/* Phones: every link and control outside running text gives the thumb at least 48px (Material).
+   Where the visible shape must stay small, an invisible layer around it takes the tap. */
 @media (max-width: 840px) {
   #root .site-footer--atelier .site-footer__nav { gap: 0; }
-  #root .site-footer--atelier .site-footer__nav a { display: inline-flex; align-items: center; min-height: 44px; }
-  .review-star-picker button { width: 44px; height: 44px; }
-  .atelier-card h3 a { display: inline-block; padding: 12px 0; margin: -12px 0; }
+  #root .site-footer--atelier .site-footer__nav a { display: inline-flex; align-items: center; min-height: 48px; }
+  #root .site-header .settings-toggle__button { width: 48px; height: 48px; }
+  .review-star-picker button { width: 48px; height: 48px; }
+  .atelier-card h3 a { display: inline-block; padding: 14px 0; margin: -14px 0; }
+  #root .site-nav-toggle, .atelier-card__cart { position: relative; }
+  #root .site-nav-toggle::after, .atelier-card__fav::after, .atelier-card__cart::after { content: ''; position: absolute; inset: -4px; }
+  .atelier-card__fav::after { inset: -8px; }
+  .atelier-card__cart::after { inset: -10px -6px; }
 }
