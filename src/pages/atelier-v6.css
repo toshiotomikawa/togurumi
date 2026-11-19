@@ -556,7 +556,11 @@ body, #root { background: var(--v6-cream); }
 .back-to-top:focus-visible { outline: 2px solid var(--v6-olive); outline-offset: 3px; }
 .back-to-top svg { width: 22px; height: 22px; }
 @media (prefers-reduced-motion: reduce) { .back-to-top { transition: none; } }
-@media (max-width: 840px) { .back-to-top { right: 16px; bottom: 16px; } }
+@media (max-width: 840px) {
+  .back-to-top { right: 16px; bottom: 16px; }
+  /* Room under the footer so the button never covers its last controls. */
+  #root .site-footer--atelier { padding-bottom: 80px; }
+}
 
 /* Phones: every link and control outside running text gives the thumb at least 48px (Material).
    Where the visible shape must stay small, an invisible layer around it takes the tap. */

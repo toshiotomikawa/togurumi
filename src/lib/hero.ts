@@ -3,7 +3,8 @@ import { slugify } from './slug'
 /** Group shots read best in the wide hero; any other photographed piece fills the gaps. */
 export const HERO_PREFERRED = ['pato-formoso', 'capivara-sereia', 'bebe-baleia']
 
-export const HERO_PHOTO_SIZES = '(max-width: 840px) 60vw, 34vw'
+// The tiles are tall and crop wide photos, so a photo must be wider than its tile.
+export const HERO_PHOTO_SIZES = '(max-width: 840px) 80vw, 50vw'
 
 /** The three photographed pieces the home hero shows, in order. */
 export function pickHeroPieces<T extends { name: string; image: string }>(products: T[]): T[] {
