@@ -12,6 +12,7 @@ import {
 } from '../lib/checkout'
 import { formatPrice, getColorSwatchBackground } from '../lib/shop'
 import { slugify } from '../lib/slug'
+import { photoProps } from '../lib/images'
 import type { CartItem } from '../context/cart'
 
 function fillTemplate(template: string, values: Record<string, string | number>) {
@@ -271,7 +272,7 @@ function CartPage() {
 
                 return (
                   <li className="cart-item" key={itemKey(item)}>
-                    {image && <img className="cart-item__photo" src={image} alt="" loading="lazy" />}
+                    {image && <img className="cart-item__photo" {...photoProps(image, '120px', 240)} alt="" loading="lazy" />}
                     <div className="cart-item__details">
                       <Link to={`/shop/${item.slug}`} className="cart-item__name">
                         {item.name}

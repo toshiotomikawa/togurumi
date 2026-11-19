@@ -4,6 +4,7 @@ import ProductCard, { ProductCardSkeleton } from '../components/ProductCard'
 import { useEditableContent } from '../hooks/useEditableContent'
 import { useLocale } from '../hooks/useLocale'
 import { useShopProducts } from '../hooks/useShopProducts'
+import { photoProps } from '../lib/images'
 import { TOGURUMI_INSTAGRAM_DM } from '../lib/togurumi'
 
 const SKELETON_COUNT = 6
@@ -52,7 +53,7 @@ function ShopPage() {
             <p className="shop-hero__intro editable-text">{editor.content.intro}</p>
           </div>
           {cover ? (
-            <img className="shop-hero__photo" src={cover.image} alt={cover.name} />
+            <img className="shop-hero__photo" {...photoProps(cover.image, '(max-width: 840px) 100vw, 50vw', 960)} fetchPriority="high" alt={cover.name} />
           ) : !loaded ? (
             <div className="shop-hero__photo shop-hero__photo--pending" aria-hidden="true" />
           ) : null}

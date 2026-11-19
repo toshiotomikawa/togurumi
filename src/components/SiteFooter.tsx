@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import logo from '../assets/togurumi-logo.png'
+import logo from '../assets/togurumi-logo.webp'
 import yarnBall from '../assets/togurumi-yarn-ball.png'
 import { useLocale } from '../hooks/useLocale'
 import { TOGURUMI_EMAIL, TOGURUMI_INSTAGRAM, TOGURUMI_YOUTUBE } from '../lib/togurumi'

@@ -17,7 +17,15 @@ function readCachedProducts(): ShopProduct[] | undefined {
   return memoryCache
 }
 
-async function fetchShopProducts(): Promise<ShopProduct[]> {
+let inFlight: Promise<ShopProduct[]> | undefined
+
+/** Callers that ask while a request is out share it, so the page loads the catalog once. */
+function fetchShopProducts(): Promise<ShopProduct[]> {
+  inFlight ??= requestShopProducts().finally(() => { inFlight = undefined })
+  return inFlight
+}
+
+async function requestShopProducts(): Promise<ShopProduct[]> {
   const res = await fetch('/api/shop/products', { cache: 'no-store' })
   if (!res.ok) throw new Error('shop_load_failed')
   const data = await res.json()

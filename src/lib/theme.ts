@@ -23,4 +23,10 @@ export function readStoredTheme(): ThemeMode {
 
 export function applyTheme(mode: ThemeMode) {
   document.documentElement.dataset.theme = mode
+  document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', colorSchemeFor(mode))
+}
+
+/** Tells the browser which scheme its own parts (scrollbars, form controls) should follow. */
+export function colorSchemeFor(mode: ThemeMode) {
+  return mode === 'day' ? 'light' : mode === 'night' ? 'dark' : 'light dark'
 }

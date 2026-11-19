@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import logo from '../assets/togurumi-logo.png'
+import logo from '../assets/togurumi-logo.webp'
 import yarnBall from '../assets/togurumi-yarn-ball.png'
 import { useCart } from '../hooks/useCart'
 import { useLocale } from '../hooks/useLocale'

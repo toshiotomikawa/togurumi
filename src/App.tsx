@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute'
 import SiteFooter from './components/SiteFooter'
@@ -6,25 +6,27 @@ import SiteHeader from './components/SiteHeader'
 import { useLocale } from './hooks/useLocale'
 import { preloadShopProducts } from './hooks/useShopProducts'
 import { preloadJournal } from './lib/journal'
-import AccountPage from './pages/AccountPage'
-import AdminPage from './pages/AdminPage'
 import CartPage from './pages/CartPage'
 import CheckoutCancelPage from './pages/CheckoutCancelPage'
 import CheckoutSuccessPage from './pages/CheckoutSuccessPage'
 import ContactPage from './pages/ContactPage'
 import HomePage from './pages/HomePage'
-import JournalEditorPage from './pages/JournalEditorPage'
 import JournalPage from './pages/JournalPage'
 import JournalPostPage from './pages/JournalPostPage'
 import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 import ProductPage from './pages/ProductPage'
-import ProductImagesPage from './pages/ProductImagesPage'
 import RefundPage from './pages/RefundPage'
-import RefundRequestsPage from './pages/RefundRequestsPage'
 import SearchPage from './pages/SearchPage'
 import ShopPage from './pages/ShopPage'
+
+// Staff pages load on demand, so shoppers never download them.
+const AccountPage = lazy(() => import('./pages/AccountPage'))
+const AdminPage = lazy(() => import('./pages/AdminPage'))
+const JournalEditorPage = lazy(() => import('./pages/JournalEditorPage'))
+const ProductImagesPage = lazy(() => import('./pages/ProductImagesPage'))
+const RefundRequestsPage = lazy(() => import('./pages/RefundRequestsPage'))
 
 function App() {
   const { messages, locale } = useLocale()
@@ -44,6 +46,7 @@ function App() {
       </a>
       <SiteHeader />
       <main id="main-content" className="site-main" tabIndex={-1}>
+        <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/shop" element={<ShopPage />} />
@@ -102,6 +105,7 @@ function App() {
           />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        </Suspense>
       </main>
       <SiteFooter />
     </>

@@ -183,7 +183,7 @@ function JournalEditorPage() {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps -- open once from /journal links
 
   const groupedPosts = useMemo(() => {
-    const sortedPosts = [...posts].sort(
+    const sortedPosts = posts.toSorted(
       (a, b) => a.slug.localeCompare(b.slug) || a.locale.localeCompare(b.locale),
     )
     const groups: { slug: string; posts: JournalPostRecord[] }[] = []

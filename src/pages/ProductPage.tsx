@@ -8,6 +8,7 @@ import { useShopProducts } from '../hooks/useShopProducts'
 import { formatPrice, getColorSwatchBackground, isRecentlyReleased, parseProductColors } from '../lib/shop'
 import { slugify } from '../lib/slug'
 import { TOGURUMI_INSTAGRAM_DM } from '../lib/togurumi'
+import { photoProps } from '../lib/images'
 import NotFoundPage from './NotFoundPage'
 
 // The only Japanese on the site is the brand name in katakana (トグルミ). The quote only
@@ -142,7 +143,8 @@ function ProductPage() {
             {showImage ? (
               <img
                 className="product-detail__image"
-                src={activeImage}
+                {...photoProps(activeImage, '(max-width: 840px) 100vw, 50vw', 960)}
+                fetchPriority="high"
                 alt={product.name}
                 onError={handleImageError}
               />
@@ -171,7 +173,7 @@ function ProductPage() {
                   aria-label={t.photo(thumb.color)}
                   aria-pressed={thumb.src === activeImage}
                 >
-                  <img src={thumb.src} alt="" loading="lazy" />
+                  <img {...photoProps(thumb.src, '120px', 240)} alt="" loading="lazy" />
                 </button>
               ))}
             </div>

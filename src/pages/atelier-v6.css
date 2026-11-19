@@ -548,3 +548,11 @@ body, #root { background: var(--v6-cream); }
 .sold-out-invite a, a.sold-out-invite { color: var(--v6-choc); text-decoration: underline; text-underline-offset: 3px; }
 .product-card__invite { display: block; margin-top: 8px; }
 .atelier-product .product-detail__invite { margin: 14px 0 6px; }
+
+/* Phones: every link and control outside running text is at least 44px tall to the thumb. */
+@media (max-width: 840px) {
+  #root .site-footer--atelier .site-footer__nav { gap: 0; }
+  #root .site-footer--atelier .site-footer__nav a { display: inline-flex; align-items: center; min-height: 44px; }
+  .review-star-picker button { width: 44px; height: 44px; }
+  .atelier-card h3 a { display: inline-block; padding: 12px 0; margin: -12px 0; }
+}

@@ -58,7 +58,7 @@ async function writeDb(db: ReviewDatabase) {
 
 export async function listReviews(): Promise<ReviewRecord[]> {
   const db = await loadDb()
-  return db.reviews.slice().sort((a, b) => b.createdAt - a.createdAt)
+  return db.reviews.toSorted((a, b) => b.createdAt - a.createdAt)
 }
 
 export async function addReview(input: { name: string; rating: number; comment: string }): Promise<ReviewRecord> {

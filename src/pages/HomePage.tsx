@@ -12,6 +12,7 @@ import { useLocale } from '../hooks/useLocale'
 import { useShopProducts } from '../hooks/useShopProducts'
 import { formatPrice, parseProductColors, type ShopProduct } from '../lib/shop'
 import { slugify } from '../lib/slug'
+import { photoProps } from '../lib/images'
 import { TOGURUMI_INSTAGRAM_DM, TOGURUMI_LATEST_VIDEO, TOGURUMI_YOUTUBE } from '../lib/togurumi'
 
 /** A piece counts as "last units" only when the real stock is this low. */
@@ -72,11 +73,11 @@ function YarnIcon({ className }: { className?: string }) {
   )
 }
 
-function PiecePhoto({ product, className = '', eager = false }: { product: ShopProduct; className?: string; eager?: boolean }) {
+function PiecePhoto({ product, className = '', eager = false, sizes = '(max-width: 840px) 50vw, 320px' }: { product: ShopProduct; className?: string; eager?: boolean; sizes?: string }) {
   const [failed, setFailed] = useState<string | null>(null)
   const { messages } = useLocale()
   return product.image && failed !== product.image ? (
-    <img className={className} src={product.image} alt={product.name} loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'high' : undefined} onError={() => setFailed(product.image)} />
+    <img className={className} {...photoProps(product.image, sizes)} alt={product.name} loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'high' : undefined} onError={() => setFailed(product.image)} />
   ) : <div className={`atelier-photo-fallback ${className}`} role="img" aria-label={messages.shop.photoComingSoon}>{messages.shop.photoComingSoon}</div>
 }
 
@@ -156,7 +157,7 @@ function HomePage() {
         </div>
       </section> : <section className="atelier-hero" aria-labelledby="home-title">
         <div className="atelier-hero__stage" aria-busy={!loaded}>
-          {heroPieces.map((product, index) => <div className={`atelier-hero__tile atelier-hero__tile--${index}`} key={product.name}><PiecePhoto product={product} eager={index === 0} /></div>)}
+          {heroPieces.map((product, index) => <div className={`atelier-hero__tile atelier-hero__tile--${index}`} key={product.name}><PiecePhoto product={product} eager sizes="(max-width: 840px) 60vw, 34vw" /></div>)}
           <span className="atelier-hero__warmth" aria-hidden="true" />
         </div>
         <Branch className="atelier-hero__leaf" />

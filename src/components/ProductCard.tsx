@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useLocale } from '../hooks/useLocale'
 import { TOGURUMI_INSTAGRAM_DM } from '../lib/togurumi'
 import { formatPrice, isRecentlyReleased, type ShopProduct } from '../lib/shop'
+import { photoProps } from '../lib/images'
 import { slugify } from '../lib/slug'
 
 function ProductImagePlaceholder({ label }: { label: string }) {
@@ -29,7 +30,7 @@ function ProductCard({ product }: { product: ShopProduct }) {
         {showImage ? (
           <img
             className="product-card__image"
-            src={product.image}
+            {...photoProps(product.image, '(max-width: 840px) 50vw, 320px')}
             alt=""
             loading="lazy"
             onError={() => setFailedImage(product.image)}
