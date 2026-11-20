@@ -7,7 +7,7 @@
     "dev": "concurrently -k -n api,web -c blue,green \"npm run dev:api\" \"npm run dev:web\"",
     "dev:api": "tsx watch server/index.ts",
     "dev:web": "vite",
-    "build": "tsc -b && vite build && vite build --ssr src/shell.tsx --outDir build/.ssr --emptyOutDir && node build/bakeShell.mjs",
+    "build": "node build/checkTypeScale.mjs && tsc -b && vite build && vite build --ssr src/shell.tsx --outDir build/.ssr --emptyOutDir && node build/bakeShell.mjs",
     "typecheck:server": "tsc -p tsconfig.server.json",
     "lint": "eslint .",
     "preview": "vite preview",

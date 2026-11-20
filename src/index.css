@@ -74,10 +74,15 @@
   --mono: ui-monospace, Consolas, monospace;
   --radius: 14px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --font-body: 1rem;
-  --font-heading: 1.6rem;
+  /* The type scale (DESIGN.md typography). build/checkTypeScale.mjs fails the build on any other size. */
+  --text-sm: 14px;
+  --text-md: 16px;
+  --text-lg: 20px;
+  --text-xl: 28px;
+  --text-2xl: clamp(28px, 3vw, 40px);
+  --text-3xl: clamp(40px, 5vw, 64px);
 
-  font: 16px/1.6 var(--sans);
+  font: var(--text-md)/1.6 var(--sans);
   letter-spacing: 0;
   color: var(--text);
   background: var(--bg);
@@ -85,12 +90,6 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-@media (max-width: 768px) {
-  :root {
-    font-size: 16px;
-  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -276,7 +275,7 @@ a:active {
   color: var(--text-h);
   text-decoration: none;
   font-family: var(--heading);
-  font-size: var(--font-heading);
+  font-size: var(--text-xl);
   font-weight: 500;
   letter-spacing: 0.01em;
 }
@@ -299,7 +298,7 @@ a:active {
   padding: 4px 0 5px;
   border-bottom: 1px solid transparent;
   font-weight: 400;
-  font-size: 0.94rem;
+  font-size: var(--text-md);
   letter-spacing: 0.01em;
   transition: color 0.18s ease, border-color 0.18s ease;
 }
@@ -413,7 +412,7 @@ a:active {
     padding: 14px 16px;
     border-radius: 12px;
     font-weight: 500;
-    font-size: 1rem;
+    font-size: var(--text-md);
     min-height: 44px;
     display: flex;
     align-items: center;
@@ -443,7 +442,7 @@ a:active {
 
   .mobile-preferences__label {
     color: var(--text);
-    font-size: 0.72rem;
+    font-size: var(--text-sm);
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -484,7 +483,7 @@ a:active {
   }
 
   .mobile-preferences__button .settings-toggle__glyph {
-    font-size: 0.7rem;
+    font-size: var(--text-sm);
     font-weight: 700;
     line-height: 1;
   }
@@ -642,14 +641,14 @@ a:active {
   color: var(--accent);
   font-family: var(--sans);
   font-weight: 400;
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   text-transform: uppercase;
   letter-spacing: 0.26em;
   margin-bottom: 16px;
 }
 
 .hero h1 {
-  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-size: var(--text-3xl);
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.012em;
@@ -657,7 +656,7 @@ a:active {
 }
 
 .hero p {
-  font-size: 1.08rem;
+  font-size: var(--text-md);
   line-height: 1.75;
   color: var(--text);
   max-width: 56ch;
@@ -677,7 +676,7 @@ a:active {
   }
 
   .hero p {
-    font-size: 1rem;
+    font-size: var(--text-md);
   }
 }
 
@@ -748,7 +747,7 @@ a:active {
 }
 
 .hero__media-placeholder-label {
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text);
@@ -793,7 +792,7 @@ a:active {
 }
 
 .hero__media-eyebrow {
-  font-size: 0.68rem;
+  font-size: var(--text-sm);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--accent);
@@ -801,7 +800,7 @@ a:active {
 
 .hero__media-name {
   font-family: var(--heading);
-  font-size: 1.1rem;
+  font-size: var(--text-md);
   font-weight: 500;
   color: var(--text-h);
   text-wrap: pretty;
@@ -809,7 +808,7 @@ a:active {
 }
 
 .hero__media-price {
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   color: var(--text);
   opacity: 0.75;
 }
@@ -853,7 +852,7 @@ a:active {
   background: none;
   color: var(--ink);
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: var(--text-md);
   cursor: pointer;
   transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
 }
@@ -939,7 +938,7 @@ a.product-card:hover {
 }
 
 .gallery-item__icon {
-  font-size: 2.4rem;
+  font-size: var(--text-2xl);
 }
 
 .gallery-item__name {
@@ -948,7 +947,7 @@ a.product-card:hover {
 }
 
 .gallery-item__tag {
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   color: var(--text);
   opacity: 0.75;
 }
@@ -1010,7 +1009,7 @@ a.product-card:hover {
   margin: 0 0 8px;
   font-family: var(--heading);
   font-weight: 500;
-  font-size: clamp(1.35rem, 2.6vw, 1.75rem);
+  font-size: var(--text-xl);
   color: var(--text-h);
   text-wrap: pretty;
 }
@@ -1122,7 +1121,7 @@ a.product-card:hover {
   margin: 0;
   font-family: var(--heading);
   font-weight: 500;
-  font-size: clamp(1.45rem, 3.2vw, 2rem);
+  font-size: var(--text-2xl);
   line-height: 1.2;
   color: var(--text-h);
   text-wrap: pretty;
@@ -1131,7 +1130,7 @@ a.product-card:hover {
 
 .home-journal-card__meta {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   letter-spacing: 0.04em;
   color: var(--text);
   opacity: 0.8;
@@ -1139,7 +1138,7 @@ a.product-card:hover {
 
 .home-journal-card__summary {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--text-md);
   line-height: 1.7;
   color: var(--text);
   text-wrap: pretty;
@@ -1153,7 +1152,7 @@ a.product-card:hover {
 .home-journal-card__cta {
   margin-top: 4px;
   width: fit-content;
-  font-size: 0.95rem;
+  font-size: var(--text-md);
   color: var(--accent);
   border-bottom: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
   padding-bottom: 2px;
@@ -1193,7 +1192,7 @@ html[data-theme='night'] .home-journal-card {
   display: inline-block;
   margin: 0 0 12px;
   color: var(--accent);
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -1202,7 +1201,7 @@ html[data-theme='night'] .home-journal-card {
 .journal-hero__title {
   margin: 0 0 14px;
   font-family: var(--heading);
-  font-size: clamp(1.9rem, 4.6vw, 2.85rem);
+  font-size: var(--text-2xl);
   font-weight: 600;
   letter-spacing: -0.012em;
   line-height: 1.12;
@@ -1213,7 +1212,7 @@ html[data-theme='night'] .home-journal-card {
 .journal-hero__intro {
   margin: 0;
   max-width: 40rem;
-  font-size: 1.05rem;
+  font-size: var(--text-md);
   line-height: 1.75;
   color: var(--text);
   text-wrap: pretty;
@@ -1256,7 +1255,7 @@ html[data-theme='night'] .home-journal-card {
 }
 
 .journal-author-filter__label {
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1264,7 +1263,7 @@ html[data-theme='night'] .home-journal-card {
 }
 
 .journal-author-filter__value {
-  font-size: 0.92rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   overflow-wrap: anywhere;
 }
@@ -1277,7 +1276,7 @@ html[data-theme='night'] .home-journal-card {
   background: none;
   color: var(--text-h);
   font: inherit;
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
   transition: border-color 0.18s ease, background-color 0.18s ease;
@@ -1335,7 +1334,7 @@ html[data-theme='night'] .home-journal-card {
 .journal-card__title {
   margin: 0 0 10px;
   font-family: var(--heading);
-  font-size: clamp(1.25rem, 2.4vw, 1.55rem);
+  font-size: var(--text-xl);
   font-weight: 500;
   line-height: 1.28;
   color: var(--text-h);
@@ -1353,7 +1352,7 @@ html[data-theme='night'] .home-journal-card {
   align-items: center;
   gap: 8px 10px;
   margin: 0 0 12px;
-  font-size: 0.86rem;
+  font-size: var(--text-sm);
   color: var(--text);
   opacity: 0.88;
 }
@@ -1367,7 +1366,7 @@ html[data-theme='night'] .home-journal-card {
   border: 1px solid color-mix(in srgb, var(--border-strong) 80%, var(--accent));
   background: color-mix(in srgb, var(--surface-2) 70%, var(--surface));
   color: var(--text-h);
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1375,7 +1374,7 @@ html[data-theme='night'] .home-journal-card {
 
 .journal-card__summary {
   margin: 0;
-  font-size: 0.98rem;
+  font-size: var(--text-md);
   line-height: 1.7;
   color: var(--text);
   text-wrap: pretty;
@@ -1420,7 +1419,7 @@ html[data-theme='night'] .home-journal-card {
 .journal-empty__title {
   margin: 0;
   font-family: var(--heading);
-  font-size: clamp(1.35rem, 3vw, 1.7rem);
+  font-size: var(--text-xl);
   font-weight: 500;
   color: var(--text-h);
   text-wrap: pretty;
@@ -1442,7 +1441,7 @@ html[data-theme='night'] .home-journal-card {
 .journal-post-nav__back {
   display: inline-block;
   color: var(--text);
-  font-size: 0.92rem;
+  font-size: var(--text-sm);
   text-decoration: none;
   border-bottom: 1px solid transparent;
   padding-bottom: 2px;
@@ -1473,7 +1472,7 @@ html[data-theme='night'] .home-journal-card {
 .journal-article__title {
   margin: 0 0 14px;
   font-family: var(--heading);
-  font-size: clamp(1.95rem, 4.8vw, 2.85rem);
+  font-size: var(--text-2xl);
   font-weight: 500;
   letter-spacing: -0.012em;
   line-height: 1.14;
@@ -1488,7 +1487,7 @@ html[data-theme='night'] .home-journal-card {
   align-items: center;
   gap: 8px 10px;
   margin: 0;
-  font-size: 0.92rem;
+  font-size: var(--text-sm);
   color: var(--text);
   line-height: 1.5;
 }
@@ -1519,7 +1518,7 @@ html[data-theme='night'] .home-journal-card {
 .journal-post__body {
   margin-top: 8px;
   max-width: 40rem;
-  font-size: 1.05rem;
+  font-size: var(--text-md);
   line-height: 1.8;
   color: var(--text);
 }
@@ -1562,6 +1561,7 @@ html[data-theme='night'] .home-journal-card {
 
 .home-reviews__intro h2 {
   margin-top: 8px;
+  font-size: var(--text-2xl);
 }
 
 .home-reviews__intro p {
@@ -1584,6 +1584,7 @@ html[data-theme='night'] .home-journal-card {
 
 .home-reviews__form h3 {
   margin-bottom: 20px;
+  font-size: var(--text-lg);
 }
 
 .home-reviews__entries {
@@ -1615,7 +1616,7 @@ html[data-theme='night'] .home-journal-card {
 }
 
 .review-card__date {
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   color: var(--text);
   opacity: 0.7;
 }
@@ -1667,7 +1668,7 @@ html[data-theme='night'] .home-journal-card {
 .review-star-picker button {
   border: none;
   background: none;
-  font-size: 1.6rem;
+  font-size: var(--text-xl);
   line-height: 1;
   color: var(--border);
   cursor: pointer;
@@ -1714,17 +1715,17 @@ html[data-theme='night'] .home-journal-card {
 }
 
 .journal-post__body h2 {
-  font-size: clamp(1.35rem, 2.6vw, 1.7rem);
+  font-size: var(--text-xl);
 }
 
 .journal-post__body h3 {
-  font-size: clamp(1.15rem, 2.2vw, 1.35rem);
+  font-size: var(--text-lg);
 }
 
 .journal-post__body h4,
 .journal-post__body h5,
 .journal-post__body h6 {
-  font-size: 1.05rem;
+  font-size: var(--text-md);
 }
 
 .journal-post__body a {
@@ -1820,7 +1821,7 @@ html[data-theme='night'] .home-journal-card {
   padding: 0;
   background: none;
   border-radius: 0;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   line-height: 1.55;
   white-space: pre;
   overflow-wrap: normal;
@@ -1830,7 +1831,7 @@ html[data-theme='night'] .home-journal-card {
 .journal-post__body table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
+  font-size: var(--text-md);
 }
 
 .journal-post__body .table-wrap,
@@ -1873,7 +1874,7 @@ html[data-theme='night'] .home-journal-card {
   align-items: center;
   gap: 10px;
   margin: 0 0 10px;
-  font-size: 0.84rem;
+  font-size: var(--text-sm);
   color: var(--text);
   opacity: 0.9;
 }
@@ -1957,7 +1958,7 @@ html[data-theme='night'] .home-journal-card {
 .product-detail__placeholder-label {
   max-width: 14rem;
   padding: 0 16px;
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1972,7 +1973,7 @@ html[data-theme='night'] .home-journal-card {
   border-radius: 999px;
   background: color-mix(in srgb, var(--ink) 86%, transparent);
   color: var(--ink-soft);
-  font-size: 0.7rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -2004,7 +2005,7 @@ html[data-theme='night'] .home-journal-card {
   align-items: center;
   color: var(--text);
   opacity: 0.75;
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -2024,7 +2025,7 @@ html[data-theme='night'] .home-journal-card {
   background: color-mix(in srgb, var(--accent) 16%, var(--surface));
   color: var(--accent);
   border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
-  font-size: 0.68rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -2032,7 +2033,7 @@ html[data-theme='night'] .home-journal-card {
 
 .product-detail__designer {
   margin: 0;
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -2042,7 +2043,7 @@ html[data-theme='night'] .home-journal-card {
 .product-detail__title {
   margin: 0;
   font-family: var(--heading);
-  font-size: clamp(1.85rem, 4.2vw, 2.75rem);
+  font-size: var(--text-2xl);
   font-weight: 600;
   line-height: 1.12;
   color: var(--text-h);
@@ -2059,7 +2060,7 @@ html[data-theme='night'] .home-journal-card {
 
 .product-detail__price {
   font-family: var(--sans);
-  font-size: clamp(1.5rem, 2.6vw, 1.9rem);
+  font-size: var(--text-xl);
   font-weight: 600;
   color: var(--text-h);
 }
@@ -2071,7 +2072,7 @@ html[data-theme='night'] .home-journal-card {
   border-radius: 999px;
   background: var(--secondary-soft);
   color: var(--secondary);
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -2085,7 +2086,7 @@ html[data-theme='night'] .home-journal-card {
 .product-detail__description {
   margin: 0;
   max-width: 34rem;
-  font-size: 1rem;
+  font-size: var(--text-md);
   line-height: 1.75;
   color: var(--text);
   text-wrap: pretty;
@@ -2111,7 +2112,7 @@ html[data-theme='night'] .home-journal-card {
 
 .product-detail__spec dt {
   margin: 0;
-  font-size: 0.7rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -2121,7 +2122,7 @@ html[data-theme='night'] .home-journal-card {
 
 .product-detail__spec dd {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: var(--text-md);
   line-height: 1.5;
   color: var(--text-h);
   overflow-wrap: anywhere;
@@ -2140,7 +2141,7 @@ html[data-theme='night'] .home-journal-card {
   padding: 0;
   margin-bottom: 2px;
   color: var(--text-h);
-  font-size: 0.95rem;
+  font-size: var(--text-md);
   font-weight: 600;
 }
 
@@ -2187,7 +2188,7 @@ html[data-theme='night'] .home-journal-card {
   place-items: center;
   opacity: 0;
   color: var(--ink);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   font-weight: 700;
   text-shadow:
     0 0 2px var(--surface),
@@ -2205,7 +2206,7 @@ html[data-theme='night'] .home-journal-card {
 
 .product-color-picker__selection {
   color: var(--text);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
 }
 
 .product-detail__actions {
@@ -2234,7 +2235,7 @@ html[data-theme='night'] .home-journal-card {
 .product-detail__cart-status {
   margin: 0;
   min-height: 1.35em;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--secondary);
 }
@@ -2245,7 +2246,7 @@ html[data-theme='night'] .home-journal-card {
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   line-height: 1.65;
   color: var(--text);
   text-wrap: pretty;
@@ -2353,7 +2354,7 @@ html[data-theme='night'] .home-journal-card {
   display: inline-block;
   margin: 0 0 12px;
   color: var(--accent);
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -2361,7 +2362,7 @@ html[data-theme='night'] .home-journal-card {
 
 .shop-hero__title {
   margin: 0 0 14px;
-  font-size: clamp(2rem, 4.5vw, 2.8rem);
+  font-size: var(--text-2xl);
   font-weight: 600;
   letter-spacing: -0.012em;
   line-height: 1.12;
@@ -2370,7 +2371,7 @@ html[data-theme='night'] .home-journal-card {
 .shop-hero__intro {
   margin: 0;
   max-width: 38rem;
-  font-size: 1.05rem;
+  font-size: var(--text-md);
   line-height: 1.75;
   color: var(--text);
   text-wrap: pretty;
@@ -2387,7 +2388,7 @@ html[data-theme='night'] .home-journal-card {
   border-radius: 12px;
   background: color-mix(in srgb, var(--secondary) 12%, var(--surface));
   color: var(--text-h);
-  font-size: 0.95rem;
+  font-size: var(--text-md);
   font-weight: 500;
   line-height: 1.55;
   text-wrap: pretty;
@@ -2405,7 +2406,7 @@ html[data-theme='night'] .home-journal-card {
 .shop-empty__title {
   margin: 0 0 8px;
   font-family: var(--heading);
-  font-size: 1.35rem;
+  font-size: var(--text-lg);
   font-weight: 500;
   color: var(--text-h);
 }
@@ -2438,7 +2439,7 @@ html[data-theme='night'] .home-journal-card {
   border-radius: 999px;
   min-height: 40px;
   padding: 8px 16px;
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
@@ -2466,7 +2467,7 @@ html[data-theme='night'] .home-journal-card {
   align-items: center;
   color: var(--text);
   opacity: 0.75;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   font-weight: 500;
 }
 
@@ -2515,7 +2516,7 @@ html[data-theme='night'] .home-journal-card {
   display: inline-block;
   margin: 0 0 12px;
   color: var(--accent);
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -2524,7 +2525,7 @@ html[data-theme='night'] .home-journal-card {
 .search-hero__title {
   margin: 0 0 14px;
   font-family: var(--heading);
-  font-size: clamp(1.85rem, 4.4vw, 2.75rem);
+  font-size: var(--text-2xl);
   font-weight: 600;
   letter-spacing: -0.012em;
   line-height: 1.12;
@@ -2535,7 +2536,7 @@ html[data-theme='night'] .home-journal-card {
 .search-hero__intro {
   margin: 0;
   max-width: 38rem;
-  font-size: 1.05rem;
+  font-size: var(--text-md);
   line-height: 1.75;
   color: var(--text);
   text-wrap: pretty;
@@ -2611,7 +2612,7 @@ html[data-theme='night'] .home-journal-card {
   background: none;
   color: var(--text-h);
   font: inherit;
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
   transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease;
@@ -2649,7 +2650,7 @@ html[data-theme='night'] .home-journal-card {
 }
 
 .search-active-filter__label {
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -2657,14 +2658,14 @@ html[data-theme='night'] .home-journal-card {
 }
 
 .search-active-filter__value {
-  font-size: 0.92rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   overflow-wrap: anywhere;
 }
 
 .search-summary {
   margin: 18px 0 0;
-  font-size: 0.95rem;
+  font-size: var(--text-md);
   color: var(--text);
   line-height: 1.55;
 }
@@ -2672,7 +2673,7 @@ html[data-theme='night'] .home-journal-card {
 .search-browse-hint {
   margin: 22px 0 0;
   max-width: 36rem;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   line-height: 1.65;
   color: var(--text);
   opacity: 0.88;
@@ -2690,7 +2691,7 @@ html[data-theme='night'] .home-journal-card {
 .search-empty__title {
   margin: 0 0 10px;
   font-family: var(--heading);
-  font-size: clamp(1.25rem, 2.8vw, 1.55rem);
+  font-size: var(--text-xl);
   font-weight: 500;
   color: var(--text-h);
   text-wrap: pretty;
@@ -2722,7 +2723,7 @@ html[data-theme='night'] .home-journal-card {
 
 .search-pagination__status {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   color: var(--text);
 }
 
@@ -2837,7 +2838,7 @@ html[data-theme='night'] .home-journal-card {
 .product-card__placeholder-label {
   max-width: 12rem;
   padding: 0 12px;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--text);
 }
@@ -2868,7 +2869,7 @@ html[data-theme='night'] .home-journal-card {
   background: none;
   color: var(--text);
   opacity: 0.7;
-  font-size: 0.7rem;
+  font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -2895,7 +2896,7 @@ html[data-theme='night'] .home-journal-card {
   background: color-mix(in srgb, var(--accent) 16%, var(--surface));
   color: var(--accent);
   border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
-  font-size: 0.68rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -2904,7 +2905,7 @@ html[data-theme='night'] .home-journal-card {
 .product-card__title {
   margin: 2px 0 0;
   font-family: var(--heading);
-  font-size: 1.18rem;
+  font-size: var(--text-lg);
   font-weight: 500;
   line-height: 1.25;
   color: var(--text-h);
@@ -2923,7 +2924,7 @@ html[data-theme='night'] .home-journal-card {
 .product-card__cores,
 .product-card__designer {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   color: var(--text);
   opacity: 0.78;
 }
@@ -2934,7 +2935,7 @@ html[data-theme='night'] .home-journal-card {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   overflow: hidden;
-  font-size: 0.92rem;
+  font-size: var(--text-sm);
   line-height: 1.55;
   color: var(--text);
 }
@@ -2951,13 +2952,13 @@ html[data-theme='night'] .home-journal-card {
 
 .product-card__price {
   font-family: var(--sans);
-  font-size: 1.2rem;
+  font-size: var(--text-lg);
   font-weight: 600;
   color: var(--text-h);
 }
 
 .product-card__stock {
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
   color: var(--text);
   opacity: 0.75;
 }
@@ -3085,7 +3086,7 @@ html[data-theme='night'] .home-journal-card {
   background: color-mix(in srgb, var(--secondary) 18%, var(--surface));
   color: color-mix(in srgb, var(--secondary) 70%, var(--text-h));
   border: 1px solid color-mix(in srgb, var(--secondary) 35%, var(--border));
-  font-size: 0.7rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -3094,7 +3095,7 @@ html[data-theme='night'] .home-journal-card {
 .pattern-card h3 {
   margin: 0;
   font-family: var(--heading);
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
   font-weight: 500;
 }
 
@@ -3134,7 +3135,7 @@ a.product-card:hover {
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
   gap: 36px 48px;
   align-items: end;
-  font-size: 0.92rem;
+  font-size: var(--text-sm);
 }
 
 .site-footer__brand-block {
@@ -3152,7 +3153,7 @@ a.product-card:hover {
   margin: 0;
   color: var(--ink-soft);
   font-family: var(--heading);
-  font-size: 1.25rem;
+  font-size: var(--text-lg);
   font-weight: 500;
   letter-spacing: -0.01em;
 }
@@ -3163,7 +3164,7 @@ a.product-card:hover {
 
 .site-footer__kana {
   font-family: 'Noto Sans JP', var(--sans);
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   font-weight: 300;
   letter-spacing: 0.22em;
   color: color-mix(in srgb, var(--ink-soft) 55%, var(--ink));
@@ -3179,7 +3180,7 @@ a.product-card:hover {
 
 .site-footer__meta {
   margin: 4px 0 0;
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
   color: color-mix(in srgb, var(--ink-soft) 52%, var(--ink));
 }
 
@@ -3250,7 +3251,7 @@ a.product-card:hover {
   display: inline-block;
   margin: 0 0 12px;
   color: var(--accent);
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -3259,7 +3260,7 @@ a.product-card:hover {
 .legal-hero__title {
   margin: 0 0 10px;
   font-family: var(--heading);
-  font-size: clamp(1.9rem, 4.2vw, 2.8rem);
+  font-size: var(--text-2xl);
   font-weight: 600;
   line-height: 1.14;
   letter-spacing: -0.012em;
@@ -3274,14 +3275,14 @@ a.product-card:hover {
   border-radius: 999px;
   background: var(--surface);
   color: var(--text);
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   letter-spacing: 0.04em;
 }
 
 .legal-hero__intro {
   margin: 0;
   max-width: 62ch;
-  font-size: 1.04rem;
+  font-size: var(--text-md);
   line-height: 1.8;
 }
 
@@ -3305,7 +3306,7 @@ a.product-card:hover {
 .legal-toc__title {
   margin: 0 0 12px;
   font-family: var(--sans);
-  font-size: 0.7rem;
+  font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -3325,7 +3326,7 @@ a.product-card:hover {
   padding: 7px 10px;
   border-radius: 9px;
   color: var(--text);
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   font-weight: 400;
   line-height: 1.4;
   transition: background 0.18s ease, color 0.18s ease;
@@ -3350,7 +3351,7 @@ a.product-card:hover {
 .legal-section__title {
   margin: 0 0 14px;
   font-family: var(--heading);
-  font-size: 1.32rem;
+  font-size: var(--text-lg);
   font-weight: 500;
   line-height: 1.3;
 }
@@ -3358,7 +3359,7 @@ a.product-card:hover {
 .legal-section p {
   margin: 0 0 14px;
   max-width: 68ch;
-  font-size: 1rem;
+  font-size: var(--text-md);
   line-height: 1.85;
   overflow-wrap: anywhere;
 }
@@ -3404,7 +3405,7 @@ a.product-card:hover {
   }
 
   .legal-section__title {
-    font-size: 1.2rem;
+    font-size: var(--text-lg);
   }
 }
 
@@ -3423,7 +3424,7 @@ a.product-card:hover {
   display: inline-block;
   margin: 0 0 12px;
   color: var(--accent);
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -3433,7 +3434,7 @@ a.product-card:hover {
   margin: 0 0 14px;
   font-family: var(--heading);
   font-weight: 600;
-  font-size: clamp(1.95rem, 4.6vw, 2.85rem);
+  font-size: var(--text-2xl);
   line-height: 1.12;
   letter-spacing: -0.012em;
   color: var(--text-h);
@@ -3442,7 +3443,7 @@ a.product-card:hover {
 
 .faq-hero__intro {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: var(--text-md);
   line-height: 1.75;
   color: var(--text);
   text-wrap: pretty;
@@ -3478,7 +3479,7 @@ a.product-card:hover {
   color: var(--text-h);
   font-family: var(--heading);
   font-weight: 500;
-  font-size: 1.05rem;
+  font-size: var(--text-md);
   line-height: 1.35;
   text-wrap: pretty;
   overflow-wrap: anywhere;
@@ -3559,7 +3560,7 @@ a.product-card:hover {
 .faq-empty__title {
   margin: 0 0 8px;
   font-family: var(--heading);
-  font-size: 1.35rem;
+  font-size: var(--text-lg);
   font-weight: 500;
   color: var(--text-h);
 }
@@ -3661,7 +3662,7 @@ a.product-card:hover {
   height: 40px;
   padding: 0;
   justify-content: center;
-  font-size: 1rem;
+  font-size: var(--text-md);
   line-height: 1;
 }
 
@@ -3722,7 +3723,7 @@ a.product-card:hover {
   display: inline-block;
   margin: 0 0 12px;
   color: var(--accent);
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -3732,7 +3733,7 @@ a.product-card:hover {
   margin: 0 0 14px;
   font-family: var(--heading);
   font-weight: 600;
-  font-size: clamp(1.95rem, 4.6vw, 2.85rem);
+  font-size: var(--text-2xl);
   line-height: 1.12;
   letter-spacing: -0.012em;
   color: var(--text-h);
@@ -3740,7 +3741,7 @@ a.product-card:hover {
 }
 
 .contact-hero__intro {
-  font-size: 1.05rem;
+  font-size: var(--text-md);
   line-height: 1.75;
   color: var(--text);
 }
@@ -3787,7 +3788,7 @@ a.product-card:hover {
   margin: 0 0 12px;
   font-family: var(--heading);
   font-weight: 500;
-  font-size: clamp(1.25rem, 2.4vw, 1.55rem);
+  font-size: var(--text-xl);
   line-height: 1.25;
   color: var(--text-h);
   text-wrap: pretty;
@@ -3821,7 +3822,7 @@ a.product-card:hover {
   margin: 0 0 10px;
   font-family: var(--heading);
   font-weight: 500;
-  font-size: clamp(1.45rem, 3vw, 1.9rem);
+  font-size: var(--text-xl);
   color: var(--text-h);
   text-wrap: pretty;
 }
@@ -3943,7 +3944,7 @@ a.product-card:hover {
 .contact-card__label,
 .contact-commission__title {
   font-family: var(--heading);
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
   font-weight: 500;
   color: var(--text-h);
   text-wrap: pretty;
@@ -3957,7 +3958,7 @@ a.product-card:hover {
 
 .contact-card__external {
   margin-top: 4px;
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   letter-spacing: 0.04em;
   color: var(--text);
   opacity: 0.75;
@@ -4020,7 +4021,7 @@ a.product-card:hover {
   border-radius: 999px;
   background: var(--surface);
   color: var(--text-h);
-  font-size: 0.92rem;
+  font-size: var(--text-sm);
   font-weight: 700;
 }
 
@@ -4050,7 +4051,7 @@ a.product-card:hover {
 .auth-menu__summary small {
   color: var(--text);
   opacity: 0.75;
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   font-weight: 700;
 }
 
@@ -4142,7 +4143,7 @@ a.product-card:hover {
   border-radius: 999px;
   background: var(--accent);
   color: var(--ink-soft);
-  font-size: 0.66rem;
+  font-size: var(--text-sm);
   font-weight: 700;
   line-height: 1;
 }
@@ -4158,7 +4159,7 @@ a.product-card:hover {
   display: inline-block;
   margin: 0 0 12px;
   color: var(--accent);
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -4175,7 +4176,7 @@ a.product-card:hover {
 .cart-hero__title {
   margin: 0;
   font-family: var(--heading);
-  font-size: clamp(1.85rem, 4.4vw, 2.75rem);
+  font-size: var(--text-2xl);
   font-weight: 600;
   letter-spacing: -0.012em;
   line-height: 1.12;
@@ -4185,7 +4186,7 @@ a.product-card:hover {
 
 .cart-hero__count {
   margin: 0;
-  font-size: 0.92rem;
+  font-size: var(--text-sm);
   color: var(--text);
   opacity: 0.9;
 }
@@ -4193,7 +4194,7 @@ a.product-card:hover {
 .cart-hero__intro {
   margin: 0 0 14px;
   max-width: 38rem;
-  font-size: 1.05rem;
+  font-size: var(--text-md);
   line-height: 1.75;
   color: var(--text);
   text-wrap: pretty;
@@ -4202,7 +4203,7 @@ a.product-card:hover {
 .cart-hero__continue {
   display: inline-block;
   color: var(--accent);
-  font-size: 0.92rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   text-decoration: none;
   border-bottom: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
@@ -4216,7 +4217,7 @@ a.product-card:hover {
 .cart-status {
   min-height: 1.35em;
   margin: 8px 0 0;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--secondary);
 }
@@ -4247,7 +4248,7 @@ a.product-card:hover {
 .cart-empty__title {
   margin: 0;
   font-family: var(--heading);
-  font-size: clamp(1.35rem, 3vw, 1.7rem);
+  font-size: var(--text-xl);
   font-weight: 500;
   color: var(--text-h);
   text-wrap: pretty;
@@ -4302,7 +4303,7 @@ a.product-card:hover {
 .cart-item__name {
   color: var(--text-h);
   font-family: var(--heading);
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
   font-weight: 500;
   text-decoration: none;
   text-wrap: pretty;
@@ -4325,7 +4326,7 @@ a.product-card:hover {
   gap: 8px;
   margin: 0;
   color: var(--text);
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   line-height: 1.4;
 }
 
@@ -4340,7 +4341,7 @@ a.product-card:hover {
 .cart-item__unit {
   margin: 0;
   color: var(--text);
-  font-size: 0.86rem;
+  font-size: var(--text-sm);
   opacity: 0.92;
 }
 
@@ -4373,7 +4374,7 @@ a.product-card:hover {
   color: var(--text-h);
   cursor: pointer;
   font: inherit;
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
   line-height: 1;
   transition: background-color 0.15s ease;
 }
@@ -4390,7 +4391,7 @@ a.product-card:hover {
 .cart-item__qty-value {
   min-width: 28px;
   text-align: center;
-  font-size: 0.98rem;
+  font-size: var(--text-md);
   font-weight: 500;
   color: var(--text-h);
   font-variant-numeric: tabular-nums;
@@ -4401,7 +4402,7 @@ a.product-card:hover {
   min-width: 5.5rem;
   text-align: right;
   font-family: var(--sans);
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
   font-weight: 600;
   color: var(--text-h);
   font-variant-numeric: tabular-nums;
@@ -4420,7 +4421,7 @@ a.product-card:hover {
   color: var(--text);
   cursor: pointer;
   font: inherit;
-  font-size: 0.88rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
 }
@@ -4459,7 +4460,7 @@ a.product-card:hover {
 .cart-summary__title {
   margin: 0;
   font-family: var(--heading);
-  font-size: 1.4rem;
+  font-size: var(--text-lg);
   font-weight: 500;
   color: var(--text-h);
 }
@@ -4475,7 +4476,7 @@ a.product-card:hover {
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  font-size: 0.95rem;
+  font-size: var(--text-md);
   color: var(--text);
 }
 
@@ -4493,12 +4494,12 @@ a.product-card:hover {
   padding-top: 14px;
   border-top: 1px solid var(--border);
   color: var(--text-h);
-  font-size: 1rem;
+  font-size: var(--text-md);
 }
 
 .cart-summary__row--total strong {
   font-family: var(--sans);
-  font-size: 1.55rem;
+  font-size: var(--text-xl);
   font-weight: 600;
   color: var(--text-h);
 }
@@ -4509,7 +4510,7 @@ a.product-card:hover {
   border: 1px dashed color-mix(in srgb, var(--border-strong) 85%, var(--accent));
   border-radius: 10px;
   color: var(--text);
-  font-size: 0.86rem;
+  font-size: var(--text-sm);
   line-height: 1.65;
   text-wrap: pretty;
 }
@@ -4541,7 +4542,7 @@ a.product-card:hover {
 
 .cart-shipping__title {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-h);
 }
@@ -4555,7 +4556,7 @@ a.product-card:hover {
 
 .cart-shipping__label {
   grid-column: 1 / -1;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   color: var(--text);
 }
 
@@ -4578,7 +4579,7 @@ a.product-card:hover {
 .cart-shipping__error {
   margin: 0;
   color: #9b3d3d;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .cart-shipping__options {
@@ -4610,25 +4611,25 @@ a.product-card:hover {
 }
 
 .cart-shipping__option-name {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   color: var(--text-h);
 }
 
 .cart-shipping__option-price {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
   color: var(--text-h);
 }
 
 .cart-shipping__option-days {
   grid-column: 2 / -1;
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   color: var(--text);
 }
 
 .cart-shipping__estimated {
   margin: 0;
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   color: var(--text);
 }
 
@@ -4641,7 +4642,7 @@ a.product-card:hover {
 
 .checkout-result__pickup-title {
   margin: 0 0 8px;
-  font-size: 1.1rem;
+  font-size: var(--text-md);
   color: var(--text-h);
 }
 
@@ -4652,7 +4653,7 @@ a.product-card:hover {
   border-radius: 10px;
   background: color-mix(in srgb, #c86d6d 12%, var(--surface));
   color: var(--text-h);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   line-height: 1.6;
   text-wrap: pretty;
 }
@@ -4673,7 +4674,7 @@ a.product-card:hover {
 
 .checkout-result__eyebrow {
   color: var(--accent);
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   letter-spacing: 0.26em;
   text-transform: uppercase;
 }
@@ -4681,7 +4682,7 @@ a.product-card:hover {
 .checkout-result__title {
   margin: 0;
   font-family: var(--heading);
-  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  font-size: var(--text-2xl);
   font-weight: 500;
   color: var(--text-h);
   text-wrap: balance;
@@ -4807,7 +4808,7 @@ a.product-card:hover {
   border-radius: 999px;
   background: var(--surface-2);
   color: var(--text-h);
-  font-size: 0.7rem;
+  font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -4827,7 +4828,7 @@ a.product-card:hover {
 .auth-card__title {
   margin: 0 0 8px;
   font-family: var(--heading);
-  font-size: clamp(1.7rem, 4vw, 2.2rem);
+  font-size: var(--text-2xl);
   font-weight: 500;
   line-height: 1.16;
   letter-spacing: -0.012em;
@@ -4844,7 +4845,7 @@ a.product-card:hover {
   padding-top: 16px;
   border-top: 1px solid var(--border);
   color: var(--text);
-  font-size: 0.86rem;
+  font-size: var(--text-sm);
   line-height: 1.65;
 }
 
@@ -4940,7 +4941,7 @@ a.product-card:hover {
   display: inline-block;
   margin-bottom: 14px;
   color: var(--accent);
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   letter-spacing: 0.3em;
   text-transform: uppercase;
 }
@@ -4948,7 +4949,7 @@ a.product-card:hover {
 .notfound__title {
   margin: 0 0 14px;
   font-family: var(--heading);
-  font-size: clamp(1.9rem, 5vw, 2.9rem);
+  font-size: var(--text-3xl);
   font-weight: 500;
   line-height: 1.12;
   letter-spacing: -0.012em;
@@ -4957,7 +4958,7 @@ a.product-card:hover {
 .notfound__body {
   margin: 0 0 28px;
   max-width: 46ch;
-  font-size: 1.04rem;
+  font-size: var(--text-md);
   line-height: 1.75;
 }
 
@@ -5073,7 +5074,7 @@ a.product-card:hover {
 .auth-message {
   min-height: 1.4em;
   color: #b35c5c;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   font-weight: 700;
   margin: -4px 0 0;
 }
@@ -5089,7 +5090,7 @@ a.product-card:hover {
   margin: 24px 0 16px;
   color: var(--text);
   opacity: 0.7;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -5131,7 +5132,7 @@ a.product-card:hover {
   border-radius: 999px;
   background: var(--accent-soft);
   color: var(--text-h);
-  font-size: 0.72rem;
+  font-size: var(--text-sm);
   font-weight: 800;
   line-height: 1;
   padding: 5px 8px;
@@ -5183,7 +5184,7 @@ a.product-card:hover {
 
 .admin-card-link h2 {
   margin: 0 0 8px;
-  font-size: 1.25rem;
+  font-size: var(--text-lg);
 }
 
 .admin-card-link p {
@@ -5291,7 +5292,7 @@ a.product-card:hover {
 
 .editor-post-group h2 {
   margin: 0 0 16px;
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
   overflow-wrap: anywhere;
 }
 
@@ -5313,7 +5314,7 @@ a.product-card:hover {
 
 .editor-post-row h3 {
   margin: 0 0 6px;
-  font-size: 1rem;
+  font-size: var(--text-md);
   overflow-wrap: anywhere;
 }
 
@@ -5371,7 +5372,7 @@ a.product-card:hover {
   }
 
   .editor-head h1 {
-    font-size: 1.6rem;
+    font-size: var(--text-xl);
   }
 
   .auth-divider {
@@ -5383,7 +5384,7 @@ a.product-card:hover {
 .form-hint {
   margin: -6px 0 0;
   color: var(--text);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   line-height: 1.5;
 }
 
@@ -5393,7 +5394,7 @@ a.product-card:hover {
 
 .refund-policy h2 {
   margin: 0 0 8px;
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
 }
 
 .refund-policy p {
@@ -5431,7 +5432,7 @@ a.product-card:hover {
 .checkout-result__order {
   margin: 0;
   color: var(--text);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   word-break: break-all;
 }
 
@@ -5465,14 +5466,14 @@ a.product-card:hover {
 
 .refund-request__order {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
   word-break: break-all;
 }
 
 .refund-status {
   border-radius: 999px;
   padding: 4px 10px;
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   font-weight: 700;
 }
 
@@ -5497,7 +5498,7 @@ a.product-card:hover {
 
 .refund-request__meta dt {
   color: var(--text);
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }

@@ -30,17 +30,23 @@ typography:
     fontSize: 64px
     lineHeight: 1.05
     letterSpacing: -0.01em
-  title:
+  heading:
     fontFamily: Fraunces
     fontWeight: 500
-    fontSize: 34px
+    fontSize: 40px
     lineHeight: 1.18
     letterSpacing: -0.01em
-  price:
+  title:
     fontFamily: Fraunces
     fontWeight: 500
     fontSize: 28px
     lineHeight: 1.2
+    letterSpacing: 0em
+  lead:
+    fontFamily: Nunito Sans
+    fontWeight: 600
+    fontSize: 20px
+    lineHeight: 1.4
     letterSpacing: 0em
   body:
     fontFamily: Nunito Sans
@@ -51,13 +57,13 @@ typography:
   label:
     fontFamily: Nunito Sans
     fontWeight: 700
-    fontSize: 15px
+    fontSize: 14px
     lineHeight: 1.4
     letterSpacing: 0.08em
   kana:
     fontFamily: Noto Sans JP
     fontWeight: 400
-    fontSize: 15px
+    fontSize: 14px
     lineHeight: 1.4
     letterSpacing: 0.18em
 rounded:
@@ -156,10 +162,12 @@ Night mode (`[data-theme="night"]`, or `[data-theme="system"]` under dark color 
 
 ## Typography
 
+Six sizes, as `--text-*` tokens in `src/index.css`: 14px (`sm`, labels and captions, the smallest text anywhere), 16px (`md`, body), 20px (`lg`), 28px (`xl`, titles and prices), `clamp(28px, 3vw, 40px)` (`2xl`, section headings) and `clamp(40px, 5vw, 64px)` (`3xl`, display). The two fluid steps fall to 28px and 40px on phones. `build/checkTypeScale.mjs` fails the build on any other size; the only exception is the decorative "handmade" stamp on product photos.
+
 Two preloaded local variable fonts and one Japanese webfont carry all copy:
 
-- **Fraunces** (300 to 700) for headings, product titles (42px to 64px), prices (28px), and italic studio quotes.
-- **Nunito Sans** (400, 600, 700, 800) for 16px body copy at 1.6 line height, navigation links, card titles (15px bold), and buttons.
+- **Fraunces** (300 to 700) for headings, product titles, prices, and italic studio quotes.
+- **Nunito Sans** (400, 600, 700, 800) for body copy at 1.6 line height, navigation links, card titles, and buttons.
 - **Noto Sans JP** (300, 400) for Japanese kana eyebrows and product subtitles with 0.14em to 0.18em letter spacing.
 
 ## Layout
