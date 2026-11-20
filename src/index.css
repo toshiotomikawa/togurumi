@@ -5523,3 +5523,6 @@ a.product-card:hover {
   flex-wrap: wrap;
   gap: 10px;
 }
+
+/* The <picture> around an AVIF photo leaves the layout to the <img> inside it. */
+.avif-picture { display: contents; }

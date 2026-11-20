@@ -45,4 +45,4 @@ export function renderShell(page: 'home' | 'shop', locale: SupportedLocale): str
 
 // Helpers the bake step needs from the same bundle.
 export { HERO_PHOTO_SIZES, pickHeroPieces, SHOP_COVER_SIZES } from './lib/hero'
-export { photoProps } from './lib/images'
+export { avifSrcSet, photoProps } from './lib/images'

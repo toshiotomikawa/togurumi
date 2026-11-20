@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowIcon, Branch, CartIcon, CrownIcon, GiftIcon, HandHeartIcon, HeartIcon, InstagramIcon, OrnamentRule, SprigIcon, YouTubeIcon } from '../components/AtelierIcons'
+import AvifPicture from '../components/AvifPicture'
 import { EditActions, EditFeedback, EditField } from '../components/EditableContent'
 import FaqSection from '../components/FaqSection'
 import ReviewsSection from '../components/ReviewsSection'
@@ -119,7 +120,7 @@ export function HomeHero({ pieces, content, busy }: { pieces: ShellPiece[]; cont
   return (
     <section className="atelier-hero" aria-labelledby="home-title">
       <div className="atelier-hero__stage" aria-busy={busy}>
-        {pieces.map((product, index) => <div className={`atelier-hero__tile atelier-hero__tile--${index}`} key={product.name}><PiecePhoto product={product} eager priority={index === 0 ? 'high' : 'low'} sizes={HERO_PHOTO_SIZES} /></div>)}
+        {pieces.map((product, index) => <div className={`atelier-hero__tile atelier-hero__tile--${index}`} key={product.name}><AvifPicture src={product.image} sizes={HERO_PHOTO_SIZES}><PiecePhoto product={product} eager priority={index === 0 ? 'high' : 'low'} sizes={HERO_PHOTO_SIZES} /></AvifPicture></div>)}
         <span className="atelier-hero__warmth" aria-hidden="true" />
       </div>
       <Branch className="atelier-hero__leaf" />
