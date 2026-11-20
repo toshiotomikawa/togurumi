@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { readShellSeed } from '../lib/shellSeed'
 import type { SupportedLocale } from '../lib/i18n'
 import type { SiteContentMap, SiteContentSection } from '../lib/siteContent'
 import { useAuth } from './useAuth'
@@ -50,15 +51,16 @@ function publicCacheKey(section: string, locale: string) {
   return `${PUBLIC_CACHE_PREFIX}:${section}:${locale}`
 }
 
+// A first-time visitor has no saved copy; the text the build drew into the page stands in for it.
 function readPublicCache(section: string, locale: string): Record<string, string> | null {
   try {
     const raw = localStorage.getItem(publicCacheKey(section, locale))
-    if (!raw) return null
-    const parsed = JSON.parse(raw) as unknown
-    return parsed && typeof parsed === 'object' ? (parsed as Record<string, string>) : null
+    const parsed = raw ? JSON.parse(raw) as unknown : null
+    if (parsed && typeof parsed === 'object') return parsed as Record<string, string>
   } catch {
-    return null
+    // Fall through to the build's copy when storage is blocked or damaged.
   }
+  return readShellSeed()?.content[locale]?.[section] ?? null
 }
 
 function writePublicCache(section: string, locale: string, content: Record<string, string>) {

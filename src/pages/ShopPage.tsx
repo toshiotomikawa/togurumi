@@ -4,10 +4,31 @@ import ProductCard, { ProductCardSkeleton } from '../components/ProductCard'
 import { useEditableContent } from '../hooks/useEditableContent'
 import { useLocale } from '../hooks/useLocale'
 import { useShopProducts } from '../hooks/useShopProducts'
+import { SHOP_COVER_SIZES } from '../lib/hero'
 import { photoProps } from '../lib/images'
+import { readShellSeed, type ShellPiece } from '../lib/shellSeed'
+import type { Messages } from '../i18n/messages'
 import { TOGURUMI_INSTAGRAM_DM } from '../lib/togurumi'
 
 const SKELETON_COUNT = 6
+
+/** The opening of the shop page; the build also draws it into the HTML (src/shell.tsx). */
+export function ShopHero({ content, cover, loaded }: { content: Pick<Messages['shop'], 'eyebrow' | 'title' | 'intro'>; cover?: ShellPiece; loaded: boolean }) {
+  return (
+    <section className="shop-hero shop-hero--photographic">
+      <div className="shop-hero__copy">
+        <span className="shop-hero__eyebrow editable-text">{content.eyebrow}</span>
+        <h1 className="shop-hero__title editable-text">{content.title}</h1>
+        <p className="shop-hero__intro editable-text">{content.intro}</p>
+      </div>
+      {cover ? (
+        <img className="shop-hero__photo" {...photoProps(cover.image, SHOP_COVER_SIZES, 960)} fetchPriority="high" alt={cover.name} />
+      ) : !loaded ? (
+        <div className="shop-hero__photo shop-hero__photo--pending" aria-hidden="true" />
+      ) : null}
+    </section>
+  )
+}
 
 function ShopPage() {
   const { messages, locale } = useLocale()
@@ -15,7 +36,8 @@ function ShopPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const editor = useEditableContent('shop', locale, messages.shop, messages.contentEditor.draftRestored)
 
-  const cover = products.find((product) => product.image && product.stock > 0)
+  // Until the catalog arrives, the build's cover keeps the photo the page opened with.
+  const cover = products.length > 0 ? products.find((product) => product.image && product.stock > 0) : readShellSeed()?.cover
 
   const categories = Array.from(new Set(products.map((product) => product.category).filter(Boolean)))
   const visibleProducts = activeCategory
@@ -46,18 +68,7 @@ function ShopPage() {
           </div>
         </section>
       ) : (
-        <section className="shop-hero shop-hero--photographic">
-          <div className="shop-hero__copy">
-            <span className="shop-hero__eyebrow editable-text">{editor.content.eyebrow}</span>
-            <h1 className="shop-hero__title editable-text">{editor.content.title}</h1>
-            <p className="shop-hero__intro editable-text">{editor.content.intro}</p>
-          </div>
-          {cover ? (
-            <img className="shop-hero__photo" {...photoProps(cover.image, '(max-width: 840px) 100vw, 50vw', 960)} fetchPriority="high" alt={cover.name} />
-          ) : !loaded ? (
-            <div className="shop-hero__photo shop-hero__photo--pending" aria-hidden="true" />
-          ) : null}
-        </section>
+        <ShopHero content={editor.content} cover={cover} loaded={loaded} />
       )}
 
       {editor.canEdit && (
