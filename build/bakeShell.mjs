@@ -67,7 +67,7 @@ try {
   const preconnect = '<link rel="preconnect" href="https://ik.imagekit.io">'
   const drawn = name => LOCALES.map(locale => `<template data-shell="${locale}">${shell.renderShell(name, locale)}</template>`).join('') + pickShell
 
-  const heroHints = pieces.slice(0, 1).map(piece => preload(piece.image, shell.HERO_PHOTO_SIZES, 720, shell))
+  const heroHints = pieces.slice(shell.LCP_TILE, shell.LCP_TILE + 1).map(piece => preload(piece.image, shell.HERO_PHOTO_SIZES, 720, shell))
   const coverHints = cover ? [preload(cover.image, shell.SHOP_COVER_SIZES, 960, shell)] : []
   await writeFile(new URL('index.html', dist), startAppAfterLoad(page([preconnect, ...heroHints, seedScript].join('\n    '), drawn('home'))))
   await writeFile(new URL('shop.html', dist), startAppAfterLoad(page([preconnect, ...coverHints, seedScript].join('\n    '), drawn('shop'))))

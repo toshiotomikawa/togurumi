@@ -8,8 +8,9 @@ export const HERO_PREFERRED = ['pato-formoso', 'capivara-sereia', 'bebe-baleia']
 // Wider screens put the stage beside the words, about a third of what is left.
 export const HERO_PHOTO_SIZES = '(max-width: 840px) max(184px, calc(33.4vw + 48px)), max(280px, calc(33vw - 130px))'
 
-// The shop cover spans the phone screen, and half the page on wider screens.
-export const SHOP_COVER_SIZES = '(max-width: 840px) 100vw, 50vw'
+// The shop cover is 220px wide on phones, about a third of the page beside the words on tablets,
+// and a little over half the page on wider screens (studio-v5.css, measured).
+export const SHOP_COVER_SIZES = '(max-width: 520px) 220px, (max-width: 840px) 34vw, 58vw'
 
 /** The three photographed pieces the home hero shows, in order. */
 export function pickHeroPieces<T extends { name: string; image: string }>(products: T[]): T[] {
@@ -19,3 +20,6 @@ export function pickHeroPieces<T extends { name: string; image: string }>(produc
     ...photographed.filter(product => !HERO_PREFERRED.includes(slugify(product.name))),
   ].slice(0, 3)
 }
+
+// The middle hero photo is the one browsers time as the largest paint, so it alone is fetched first.
+export const LCP_TILE = 1

@@ -14,7 +14,7 @@ import { useShopProducts } from '../hooks/useShopProducts'
 import { formatPrice, parseProductColors, type ShopProduct } from '../lib/shop'
 import { slugify } from '../lib/slug'
 import { photoProps } from '../lib/images'
-import { HERO_PHOTO_SIZES, pickHeroPieces } from '../lib/hero'
+import { HERO_PHOTO_SIZES, LCP_TILE, pickHeroPieces } from '../lib/hero'
 import { readShellSeed, type ShellPiece } from '../lib/shellSeed'
 import { TOGURUMI_INSTAGRAM_DM, TOGURUMI_LATEST_VIDEO, TOGURUMI_YOUTUBE } from '../lib/togurumi'
 import type { Messages } from '../i18n/messages'
@@ -113,14 +113,12 @@ function CollectionCard({ product }: { product: ShopProduct }) {
   )
 }
 
-/** The opening of the home page; the build also draws it into the HTML (src/shell.tsx). */
-// The tiles are the same size, so the first photo to arrive is the largest paint: the first one is
-// fetched ahead and the other two wait, instead of all three sharing a slow connection.
+// are fetched first; as AVIF they are small enough to share the connection.
 export function HomeHero({ pieces, content, busy }: { pieces: ShellPiece[]; content: Pick<Messages['home'], 'eyebrow' | 'title' | 'intro' | 'shopCta' | 'journalCta'>; busy: boolean }) {
   return (
     <section className="atelier-hero" aria-labelledby="home-title">
       <div className="atelier-hero__stage" aria-busy={busy}>
-        {pieces.map((product, index) => <div className={`atelier-hero__tile atelier-hero__tile--${index}`} key={product.name}><AvifPicture src={product.image} sizes={HERO_PHOTO_SIZES}><PiecePhoto product={product} eager priority={index === 0 ? 'high' : 'low'} sizes={HERO_PHOTO_SIZES} /></AvifPicture></div>)}
+        {pieces.map((product, index) => <div className={`atelier-hero__tile atelier-hero__tile--${index}`} key={product.name}><AvifPicture src={product.image} sizes={HERO_PHOTO_SIZES}><PiecePhoto product={product} eager priority={index === LCP_TILE ? 'high' : 'low'} sizes={HERO_PHOTO_SIZES} /></AvifPicture></div>)}
         <span className="atelier-hero__warmth" aria-hidden="true" />
       </div>
       <Branch className="atelier-hero__leaf" />
