@@ -14,7 +14,9 @@ import { formatPrice, parseProductColors, type ShopProduct } from '../lib/shop'
 import { slugify } from '../lib/slug'
 import { photoProps } from '../lib/images'
 import { HERO_PHOTO_SIZES, pickHeroPieces } from '../lib/hero'
+import { readShellSeed, type ShellPiece } from '../lib/shellSeed'
 import { TOGURUMI_INSTAGRAM_DM, TOGURUMI_LATEST_VIDEO, TOGURUMI_YOUTUBE } from '../lib/togurumi'
+import type { Messages } from '../i18n/messages'
 
 /** A piece counts as "last units" only when the real stock is this low. */
 const LOW_STOCK = 3
@@ -71,11 +73,11 @@ function YarnIcon({ className }: { className?: string }) {
   )
 }
 
-function PiecePhoto({ product, className = '', eager = false, sizes = '(max-width: 840px) 50vw, 320px' }: { product: ShopProduct; className?: string; eager?: boolean; sizes?: string }) {
+function PiecePhoto({ product, className = '', eager = false, priority, sizes = '(max-width: 840px) 50vw, 320px' }: { product: ShellPiece; className?: string; eager?: boolean; priority?: 'high' | 'low'; sizes?: string }) {
   const [failed, setFailed] = useState<string | null>(null)
   const { messages } = useLocale()
   return product.image && failed !== product.image ? (
-    <img className={className} {...photoProps(product.image, sizes)} alt={product.name} loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'high' : undefined} onError={() => setFailed(product.image)} />
+    <img className={className} {...photoProps(product.image, sizes)} alt={product.name} loading={eager ? 'eager' : 'lazy'} fetchPriority={priority} onError={() => setFailed(product.image)} />
   ) : <div className={`atelier-photo-fallback ${className}`} role="img" aria-label={messages.shop.photoComingSoon}>{messages.shop.photoComingSoon}</div>
 }
 
@@ -110,6 +112,33 @@ function CollectionCard({ product }: { product: ShopProduct }) {
   )
 }
 
+/** The opening of the home page; the build also draws it into the HTML (src/shell.tsx). */
+// The tiles are the same size, so the first photo to arrive is the largest paint: the first one is
+// fetched ahead and the other two wait, instead of all three sharing a slow connection.
+export function HomeHero({ pieces, content, busy }: { pieces: ShellPiece[]; content: Pick<Messages['home'], 'eyebrow' | 'title' | 'intro' | 'shopCta' | 'journalCta'>; busy: boolean }) {
+  return (
+    <section className="atelier-hero" aria-labelledby="home-title">
+      <div className="atelier-hero__stage" aria-busy={busy}>
+        {pieces.map((product, index) => <div className={`atelier-hero__tile atelier-hero__tile--${index}`} key={product.name}><PiecePhoto product={product} eager priority={index === 0 ? 'high' : 'low'} sizes={HERO_PHOTO_SIZES} /></div>)}
+        <span className="atelier-hero__warmth" aria-hidden="true" />
+      </div>
+      <Branch className="atelier-hero__leaf" />
+      <div className="atelier-wrap atelier-hero__inner">
+        <div className="atelier-hero__words">
+          {content.eyebrow && <p className="atelier-hero__eyebrow editable-text">{content.eyebrow}</p>}
+          <h1 id="home-title" className="editable-text">{content.title}</h1>
+          <OrnamentRule kind="heart" className="atelier-hero__rule" />
+          <p className="editable-text">{content.intro}</p>
+          <div className="atelier-hero__actions editable-text">
+            <Link className="atelier-button" to="/shop">{content.shopCta}<ArrowIcon /></Link>
+            <Link className="atelier-link" to="/journal">{content.journalCta}</Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function HomePage() {
   const { messages, locale } = useLocale()
   const t = copy[locale]
@@ -119,7 +148,8 @@ function HomePage() {
   const photographed = products.filter(product => product.image)
   const available = photographed.filter(product => product.stock > 0)
   const selected = [...available.filter(product => product.highlight), ...available.filter(product => !product.highlight)].slice(0, 8)
-  const heroPieces = pickHeroPieces(products)
+  // Until the catalog arrives, the build's pieces keep the hero photos the page opened with.
+  const heroPieces = products.length > 0 ? pickHeroPieces(products) : readShellSeed()?.pieces ?? []
   const lastPieces = available.filter(product => product.stock <= LOW_STOCK).sort((a, b) => a.stock - b.stock).slice(0, 4)
   const latestPosts = posts.slice(0, 3)
 
@@ -150,25 +180,7 @@ function HomePage() {
         <div className="content-editor__fields">
           {fields.map(field => <EditField key={field} label={messages.contentEditor.fields[field]} value={editor.draft![field]} multiline={multiline.has(field)} onChange={(value) => editor.updateField(field, value)} />)}
         </div>
-      </section> : <section className="atelier-hero" aria-labelledby="home-title">
-        <div className="atelier-hero__stage" aria-busy={!loaded}>
-          {heroPieces.map((product, index) => <div className={`atelier-hero__tile atelier-hero__tile--${index}`} key={product.name}><PiecePhoto product={product} eager sizes={HERO_PHOTO_SIZES} /></div>)}
-          <span className="atelier-hero__warmth" aria-hidden="true" />
-        </div>
-        <Branch className="atelier-hero__leaf" />
-        <div className="atelier-wrap atelier-hero__inner">
-          <div className="atelier-hero__words">
-            {editor.content.eyebrow && <p className="atelier-hero__eyebrow editable-text">{editor.content.eyebrow}</p>}
-            <h1 id="home-title" className="editable-text">{editor.content.title}</h1>
-            <OrnamentRule kind="heart" className="atelier-hero__rule" />
-            <p className="editable-text">{editor.content.intro}</p>
-            <div className="atelier-hero__actions editable-text">
-              <Link className="atelier-button" to="/shop">{editor.content.shopCta}<ArrowIcon /></Link>
-              <Link className="atelier-link" to="/journal">{editor.content.journalCta}</Link>
-            </div>
-          </div>
-        </div>
-      </section>}
+      </section> : <HomeHero pieces={heroPieces} content={editor.content} busy={!loaded} />}
 
       {editor.canEdit && <div className="atelier-wrap"><EditActions editLabel={messages.contentEditor.editButton} saveLabel={messages.contentEditor.save} cancelLabel={messages.contentEditor.cancel} editing={editor.editing} saving={editor.saving} onEdit={editor.startEditing} onSave={() => void editor.save(messages.contentEditor)} onCancel={editor.cancelEditing} /></div>}
       <div className="atelier-wrap"><EditFeedback feedback={editor.feedback} /></div>

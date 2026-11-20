@@ -7,22 +7,23 @@ import SiteHeader from './components/SiteHeader'
 import { useLocale } from './hooks/useLocale'
 import { preloadShopProducts } from './hooks/useShopProducts'
 import { preloadJournal } from './lib/journal'
-import CartPage from './pages/CartPage'
-import CheckoutCancelPage from './pages/CheckoutCancelPage'
-import CheckoutSuccessPage from './pages/CheckoutSuccessPage'
-import ContactPage from './pages/ContactPage'
 import HomePage from './pages/HomePage'
-import JournalPage from './pages/JournalPage'
-import JournalPostPage from './pages/JournalPostPage'
-import LoginPage from './pages/LoginPage'
-import NotFoundPage from './pages/NotFoundPage'
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
-import ProductPage from './pages/ProductPage'
-import RefundPage from './pages/RefundPage'
-import SearchPage from './pages/SearchPage'
 import ShopPage from './pages/ShopPage'
 
-// Staff pages load on demand, so shoppers never download them.
+// The home and shop pages, where most visits start, come with the app; every other page loads
+// when first opened, and staff pages never reach shoppers at all.
+const CartPage = lazy(() => import('./pages/CartPage'))
+const CheckoutCancelPage = lazy(() => import('./pages/CheckoutCancelPage'))
+const CheckoutSuccessPage = lazy(() => import('./pages/CheckoutSuccessPage'))
+const ContactPage = lazy(() => import('./pages/ContactPage'))
+const JournalPage = lazy(() => import('./pages/JournalPage'))
+const JournalPostPage = lazy(() => import('./pages/JournalPostPage'))
+const LoginPage = lazy(() => import('./pages/LoginPage'))
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'))
+const ProductPage = lazy(() => import('./pages/ProductPage'))
+const RefundPage = lazy(() => import('./pages/RefundPage'))
+const SearchPage = lazy(() => import('./pages/SearchPage'))
 const AccountPage = lazy(() => import('./pages/AccountPage'))
 const AdminPage = lazy(() => import('./pages/AdminPage'))
 const JournalEditorPage = lazy(() => import('./pages/JournalEditorPage'))
