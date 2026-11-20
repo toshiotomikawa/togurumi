@@ -25,9 +25,11 @@ async function getJson(path) {
 const safeJson = value => JSON.stringify(value).replace(/</g, '\\u003c')
 const attr = value => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;')
 
-function preload({ src, srcSet, sizes }) {
-  const set = srcSet ? ` imagesrcset="${attr(srcSet)}" imagesizes="${attr(sizes)}"` : ''
-  return `<link rel="preload" as="image" href="${attr(src)}"${set} fetchpriority="high">`
+// The AVIF set the page's <picture> offers; browsers without AVIF skip this hint and load the photo itself.
+function preload(image, sizes, fallbackWidth, shell) {
+  const avif = shell.avifSrcSet(image)
+  if (!avif) return `<link rel="preload" as="image" href="${attr(shell.photoProps(image, sizes, fallbackWidth).src)}" fetchpriority="high">`
+  return `<link rel="preload" as="image" type="image/avif" imagesrcset="${attr(avif)}" imagesizes="${attr(sizes)}" fetchpriority="high">`
 }
 
 // The language the head script picked decides which drawing goes into the page.
@@ -56,8 +58,8 @@ try {
   const preconnect = '<link rel="preconnect" href="https://ik.imagekit.io">'
   const drawn = name => LOCALES.map(locale => `<template data-shell="${locale}">${shell.renderShell(name, locale)}</template>`).join('') + pickShell
 
-  const heroHints = pieces.slice(0, 1).map(piece => preload(shell.photoProps(piece.image, shell.HERO_PHOTO_SIZES)))
-  const coverHints = cover ? [preload(shell.photoProps(cover.image, shell.SHOP_COVER_SIZES, 960))] : []
+  const heroHints = pieces.slice(0, 1).map(piece => preload(piece.image, shell.HERO_PHOTO_SIZES, 720, shell))
+  const coverHints = cover ? [preload(cover.image, shell.SHOP_COVER_SIZES, 960, shell)] : []
   await writeFile(new URL('index.html', dist), page([preconnect, ...heroHints, seedScript].join('\n    '), drawn('home')))
   await writeFile(new URL('shop.html', dist), page([preconnect, ...coverHints, seedScript].join('\n    '), drawn('shop')))
   await writeFile(new URL('app.html', dist), page([preconnect, seedScript].join('\n    ')))

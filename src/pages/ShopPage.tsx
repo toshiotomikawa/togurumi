@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import AvifPicture from '../components/AvifPicture'
 import { EditActions, EditFeedback, EditField } from '../components/EditableContent'
 import ProductCard, { ProductCardSkeleton } from '../components/ProductCard'
 import { useEditableContent } from '../hooks/useEditableContent'
@@ -22,7 +23,9 @@ export function ShopHero({ content, cover, loaded }: { content: Pick<Messages['s
         <p className="shop-hero__intro editable-text">{content.intro}</p>
       </div>
       {cover ? (
-        <img className="shop-hero__photo" {...photoProps(cover.image, SHOP_COVER_SIZES, 960)} fetchPriority="high" alt={cover.name} />
+        <AvifPicture src={cover.image} sizes={SHOP_COVER_SIZES}>
+          <img className="shop-hero__photo" {...photoProps(cover.image, SHOP_COVER_SIZES, 960)} fetchPriority="high" alt={cover.name} />
+        </AvifPicture>
       ) : !loaded ? (
         <div className="shop-hero__photo shop-hero__photo--pending" aria-hidden="true" />
       ) : null}
