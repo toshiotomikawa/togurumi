@@ -4,6 +4,7 @@
  *   index.html  the home page, with its opening drawn in and its hero photos requested at once
  *   shop.html   the same for /shop (vercel.json routes /shop here)
  *   app.html    the plain app for every other page (vercel.json's fallback)
+ *   sitemap.xml every public page, product and journal post, for search engines
  * If the live data cannot be read, all three are the plain app and the site works as before.
  */
 import { readFile, rm, writeFile } from 'node:fs/promises'
@@ -48,6 +49,24 @@ function startAppAfterLoad(html) {
   return html.replace(app[0], '').replace(/\s*<link rel="modulepreload"[^>]*>/g, '').replace('</body>', start + '\n  </body>')
 }
 
+// Release dates are MM/YY; a sitemap takes YYYY-MM.
+function month(date) {
+  const match = /^(\d{2})\/(\d{2})$/.exec(date ?? '')
+  return match ? `20${match[2]}-${match[1]}` : undefined
+}
+
+async function sitemap(products, shell) {
+  const entry = (path, lastmod) => `<url><loc>${SITE}${path}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}</url>`
+  const pages = ['/', '/shop', '/journal', '/contact', '/reembolso', '/privacy'].map(path => entry(path))
+  const pieces = products.map(product => entry(`/shop/${shell.slugify(product.name)}`, month(product.releaseDate)))
+  const posts = new Map()
+  for (const locale of LOCALES) {
+    for (const post of (await getJson(`/api/public/journal?locale=${locale}`)).posts ?? []) posts.set(post.slug, post.date)
+  }
+  const journal = [...posts].map(([slug, date]) => entry(`/journal/${encodeURIComponent(slug)}`, date))
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...pages, ...pieces, ...journal].join('\n')}\n</urlset>\n`
+}
+
 try {
   const shell = await import(new URL('shell.js', ssrDir).href)
   const { products = [] } = await getJson('/api/shop/products')
@@ -72,6 +91,7 @@ try {
   await writeFile(new URL('index.html', dist), startAppAfterLoad(page([preconnect, ...heroHints, seedScript].join('\n    '), drawn('home'))))
   await writeFile(new URL('shop.html', dist), startAppAfterLoad(page([preconnect, ...coverHints, seedScript].join('\n    '), drawn('shop'))))
   await writeFile(new URL('app.html', dist), page([preconnect, seedScript].join('\n    ')))
+  await writeFile(new URL('sitemap.xml', dist), await sitemap(products, shell))
   console.log(`shell: home and shop drawn in ${LOCALES.length} languages`)
 } catch (error) {
   console.warn('shell: skipped, the pages load as the plain app:', error instanceof Error ? error.message : error)
