@@ -39,6 +39,15 @@ function page(head, body = '') {
   return plain.replace('<!-- shell-head -->', head).replace('<!-- shell-body -->', body)
 }
 
+// A drawn page is already readable, so the app downloads once the page has loaded, leaving a
+// slow connection to the photo and fonts first. Its links work before then; its buttons wait.
+function startAppAfterLoad(html) {
+  const app = html.match(/<script type="module" crossorigin src="([^"]+)"><\/script>/)
+  if (!app) return html
+  const start = `<script>addEventListener("load", function () { var s = document.createElement("script"); s.type = "module"; s.src = ${JSON.stringify(app[1])}; document.body.append(s) })</script>`
+  return html.replace(app[0], '').replace(/\s*<link rel="modulepreload"[^>]*>/g, '').replace('</body>', start + '\n  </body>')
+}
+
 try {
   const shell = await import(new URL('shell.js', ssrDir).href)
   const { products = [] } = await getJson('/api/shop/products')
@@ -60,8 +69,8 @@ try {
 
   const heroHints = pieces.slice(0, 1).map(piece => preload(piece.image, shell.HERO_PHOTO_SIZES, 720, shell))
   const coverHints = cover ? [preload(cover.image, shell.SHOP_COVER_SIZES, 960, shell)] : []
-  await writeFile(new URL('index.html', dist), page([preconnect, ...heroHints, seedScript].join('\n    '), drawn('home')))
-  await writeFile(new URL('shop.html', dist), page([preconnect, ...coverHints, seedScript].join('\n    '), drawn('shop')))
+  await writeFile(new URL('index.html', dist), startAppAfterLoad(page([preconnect, ...heroHints, seedScript].join('\n    '), drawn('home'))))
+  await writeFile(new URL('shop.html', dist), startAppAfterLoad(page([preconnect, ...coverHints, seedScript].join('\n    '), drawn('shop'))))
   await writeFile(new URL('app.html', dist), page([preconnect, seedScript].join('\n    ')))
   console.log(`shell: home and shop drawn in ${LOCALES.length} languages`)
 } catch (error) {

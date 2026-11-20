@@ -581,3 +581,17 @@ body, #root { background: var(--v6-cream); }
   .atelier-card__fav::after { inset: -8px; }
   .atelier-card__cart::after { inset: -10px -6px; }
 }
+
+/* System dark mode gets every night-only rule above, so no light ground sits under light text. */
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] .atelier-button:hover, :root[data-theme="system"] .atelier-button:focus-visible { background: #c7d49a; }
+  :root[data-theme="system"] .atelier-hero { background: radial-gradient(120% 140% at 0% 0%, #2c2219 0%, #241b14 60%, #1c150f 100%); }
+  :root[data-theme="system"] .atelier-hero__tile img { filter: sepia(.4) saturate(1.05) hue-rotate(-10deg) brightness(.72); }
+  :root[data-theme="system"] .atelier-hero__warmth { background: linear-gradient(90deg, #241b14 0%, #241b1400 34%), linear-gradient(180deg, transparent 50%, #1c150fcc 100%); mix-blend-mode: normal; }
+  :root[data-theme="system"] .atelier-card__fav { background: #2b231ce6; }
+  :root[data-theme="system"] .product-detail__seal { background: #2a211af0; }
+  :root[data-theme="system"] .atelier-product .product-detail__cta { background: #c79a6b; border-color: #c79a6b; color: #1e1813; }
+  :root[data-theme="system"] .atelier-explore__label { background: #2b231cf0; color: var(--v6-choc); }
+  :root[data-theme="system"] .page--cart .cart-summary__checkout:hover, :root[data-theme="system"] .page--checkout .button--primary:hover { background: #c7d49a; color: #1b2013; }
+  :root[data-theme="system"] #root .site-footer--atelier { background: var(--v6-olive-dark); }
+}
