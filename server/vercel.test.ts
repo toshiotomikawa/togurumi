@@ -145,6 +145,7 @@ test('Vercel routes API requests before the SPA fallback', () => {
   assert.deepEqual(config.rewrites, [
     { source: '/api/:path*', destination: '/api' },
     { source: '/', destination: '/index.html' },
-    { source: '/:path((?!api/|assets/|.*\\.).*)', destination: '/index.html' },
+    { source: '/shop', destination: '/shop.html' },
+    { source: '/:path((?!api/|assets/|.*\\.).*)', destination: '/app.html' },
   ])
 })
