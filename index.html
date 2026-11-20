@@ -72,6 +72,10 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Asks for the catalog while the app itself downloads; the app picks this answer up.
+      if (!location.pathname.startsWith('/admin')) window.__togurumiCatalog = fetch('/api/shop/products', { cache: 'no-store' }).catch(function () {});
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

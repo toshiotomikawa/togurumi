@@ -27,8 +27,15 @@ function fetchShopProducts(): Promise<ShopProduct[]> {
   return inFlight
 }
 
+/** The request index.html started before the app loaded; used once, then every load is fresh. */
+function takeEarlyRequest(): Promise<Response | undefined> | undefined {
+  const early = (window as { __togurumiCatalog?: Promise<Response | undefined> }).__togurumiCatalog
+  delete (window as { __togurumiCatalog?: unknown }).__togurumiCatalog
+  return early
+}
+
 async function requestShopProducts(): Promise<ShopProduct[]> {
-  const res = await fetch('/api/shop/products', { cache: 'no-store' })
+  const res = (await takeEarlyRequest()) ?? await fetch('/api/shop/products', { cache: 'no-store' })
   if (!res.ok) throw new Error('shop_load_failed')
   const data = await res.json()
   const products: ShopProduct[] = data.products ?? []
